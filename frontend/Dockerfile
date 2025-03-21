@@ -1,0 +1,15 @@
+# 開発用 Dockerfile（ホットリロード前提）
+FROM node:20.12.2
+
+WORKDIR /app
+
+# パッケージファイルだけ先にコピー（キャッシュ効かせるため）
+COPY package.json package-lock.json ./
+
+# 依存関係インストール（ホスト側のnode_modulesと分離）
+RUN npm install
+
+EXPOSE 3000
+
+# 開発モードで起動
+CMD ["npm", "run", "dev"]
