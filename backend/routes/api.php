@@ -9,6 +9,7 @@ Route::get('/', function () {
 });
 
 // ユーザー
+Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
 
 // ユーザーログインしたものしか受け付けない
