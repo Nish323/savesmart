@@ -116,9 +116,9 @@ const Component = () => {
           </Button>
           <Typography align="center" sx={{ color: "black", mt: 2 }}>
             新規登録は
-            <NextLink href="/user/register" passHref>
-              <Link>こちら</Link>
-            </NextLink>
+            <Link component={NextLink} href="/user/register">
+              こちら
+            </Link>
           </Typography>
         </Box>
       </Container>

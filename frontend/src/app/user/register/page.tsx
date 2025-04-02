@@ -167,9 +167,9 @@ const Component = () => {
           
           <Typography align="center" sx={{ color: "black", mt: 2 }}>
             すでにアカウントをお持ちの方は
-            <NextLink href="/user/login" passHref>
-              <Link>こちら</Link>
-            </NextLink>
+            <Link component={NextLink} href="/user/login">
+              こちら
+            </Link>
           </Typography>
         </Box>
       </Container>
