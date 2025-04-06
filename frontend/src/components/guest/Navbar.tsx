@@ -40,9 +40,6 @@ export function Navbar() {
           
           {/* デスクトップ用メニュー */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/about">
-              <Button variant="ghost">SaveSmartについて</Button>
-            </Link>
             <Link href="/guide">
               <Button variant="ghost">使い方</Button>
             </Link>
@@ -82,11 +79,6 @@ export function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/90 backdrop-blur-sm border-t">
             <div className="px-4 py-2 space-y-2">
-              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-left">
-                  SaveSmartについて
-                </Button>
-              </Link>
               <Link href="/guide" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button variant="ghost" className="w-full text-left">
                   使い方
