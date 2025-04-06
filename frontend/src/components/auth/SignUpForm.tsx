@@ -16,11 +16,8 @@ import {
 } from "@/components/ui/form";
 import { UserPlus, Mail, Lock, ArrowRight, User } from "lucide-react";
 import { motion } from "framer-motion";
-import axios from "@/utils/axios/client";
-import Cookies from "js-cookie";
 import { useAuth } from "@/utils/contexts/AuthContext";
 import { ErrorType } from "@/types/errors/common";
-import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -47,8 +44,7 @@ type SignUpFormProps = {
 };
 
 export function SignUpForm({ onLoginClick }: SignUpFormProps) {
-  const router = useRouter();
-  const { isLoading, setIsLoading } = useAuth();
+  const { isLoading, signup } = useAuth();
   const [errors, setErrors] = useState<ErrorType>({});
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,21 +58,15 @@ export function SignUpForm({ onLoginClick }: SignUpFormProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
     setErrors({});
 
     try {
-      const response = await axios.post('/user/register', {
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        password_confirmation: values.passwordConfirmation,
-      });
-      
-      Cookies.set('token', response.data.token, { expires: 30 });
-      
-      // Redirect to dashboard
-      router.push('/dashboard');
+      await signup(
+        values.name,
+        values.email,
+        values.password,
+        values.passwordConfirmation
+      );
     } catch (error: any) {
       console.error(error);
       if (error.response && error.response.status === 422) {
@@ -107,8 +97,6 @@ export function SignUpForm({ onLoginClick }: SignUpFormProps) {
       } else {
         alert('登録中にエラーが発生しました。もう一度お試しください。');
       }
-    } finally {
-      setIsLoading(false);
     }
   }
 
