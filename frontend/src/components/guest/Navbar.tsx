@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { AuthDialog } from "@/components/auth/AuthDialog";
+import { useAuth } from "@/utils/contexts/AuthContext";
 import {
   Logo,
   DesktopMenu,
@@ -11,23 +12,17 @@ import {
 } from "@/components/guest/navbar";
 
 export function Navbar() {
-  // Auth related state
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const [authView, setAuthView] = useState<"login" | "signup">("login");
+  // Auth related state from context
+  const { setShowAuthDialog, setAuthDialogView } = useAuth();
   
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Handlers
   const handleAuthClick = (view: "login" | "signup") => {
-    setAuthView(view);
+    setAuthDialogView(view);
     setShowAuthDialog(true);
     setIsMobileMenuOpen(false); // Close mobile menu when auth dialog opens
-  };
-
-  const handleCloseDialog = () => {
-    setShowAuthDialog(false);
-    setAuthView("login"); // Reset to login view when dialog closes
   };
 
   const toggleMobileMenu = () => {
@@ -57,11 +52,7 @@ export function Navbar() {
         />
       </motion.nav>
 
-      <AuthDialog
-        isOpen={showAuthDialog}
-        onClose={handleCloseDialog}
-        defaultView={authView}
-      />
+      {/* AuthDialog is now controlled by the AuthContext and rendered at the app level */}
     </>
   );
 }

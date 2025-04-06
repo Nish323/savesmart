@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn, UserPlus, User, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/utils/contexts/AuthContext";
 
 export type MobileMenuProps = {
   isOpen: boolean;
@@ -11,6 +12,8 @@ export type MobileMenuProps = {
 };
 
 export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) => {
+  const { isAuthenticated, logout } = useAuth();
+  
   if (!isOpen) return null;
   
   return (
@@ -21,21 +24,48 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
             使い方
           </Button>
         </Link>
-        <Button
-          variant="outline"
-          className="w-full text-left flex items-center gap-2"
-          onClick={() => onAuthClick("login")}
-        >
-          <LogIn className="h-4 w-4" />
-          ログイン
-        </Button>
-        <Button
-          className="w-full text-left flex items-center gap-2"
-          onClick={() => onAuthClick("signup")}
-        >
-          <UserPlus className="h-4 w-4" />
-          無料で始める
-        </Button>
+        
+        {isAuthenticated ? (
+          // Show authenticated menu items
+          <>
+            <Link href="/dashboard" onClick={onClose}>
+              <Button variant="ghost" className="w-full text-left flex items-center gap-2">
+                <User className="h-4 w-4" />
+                マイページ
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              className="w-full text-left flex items-center gap-2"
+              onClick={() => {
+                onClose();
+                logout();
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              ログアウト
+            </Button>
+          </>
+        ) : (
+          // Show unauthenticated menu items
+          <>
+            <Button
+              variant="outline"
+              className="w-full text-left flex items-center gap-2"
+              onClick={() => onAuthClick("login")}
+            >
+              <LogIn className="h-4 w-4" />
+              ログイン
+            </Button>
+            <Button
+              className="w-full text-left flex items-center gap-2"
+              onClick={() => onAuthClick("signup")}
+            >
+              <UserPlus className="h-4 w-4" />
+              無料で始める
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
