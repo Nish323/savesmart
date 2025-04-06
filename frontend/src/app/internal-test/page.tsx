@@ -3,7 +3,6 @@
 export default async function InternalTestPage() {
   let data;
   try {
-    // NEXT_PUBLIC_API_URL_SERVER は Docker Compose の内部通信用URL（例: http://backend:9000/api）を指す
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_SERVER}/user`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
