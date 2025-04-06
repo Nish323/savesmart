@@ -73,7 +73,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex gap-4"
           >
-            <Link href="/dashboard">
+            <Link href="/home">
               <Button size="lg" className="relative overflow-hidden group">
                 <span className="relative z-10">
                   今すぐ始める
