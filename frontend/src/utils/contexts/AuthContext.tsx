@@ -48,8 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (token) {
         try {
-          const response = await axios.get('/user/me');
-          setUser(response.data.user);
+          const response = await axios.get('/user/check-auth');
+          setUser(response.data);
           setIsAuthenticated(true);
         } catch (error) {
           console.error('Authentication error:', error);
@@ -75,7 +75,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await axios.post('/user/login', { email, password });
       Cookies.set('token', response.data.token, { expires: 30 });
-      setUser(response.data.user);
+      
+      // Fetch user data after successful login
+      const userResponse = await axios.get('/user/check-auth');
+      setUser(userResponse.data);
       setIsAuthenticated(true);
       setShowAuthDialog(false);
       router.push('/dashboard');
@@ -100,7 +103,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       
       Cookies.set('token', response.data.token, { expires: 30 });
-      setUser(response.data.user);
+      
+      // Fetch user data after successful signup
+      const userResponse = await axios.get('/user/check-auth');
+      setUser(userResponse.data);
       setIsAuthenticated(true);
       setShowAuthDialog(false);
       router.push('/dashboard');
@@ -121,6 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       Cookies.remove('token');
       setUser(null);
       setIsAuthenticated(false);
+      setShowAuthDialog(false); // Reset dialog state when logging out
       router.push('/');
     } catch (error) {
       console.error('Logout error:', error);
@@ -128,6 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       Cookies.remove('token');
       setUser(null);
       setIsAuthenticated(false);
+      setShowAuthDialog(false); // Reset dialog state when logging out
     } finally {
       setIsLoading(false);
     }

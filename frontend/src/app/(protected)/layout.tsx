@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import { useAuth } from "@/utils/contexts/AuthContext";
 import { AuthDialog } from "@/components/auth/AuthDialog";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Footer } from "@/components/guest/Footer";
+import { Navbar } from "@/components/protected/Navbar";
 
 export default function ProtectedLayout({
   children,
@@ -12,6 +14,7 @@ export default function ProtectedLayout({
 }) {
   const { isAuthenticated, isLoading, setShowAuthDialog, setAuthDialogView } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     // If not authenticated and not loading, show login dialog
@@ -34,10 +37,11 @@ export default function ProtectedLayout({
   }
 
   // If authenticated, show the protected content
-  // If not authenticated, still render children but with the auth dialog
   return (
     <>
+      <Navbar />
       {children}
+      <Footer />
       <AuthDialog />
     </>
   );

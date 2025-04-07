@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/guest/Navbar";
 import { Footer } from "@/components/guest/Footer";
-import { AuthDialog } from "@/components/auth/AuthDialog";
 
 export default function GuestLayout({
   children,
@@ -12,7 +11,6 @@ export default function GuestLayout({
       <Navbar />
       {children}
       <Footer />
-      <AuthDialog />
     </>
   );
 }
