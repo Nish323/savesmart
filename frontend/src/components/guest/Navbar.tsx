@@ -52,7 +52,8 @@ export function Navbar() {
         />
       </motion.nav>
 
-      {/* AuthDialog is now controlled by the AuthContext and rendered at the app level */}
+      {/* Include AuthDialog in Navbar for guest pages */}
+      <AuthDialog />
     </>
   );
 }
