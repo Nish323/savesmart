@@ -55,16 +55,6 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
             目標
           </Button>
         </Link>
-        <Link href="/dashboard/notifications" onClick={onClose}>
-          <Button
-            variant="ghost"
-            className="w-full text-left flex gap-2 relative"
-          >
-            <Bell className="h-5 w-5" />
-            通知
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </Button>
-        </Link>
         <div className="border-t pt-2">
           <Link href="/dashboard/settings/profile" onClick={onClose}>
             <Button

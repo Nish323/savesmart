@@ -51,13 +51,6 @@ export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
       </Link>
 
       <div className="flex items-center space-x-2 ml-2 border-l pl-2">
-        <Link href="/dashboard/notifications">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </Button>
-        </Link>
-
         <UserMenu />
       </div>
     </div>

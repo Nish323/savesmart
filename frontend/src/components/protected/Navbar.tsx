@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/utils/contexts/AuthContext";
-import { Logo, DesktopMenu, MobileMenuButton, MobileMenu } from "./navbar";
+import { Logo, DesktopMenu, MobileMenuButton, MobileMenu } from "./protectednavbar";
 
 export function Navbar() {
   const pathname = usePathname();
