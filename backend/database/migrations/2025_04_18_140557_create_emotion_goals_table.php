@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('emotion_category_id')->constrained();
+            $table->string('type')->default('emotion');
             $table->string('title');
             $table->bigInteger('target_count');
             $table->bigInteger('current_count');
             $table->date('deadline');
-            $table->boolean('achieved');
-            $table->boolean('failed');
+            $table->boolean('achieved')->default(false);
+            $table->boolean('failed')->default(false);
             $table->timestamps();
         });
     }
