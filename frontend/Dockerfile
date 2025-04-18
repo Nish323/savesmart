@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # 依存関係インストール（ホスト側のnode_modulesと分離）
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 EXPOSE 3000
 
