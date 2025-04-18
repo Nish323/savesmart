@@ -17,6 +17,7 @@ services:
       timeout: 10s
       retries: 3
       disable: true
+    user: "${UID}:${GID}"
     networks:
       - backend-network
 
