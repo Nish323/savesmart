@@ -31,18 +31,18 @@ export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
           ダッシュボード
         </Button>
       </Link>
-      <Link href="/dashboard/expenses">
+      <Link href="/expenses">
         <Button
-          variant={isActive("/dashboard/expenses") ? "default" : "ghost"}
+          variant={isActive("/expenses") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Receipt className="h-4 w-4" />
           収支を記録
         </Button>
       </Link>
-      <Link href="/dashboard/goals">
+      <Link href="/goals">
         <Button
-          variant={isActive("/dashboard/goals") ? "default" : "ghost"}
+          variant={isActive("/goals") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Target className="h-4 w-4" />
