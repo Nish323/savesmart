@@ -1,6 +1,14 @@
 import "./globals.css";
 import { AuthProvider } from "@/utils/contexts/AuthContext";
 
+export const metadata = {
+  title: 'SaveSmart',
+  description: 'Smart personal finance app',
+  icons: {
+    icon: '/favicon.svg?v=4',
+  },
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -8,8 +16,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <head>
-      </head>
       <body>
 			<AuthProvider>
         {children}

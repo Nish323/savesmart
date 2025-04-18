@@ -13,36 +13,36 @@ export type DesktopMenuProps = {
 export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
   return (
     <div className="hidden md:flex items-center space-x-4">
-      <Link href="/dashboard">
+      <Link href="/home">
         <Button
-          variant={isActive("/dashboard") ? "default" : "ghost"}
+          variant={isActive("/home") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Home className="h-4 w-4" />
           ホーム
         </Button>
       </Link>
-      <Link href="/dashboard/overview">
+      <Link href="/dashboard">
         <Button
-          variant={isActive("/dashboard/overview") ? "default" : "ghost"}
+          variant={isActive("/dashboard") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <LayoutDashboard className="h-4 w-4" />
           ダッシュボード
         </Button>
       </Link>
-      <Link href="/dashboard/expenses">
+      <Link href="/expenses">
         <Button
-          variant={isActive("/dashboard/expenses") ? "default" : "ghost"}
+          variant={isActive("/expenses") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Receipt className="h-4 w-4" />
           収支を記録
         </Button>
       </Link>
-      <Link href="/dashboard/goals">
+      <Link href="/goals">
         <Button
-          variant={isActive("/dashboard/goals") ? "default" : "ghost"}
+          variant={isActive("/goals") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Target className="h-4 w-4" />
