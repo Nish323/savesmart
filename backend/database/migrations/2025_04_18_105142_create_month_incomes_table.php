@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('month_incomes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->bigInteger('income_total');
+            $table->bigInteger('income_total')->default(0);
             $table->integer('year');
             $table->tinyInteger('month');
             $table->timestamps();

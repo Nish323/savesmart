@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('waste_goals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->string('type')->default('waste');
             $table->string('title');
             $table->bigInteger('target_amount');
             $table->bigInteger('current_amount');
             $table->date('deadline');
             $table->string('icon')->default('TbAlertSquare');
             $table->string('color')->default('text-red-500');
-            $table->boolean('achieved');
-            $table->boolean('failed');
+            $table->boolean('achieved')->default(false);
+            $table->boolean('failed')->default(false);
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('emotion_category_id')->constrained();
-            $table->bigInteger('total_amount');
+            $table->bigInteger('total_amount')->default(0);
             $table->integer('year');
             $table->tinyInteger('month');
             $table->timestamps();
