@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('special_category_id')->constrained();
             $table->foreignId('emotion_category_id')->constrained();
             $table->bigInteger('amount');
-            $table->string('memo');
+            $table->string('memo')->nullable();
             $table->unsignedInteger('day');
             $table->timestamps();
             $table->softDeletes();
