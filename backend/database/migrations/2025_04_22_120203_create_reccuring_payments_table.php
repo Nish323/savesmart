@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('reccuring_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('normal_category_id')->constrained();
@@ -19,10 +19,7 @@ return new class extends Migration
             $table->foreignId('emotion_category_id')->constrained();
             $table->bigInteger('amount');
             $table->string('memo')->nullable();
-            $table->date('spent_at');
-            $table->integer('year');
-            $table->tinyInteger('month');
-            $table->tinyInteger('day');
+            $table->unsignedInteger('day');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('reccuring_payments');
     }
 };
