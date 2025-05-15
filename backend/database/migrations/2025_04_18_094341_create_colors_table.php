@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('normal_categories', function (Blueprint $table) {
+        Schema::create('colors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('color_id')->constrained();
-            $table->string('name');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->string('color');
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('normal_categories');
+        Schema::dropIfExists('colors');
     }
 };
