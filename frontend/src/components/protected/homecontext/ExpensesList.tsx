@@ -5,24 +5,7 @@ import { getExpenses } from "@/api/controllers/expenseController";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingDown } from "lucide-react";
-
-// 支出データの型定義
-interface Expense {
-  id: number;
-  userId: number;
-  normalCategoryId: number;
-  specialCategoryId: number;
-  emotionCategoryId: number;
-  amount: number;
-  memo: string | null;
-  spentAt: string;
-  year: number;
-  month: number;
-  day: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
+import { Expense } from "@/types/transaction";
 
 export function ExpensesList() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
