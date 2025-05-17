@@ -19,17 +19,17 @@ class SpecialCategorySeeder extends Seeder
             [
                 'name'       => '無駄遣い',
                 'icon'       => 'AlertTriangle',
-                'color'      => 'text-red-500',
+                'color'      => 'red',
             ],
             [
                 'name'       => '自己投資',
                 'icon'       => 'Rocket',
-                'color'      => 'text-blue-500',
+                'color'      => 'blue',
             ],
             [
                 'name'       => '通常',
                 'icon'       => 'CircleDot',
-                'color'      => 'text-gray-500',
+                'color'      => 'gray',
             ],
         ]);
     }
