@@ -38,8 +38,8 @@ instance.interceptors.response.use(
     },
     error => {
       // ログインしていない状態でログイン画面にアクセスしようとした場合
-      if (error.response && error.response.status === 401 && window.location.pathname !== "/user/login") {
-        window.location.href = "/user/login";
+      if (error.response && error.response.status === 401 && window.location.pathname !== "/") {
+        window.location.href = "/";
       }
       return Promise.reject(error);
     }

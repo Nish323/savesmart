@@ -40,7 +40,7 @@ instance.interceptors.response.use(
     error => {
       // ログインしていない状態でログイン画面にアクセスしようとした場合
       if (error.response && error.response.status === 401) {
-        redirect("/user/login");
+        redirect("/");
       }
       return Promise.reject(error);
     }

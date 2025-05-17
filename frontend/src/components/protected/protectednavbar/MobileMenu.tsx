@@ -19,36 +19,36 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
   return (
     <div className="md:hidden bg-white/90 backdrop-blur-sm border-t">
       <div className="px-4 py-2 space-y-2">
-        <Link href="/dashboard" onClick={onClose}>
+        <Link href="/home" onClick={onClose}>
           <Button
-            variant={isActive("/dashboard") ? "default" : "ghost"}
+            variant={isActive("/home") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
           >
             <Home className="h-4 w-4" />
             ホーム
           </Button>
         </Link>
-        <Link href="/dashboard/overview" onClick={onClose}>
+        <Link href="/dashboard" onClick={onClose}>
           <Button
-            variant={isActive("/dashboard/overview") ? "default" : "ghost"}
+            variant={isActive("/dashboard") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
           >
             <LayoutDashboard className="h-4 w-4" />
             ダッシュボード
           </Button>
         </Link>
-        <Link href="/dashboard/expenses" onClick={onClose}>
+        <Link href="/create/expenses" onClick={onClose}>
           <Button
-            variant={isActive("/dashboard/expenses") ? "default" : "ghost"}
+            variant={isActive("/create/expenses") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
           >
             <Receipt className="h-4 w-4" />
             収支を記録
           </Button>
         </Link>
-        <Link href="/dashboard/goals" onClick={onClose}>
+        <Link href="/goals" onClick={onClose}>
           <Button
-            variant={isActive("/dashboard/goals") ? "default" : "ghost"}
+            variant={isActive("/goals") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
           >
             <Target className="h-4 w-4" />
