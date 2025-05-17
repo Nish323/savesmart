@@ -1,54 +1,75 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { getExpenses } from "@/api/controllers/expenseController";
+import { getIncomes } from "@/api/controllers/incomeController";
 import { TransactionHeader } from "./homecontext/TransactionHeader";
 import { TransactionCalendar } from "./homecontext/TransactionCalendar";
 import { DailyTransactions } from "./homecontext/DailyTransactions";
-import { Transaction, Expense } from "@/types/transaction";
+import { Transaction, Expense, Income } from "@/types/transaction";
 
-// 仮のデータ（収入用）
-const incomeTransactions = [
-  { date: new Date(2025, 5, 15), type: "income" as const, amount: 280000, category: "給与", description: "3月分給与" },
-];
-
-export function HomeContent() {
+export function HomeContext() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [incomes, setIncomes] = useState<Income[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // 支出データを取得
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getExpenses();
-        setExpenses(data);
+        const expenseData = await getExpenses();
+        setExpenses(expenseData);
+        const incomeData = await getIncomes();
+        setIncomes(incomeData);
       } catch (error) {
-        console.error('Error fetching expenses:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchExpenses();
+    fetchData();
   }, []);
 
-  // 支出データを日付ごとのトランザクションに変換
-  const expenseTransactions = expenses.map(expense => ({
-    date: new Date(expense.spentAt),
-    type: "expense" as const,
-    amount: expense.amount,
-    category: `カテゴリID: ${expense.normalCategoryId}`,
-    description: expense.memo || '詳細なし'
-  }));
+  const expenseTransactions = expenses.map((expense) => {
+    return {
+      date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
+      type: "expense" as const,
+      amount: expense.amount,
+      normalCategory: expense.normalCategoryName,
+      specialCategory: expense.specialCategoryName,
+      emotionCategory: expense.emotionCategoryName,
+      normalCategoryColor: expense.normalCategoryColor,
+      specialCategoryColor: expense.specialCategoryColor,
+      emotionCategoryColor: expense.emotionCategoryColor,
+      description: expense.memo || "詳細なし",
+    };
+  });
 
-  // 収入と支出を合わせたトランザクション
-  const allTransactions = [...expenseTransactions, ...incomeTransactions];
+  const incomeTransactionsFromApi = incomes.map((income) => {
+    return {
+      date: income.savedAt ? new Date(income.savedAt) : new Date(),
+      type: "income" as const,
+      amount: income.income,
+      category: "収入",
+      normalCategory: null,
+      specialCategory: null,
+      emotionCategory: null,
+      normalCategoryColor: null,
+      specialCategoryColor: null,
+      emotionCategoryColor: null,
+      description: "収入",
+    };
+  });
 
-  // 選択された日付のトランザクション
+  const allTransactions = [
+    ...expenseTransactions,
+    ...incomeTransactionsFromApi,
+  ].filter((t) => isValid(t.date));
+
   const selectedDateTransactions = allTransactions.filter(
     (t) => format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
   );
@@ -57,7 +78,7 @@ export function HomeContent() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4 py-8">
         <TransactionHeader selectedDate={selectedDate} />
-        
+
         <div className="grid lg:grid-cols-4 gap-8">
           <TransactionCalendar
             selectedDate={selectedDate}
@@ -65,9 +86,9 @@ export function HomeContent() {
             currentMonth={currentMonth}
             setCurrentMonth={setCurrentMonth}
             expenseTransactions={expenseTransactions}
-            incomeTransactions={incomeTransactions}
+            incomeTransactions={incomeTransactionsFromApi}
           />
-          
+
           <DailyTransactions
             selectedDate={selectedDate}
             transactions={selectedDateTransactions}

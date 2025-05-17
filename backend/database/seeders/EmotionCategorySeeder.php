@@ -19,22 +19,22 @@ class EmotionCategorySeeder extends Seeder
             [
                 'name'       => '満足',
                 'icon'       => 'Smile',
-                'color'      => 'text-green-500',
+                'color'      => 'green',
             ],
             [
                 'name'       => '後悔',
                 'icon'       => 'Frown',
-                'color'      => 'text-red-500',
+                'color'      => 'red',
             ],
             [
                 'name'       => '衝動的',
                 'icon'       => 'Zap',
-                'color'      => 'text-yellow-500',
+                'color'      => 'yellow',
             ],
             [
                 'name'       => '計画的',
                 'icon'       => 'Target',
-                'color'      => 'text-blue-500',
+                'color'      => 'blue',
             ],
         ]);
     }
