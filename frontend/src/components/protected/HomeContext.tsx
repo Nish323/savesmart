@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, addMonths, subMonths, addYears, subYears } from "date-fns";
 import { ja } from "date-fns/locale";
+import { getExpenses } from "@/api/controllers/expenseController";
 import { useRouter } from "next/navigation";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -20,26 +21,74 @@ import {
   ChevronsRight
 } from "lucide-react";
 
-// 仮のデータ
-const transactions = [
-  { date: new Date(2024, 2, 15), type: "expense", amount: 5000, category: "食費", description: "昼食" },
-  { date: new Date(2024, 2, 15), type: "expense", amount: 12000, category: "交通費", description: "電車定期" },
-  { date: new Date(2024, 2, 15), type: "income", amount: 280000, category: "給与", description: "3月分給与" },
-  { date: new Date(2024, 2, 25), type: "expense", amount: 85000, category: "住居費", description: "家賃" },
+// 仮のデータ（収入用）
+const incomeTransactions = [
+  { date: new Date(2025, 5, 15), type: "income", amount: 280000, category: "給与", description: "3月分給与" },
 ];
+
+// 支出データの型定義
+interface Expense {
+  id: number;
+  userId: number;
+  normalCategoryId: number;
+  specialCategoryId: number;
+  emotionCategoryId: number;
+  amount: number;
+  memo: string | null;
+  spentAt: string;
+  year: number;
+  month: number;
+  day: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
 
 export function HomeContent() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const selectedDateTransactions = transactions.filter(
+  // 支出データを取得
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        setLoading(true);
+        const data = await getExpenses();
+        setExpenses(data);
+      } catch (error) {
+        console.error('Error fetching expenses:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExpenses();
+  }, []);
+
+  // 支出データを日付ごとのトランザクションに変換
+  const expenseTransactions = expenses.map(expense => ({
+    date: new Date(expense.spentAt),
+    type: "expense" as const,
+    amount: expense.amount,
+    category: `カテゴリID: ${expense.normalCategoryId}`,
+    description: expense.memo || '詳細なし'
+  }));
+
+  // 収入と支出を合わせたトランザクション
+  const allTransactions = [...expenseTransactions, ...incomeTransactions];
+
+  // 選択された日付のトランザクション
+  const selectedDateTransactions = allTransactions.filter(
     (t) => format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
   );
 
+  // カレンダーの日付マーカー
   const modifiers = {
-    expense: transactions.filter(t => t.type === "expense").map(t => t.date),
-    income: transactions.filter(t => t.type === "income").map(t => t.date),
+    expense: expenseTransactions.map(t => t.date),
+    income: incomeTransactions.map(t => t.date),
   };
 
   const modifiersStyles = {
@@ -59,7 +108,7 @@ export function HomeContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-24">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <motion.div
@@ -231,7 +280,7 @@ export function HomeContent() {
                             {transaction.description}
                           </div>
                         </div>
-                        <Badge variant={transaction.type === "expense" ? "destructive" : "success"}>
+                        <Badge variant={transaction.type === "expense" ? "destructive" : "secondary"}>
                           {transaction.category}
                         </Badge>
                       </div>
