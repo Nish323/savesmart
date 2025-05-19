@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import { getExpenses } from "@/api/controllers/expenseController";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TrendingDown } from "lucide-react";
 import { Expense } from "@/types/transaction";
-import { getColorBackGround } from "@/components/protected/color/getColor";
 import { HomeList } from "./sharedComponent/HomeList";
 import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 import { parseISO } from "date-fns/parseISO";
@@ -34,7 +31,13 @@ export function ExpensesList() {
           emotionCategoryColor: expense.emotionCategoryColor || "",
           description: expense.memo || "詳細なし",
         }));
-        setExpenses(convertedExpenses);
+        // 日付で降順ソートして最新の5件を取得
+        const sortedExpenses = convertedExpenses.sort(
+          (a: ExpenseAndIncomeTransaction, b: ExpenseAndIncomeTransaction) =>
+            b.date.getTime() - a.date.getTime()
+        );
+        const latestExpenses = sortedExpenses.slice(0, 5);
+        setExpenses(latestExpenses);
       } catch (error) {
         console.error("Error fetching expenses:", error);
       } finally {
@@ -50,7 +53,21 @@ export function ExpensesList() {
       <CardHeader>
         <CardTitle>最近の支出</CardTitle>
       </CardHeader>
-      <HomeList transactions={expenses} showDate={true} />
+      <CardContent>
+        {expenses.length > 0 ? (
+          <div className="space-y-4">
+            {expenses.map((expense) => (
+              <HomeList
+                key={expense.id}
+                transaction={expense}
+                showDate={true}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">支出はありません</div>
+        )}
+      </CardContent>
     </Card>
   );
 }

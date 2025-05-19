@@ -28,7 +28,23 @@ export function DailyTransactions({
             {format(selectedDate, "yyyy年 MM月 dd日", { locale: ja })}の収支
           </CardTitle>
         </CardHeader>
-        <HomeList transactions={transactions} />
+        <CardContent>
+          {transactions.length > 0 ? (
+            <div className="space-y-4">
+              {transactions.map((transaction) => (
+                <HomeList
+                  key={transaction.id}
+                  transaction={transaction}
+                  showDate={false}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              この日の記録はありません
+            </div>
+          )}
+        </CardContent>
       </Card>
     </motion.div>
   );
