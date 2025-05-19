@@ -36,6 +36,7 @@ export function HomeContext() {
 
   const expenseTransactions = expenses.map((expense) => {
     return {
+      id: expense.id,
       date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
       type: "expense" as const,
       amount: expense.amount,
@@ -51,6 +52,7 @@ export function HomeContext() {
 
   const incomeTransactionsFromApi = incomes.map((income) => {
     return {
+      id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
       type: "income" as const,
       amount: income.income,
@@ -79,7 +81,7 @@ export function HomeContext() {
       <div className="container mx-auto px-4 py-8">
         <TransactionHeader selectedDate={selectedDate} />
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
           <TransactionCalendar
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
