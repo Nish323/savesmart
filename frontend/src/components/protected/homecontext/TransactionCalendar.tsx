@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Calendar as CalendarIcon,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
 } from "lucide-react";
 
 // トランザクションの型定義
@@ -35,12 +35,12 @@ export function TransactionCalendar({
   currentMonth,
   setCurrentMonth,
   expenseTransactions,
-  incomeTransactions
+  incomeTransactions,
 }: TransactionCalendarProps) {
   // カレンダーの日付マーカー
   const modifiers = {
-    expense: expenseTransactions.map(t => t.date),
-    income: incomeTransactions.map(t => t.date),
+    expense: expenseTransactions.map((t) => t.date),
+    income: incomeTransactions.map((t) => t.date),
   };
 
   const modifiersStyles = {
@@ -63,12 +63,12 @@ export function TransactionCalendar({
     >
       <Card>
         <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
               {format(currentMonth, "yyyy年 MM月", { locale: ja })}
             </CardTitle>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
               <div className="flex gap-1">
                 <Button
                   variant="outline"
@@ -141,20 +141,24 @@ export function TransactionCalendar({
                 caption: "flex justify-center pt-1 relative items-center",
                 caption_label: "text-sm font-medium",
                 nav: "space-x-1 flex items-center",
-                nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                nav_button:
+                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
                 nav_button_previous: "absolute left-1",
                 nav_button_next: "absolute right-1",
                 table: "w-full border-collapse space-y-1",
-                head_row: "flex",
-                head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                row: "flex w-full mt-2",
-                cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 h-12 w-full",
-                day: "h-12 w-12 p-0 font-normal aria-selected:opacity-100 hover:bg-accent rounded-md transition-colors",
-                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                head_row: "grid grid-cols-7 place-items-center",
+                head_cell:
+                  "text-muted-foreground rounded-md font-normal text-[0.8rem] text-center py-2 px-0 w-full",
+                row: "grid grid-cols-7 place-items-center mt-2",
+                cell: "text-center text-xs sm:text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 h-8 w-8 sm:h-10 sm:w-10",
+                day: "h-8 w-8 sm:h-10 sm:w-10 p-0 font-normal aria-selected:opacity-100 hover:bg-accent rounded-md transition-colors flex items-center justify-center w-full h-full text-center",
+                day_selected:
+                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                 day_today: "bg-accent text-accent-foreground",
                 day_outside: "text-muted-foreground opacity-50",
                 day_disabled: "text-muted-foreground opacity-50",
-                day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                day_range_middle:
+                  "aria-selected:bg-accent aria-selected:text-accent-foreground",
                 day_hidden: "invisible",
               }}
             />

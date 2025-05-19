@@ -19,13 +19,14 @@ export function TransactionHeader({ selectedDate }: TransactionHeaderProps) {
   };
 
   return (
-    <div className="flex items-center justify-between mb-8">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
+        className="text-center sm:text-left"
       >
-        <h1 className="text-3xl font-bold">ホーム</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">ホーム</h1>
         <p className="text-gray-600">収支カレンダー</p>
       </motion.div>
 
@@ -33,13 +34,20 @@ export function TransactionHeader({ selectedDate }: TransactionHeaderProps) {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex gap-2"
+        className="flex flex-col sm:flex-row gap-2"
       >
-        <Button variant="outline" onClick={() => handleRecordTransaction("income")}>
+        <Button
+          variant="outline"
+          onClick={() => handleRecordTransaction("income")}
+          className="w-full sm:w-auto"
+        >
           <TrendingUp className="h-4 w-4 mr-2" />
           収入を記録
         </Button>
-        <Button onClick={() => handleRecordTransaction("expense")}>
+        <Button
+          onClick={() => handleRecordTransaction("expense")}
+          className="w-full sm:w-auto"
+        >
           <TrendingDown className="h-4 w-4 mr-2" />
           支出を記録
         </Button>
