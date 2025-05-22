@@ -21,9 +21,14 @@ class IncomeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(IncomeRequest $request)
     {
-        //
+        $income = Income::create([
+            'user_id' => Auth::id(),
+            'income' => $request->income,
+            'saved_at' => $request->saved_at,
+        ]);
+        return response()->json($income);
     }
 
     /**

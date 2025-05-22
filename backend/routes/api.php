@@ -21,4 +21,6 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/user/top', [UserController::class, 'showTop']);
     Route::get('/expenses', [ExpenseController::class, 'index']);
     Route::get('/incomes', [IncomeController::class, 'index']);
+    Route::post('/expenses', [ExpenseController::class, 'store']);
+    Route::post('/incomes', [IncomeController::class, 'store']);
 });
