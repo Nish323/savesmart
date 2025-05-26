@@ -7,8 +7,8 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import client from "@/utils/axios/client";
 import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
 import { SuccessMessage } from "./createcontext/SuccessMessage";
-import { ExpenseForm } from "./createcontext/ExpenseForm";
-import { IncomeForm } from "./createcontext/IncomeForm";
+import { ImprovedExpenseForm } from "./createcontext/ImprovedExpenseForm";
+import { ImprovedIncomeForm } from "./createcontext/ImprovedIncomeForm";
 
 type CreateExpenseFormProps = {
   defaultType?: "expense" | "income";
@@ -86,7 +86,7 @@ export function CreateExpenseAndIncome({
             </TabsList>
 
             <TabsContent value="expense">
-              <ExpenseForm
+              <ImprovedExpenseForm
                 normalCategories={normalCategories}
                 specialCategories={specialCategories}
                 emotionCategories={emotionCategories}
@@ -96,7 +96,7 @@ export function CreateExpenseAndIncome({
             </TabsContent>
 
             <TabsContent value="income">
-              <IncomeForm
+              <ImprovedIncomeForm
                 onSuccess={handleSuccess}
                 defaultDate={defaultDate}
               />
