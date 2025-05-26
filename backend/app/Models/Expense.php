@@ -20,6 +20,9 @@ class Expense extends Model
         'normal_category_color',
         'special_category_color',
         'emotion_category_color',
+        'normal_category_name',
+        'special_category_name',
+        'emotion_category_name',
     ];
 
     protected $fillable = [
@@ -72,5 +75,20 @@ class Expense extends Model
     public function getEmotionCategoryColorAttribute(): ?string
     {
         return $this->emotionCategory?->color;
+    }
+
+    public function getNormalCategoryNameAttribute(): ?string
+    {
+        return $this->normalCategory?->name;
+    }
+
+    public function getSpecialCategoryNameAttribute(): ?string
+    {
+        return $this->specialCategory?->name;
+    }
+
+    public function getEmotionCategoryNameAttribute(): ?string
+    {
+        return $this->emotionCategory?->name;
     }
 }

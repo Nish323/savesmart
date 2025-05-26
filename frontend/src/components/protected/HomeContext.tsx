@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, isValid, parseISO } from "date-fns";
+import { format, isValid } from "date-fns";
 import { getExpenses } from "@/api/controllers/expenseController";
 import { getIncomes } from "@/api/controllers/incomeController";
 import { TransactionHeader } from "./homeContext/TransactionHeader";
 import { TransactionCalendar } from "./homeContext/TransactionCalendar";
 import { DailyTransactions } from "./homeContext/DailyTransactions";
-import { Transaction, Expense, Income } from "@/types/transaction";
+import { Expense, Income } from "@/types/transaction";
+import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 
 export function HomeContext() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -34,23 +35,39 @@ export function HomeContext() {
     fetchData();
   }, []);
 
-  const expenseTransactions = expenses.map((expense) => {
+  const expenseTransactions: ExpenseAndIncomeTransaction[] = expenses.map((expense) => {
+    // 安全な日付解析
+    let date: Date;
+    try {
+      if (expense.spentAt) {
+        const parsedDate = new Date(expense.spentAt);
+        date = isValid(parsedDate) ? parsedDate : new Date();
+      } else {
+        date = new Date();
+      }
+    } catch (error) {
+      console.warn('Invalid date format for expense:', expense.spentAt);
+      date = new Date();
+    }
+
     return {
       id: expense.id,
-      date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
+      date: date,
       type: "expense" as const,
       amount: expense.amount,
       normalCategory: expense.normalCategoryName,
       specialCategory: expense.specialCategoryName,
       emotionCategory: expense.emotionCategoryName,
-      normalCategoryColor: expense.normalCategoryColor,
-      specialCategoryColor: expense.specialCategoryColor,
-      emotionCategoryColor: expense.emotionCategoryColor,
+      normalCategoryColor: expense.normalCategoryColor || null,
+      specialCategoryColor: expense.specialCategoryColor || null,
+      emotionCategoryColor: expense.emotionCategoryColor || null,
       description: expense.memo || "詳細なし",
     };
   });
 
-  const incomeTransactionsFromApi = incomes.map((income) => {
+  console.log(expenseTransactions);
+
+  const incomeTransactionsFromApi: ExpenseAndIncomeTransaction[] = incomes.map((income) => {
     return {
       id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
