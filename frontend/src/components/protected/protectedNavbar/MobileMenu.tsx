@@ -37,9 +37,9 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
             ダッシュボード
           </Button>
         </Link>
-        <Link href="/create/expenses" onClick={onClose}>
+        <Link href="/create" onClick={onClose}>
           <Button
-            variant={isActive("/create/expenses") ? "default" : "ghost"}
+            variant={isActive("/create") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
           >
             <Receipt className="h-4 w-4" />
