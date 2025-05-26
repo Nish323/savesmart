@@ -65,8 +65,6 @@ export function HomeContext() {
     };
   });
 
-  console.log(expenseTransactions);
-
   const incomeTransactionsFromApi: ExpenseAndIncomeTransaction[] = incomes.map((income) => {
     return {
       id: income.id,
@@ -80,7 +78,7 @@ export function HomeContext() {
       normalCategoryColor: null,
       specialCategoryColor: null,
       emotionCategoryColor: null,
-      description: "収入",
+      description: income.memo || "収入",
     };
   });
 
@@ -89,12 +87,20 @@ export function HomeContext() {
     ...incomeTransactionsFromApi,
   ].filter((t) => isValid(t.date));
 
-  const selectedDateTransactions = allTransactions.filter(
-    (t) => format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
-  );
+  const selectedDateTransactions = allTransactions.filter((t) => {
+    try {
+      if (!isValid(t.date) || !isValid(selectedDate)) {
+        return false;
+      }
+      return format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
+    } catch (error) {
+      console.warn('Date formatting error:', error);
+      return false;
+    }
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div>
       <div className="container mx-auto px-4 py-8">
         <TransactionHeader selectedDate={selectedDate} />
 

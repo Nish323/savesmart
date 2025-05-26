@@ -14,6 +14,7 @@ export const getIncomes = async (): Promise<Income[]> => {
 
 export const createIncome = async (income: any) => {
   try {
+    console.log(income);
     const response = await client.post("/incomes", income);
     return response.data;
   } catch (error) {

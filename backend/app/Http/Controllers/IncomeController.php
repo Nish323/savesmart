@@ -24,12 +24,19 @@ class IncomeController extends Controller
      */
     public function store(IncomeRequest $request)
     {
-        $income = Income::create([
-            'user_id' => Auth::id(),
-            'income' => $request->income,
-            'saved_at' => $request->saved_at,
-        ]);
-        return response()->json($income);
+        try {
+            $income = Income::create([
+                'user_id' => Auth::id(),
+                'income' => $request->amount,
+                'saved_at' => $request->saved_at,
+                'memo' => $request->memo,
+            ]);
+            return response()->json($income, 201);
+        } catch (\Exception $e) {
+            \Log::error('Error creating income: ' . $e->getMessage());
+            \Log::error('Request data: ' . json_encode($request->all()));
+            return response()->json(['error' => 'Failed to create income', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

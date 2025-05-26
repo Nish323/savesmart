@@ -30,4 +30,5 @@ export interface ExpenseFormData {
 export interface IncomeFormData {
   date: Date;
   income: string;
+  memo: string;
 }

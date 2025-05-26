@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -77,8 +76,9 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
       // 各項目を個別に送信
       for (const item of values.items) {
         const incomeData = {
-          income: parseInt(item.amount),
-          savedAt: values.date.toISOString().split('T')[0],
+          amount: parseInt(item.amount),
+          saved_at: values.date.toISOString().split('T')[0],
+          memo: item.memo || "",
         };
 
         await createIncome(incomeData as any);
@@ -196,24 +196,6 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
                 </div>
               ))}
             </div>
-
-            <FormField
-              control={form.control}
-              name="memo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>全体メモ（任意）</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="収入全体の詳細などを記録"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="border-t pt-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">

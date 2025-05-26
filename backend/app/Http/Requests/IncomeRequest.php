@@ -22,8 +22,9 @@ class IncomeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'income' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0',
             'saved_at' => 'required|date',
+            'memo' => 'nullable|string|max:255',
         ];
     }
 }

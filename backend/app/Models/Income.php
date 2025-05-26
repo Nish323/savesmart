@@ -12,17 +12,9 @@ class Income extends Model
 
     protected $fillable = [
         'user_id',
-        'category',
-        'amount',
+        'income',
         'memo',
-        'received_at',
-        'year',
-        'month',
-        'day',
-    ];
-
-    protected $casts = [
-        'received_at' => 'date',
+        'saved_at',
     ];
 
     public function user()
