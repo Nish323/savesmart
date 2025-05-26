@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Http\Requests\IncomeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

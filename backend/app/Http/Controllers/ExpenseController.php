@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Http\Requests\ExpenseRequest;
 use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
@@ -17,7 +18,6 @@ class ExpenseController extends Controller
         return response()->json($expenses);
     }
 
-
     public function store(ExpenseRequest $request)
     {
         $expense = Expense::create([    
@@ -28,6 +28,9 @@ class ExpenseController extends Controller
             'special_category_id' => $request->special_category_id,
             'emotion_category_id' => $request->emotion_category_id,
             'memo' => $request->memo,
+            'year' => $request->year,
+            'month' => $request->month,
+            'day' => $request->day,
         ]);
         return response()->json($expense, 201);
     }

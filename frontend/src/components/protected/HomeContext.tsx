@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { format, isValid, parseISO } from "date-fns";
 import { getExpenses } from "@/api/controllers/expenseController";
 import { getIncomes } from "@/api/controllers/incomeController";
-import { TransactionHeader } from "./homecontext/TransactionHeader";
-import { TransactionCalendar } from "./homecontext/TransactionCalendar";
-import { DailyTransactions } from "./homecontext/DailyTransactions";
+import { TransactionHeader } from "./homeContext/TransactionHeader";
+import { TransactionCalendar } from "./homeContext/TransactionCalendar";
+import { DailyTransactions } from "./homeContext/DailyTransactions";
 import { Transaction, Expense, Income } from "@/types/transaction";
 
 export function HomeContext() {

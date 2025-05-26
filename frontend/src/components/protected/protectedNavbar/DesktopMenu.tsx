@@ -31,9 +31,9 @@ export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
           ダッシュボード
         </Button>
       </Link>
-      <Link href="/expenses">
+      <Link href="/create">
         <Button
-          variant={isActive("/expenses") ? "default" : "ghost"}
+          variant={isActive("/create") ? "default" : "ghost"}
           className="flex gap-2"
         >
           <Receipt className="h-4 w-4" />
