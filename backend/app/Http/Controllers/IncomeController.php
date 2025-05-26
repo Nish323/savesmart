@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Http\Requests\IncomeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,9 +22,21 @@ class IncomeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(IncomeRequest $request)
     {
-        //
+        try {
+            $income = Income::create([
+                'user_id' => Auth::id(),
+                'income' => $request->amount,
+                'saved_at' => $request->saved_at,
+                'memo' => $request->memo,
+            ]);
+            return response()->json($income, 201);
+        } catch (\Exception $e) {
+            \Log::error('Error creating income: ' . $e->getMessage());
+            \Log::error('Request data: ' . json_encode($request->all()));
+            return response()->json(['error' => 'Failed to create income', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

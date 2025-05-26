@@ -35,9 +35,7 @@ export function HomeList({ transaction, showDate = false }: HomeListProps) {
         <div className="text-sm text-gray-500 mt-1">
           {showDate && (
             <span className="mr-2 whitespace-nowrap">
-              {format(transaction.date, "yyyy年MM月dd日", {
-                locale: ja,
-              })}
+              {format(transaction.date, "yyyy年MM月dd日")}
             </span>
           )}
           <span className="break-words">{transaction.description}</span>
@@ -79,6 +77,14 @@ export function HomeList({ transaction, showDate = false }: HomeListProps) {
               </Badge>
             )}
           </>
+        )}
+        {transaction.type === "income" && (
+          <Badge
+            className="bg-green-600 text-white whitespace-nowrap text-xs"
+            variant="default"
+          >
+            収入
+          </Badge>
         )}
         <Button
           variant="ghost"

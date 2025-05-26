@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->bigInteger('income');
+            $table->string('memo')->nullable();
             $table->date('saved_at');
             $table->timestamps();
             $table->softDeletes();

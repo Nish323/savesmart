@@ -1,5 +1,5 @@
 import { HomeContext } from "@/components/protected/HomeContext";
-import { ExpensesList } from "@/components/protected/homecontext/ExpensesList";
+import { ExpensesList } from "@/components/protected/homeContext/ExpensesList";
 
 export default function Home() {
   return (

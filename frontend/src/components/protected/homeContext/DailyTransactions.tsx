@@ -1,6 +1,6 @@
 "use client";
 
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -25,7 +25,10 @@ export function DailyTransactions({
       <Card>
         <CardHeader>
           <CardTitle>
-            {format(selectedDate, "yyyy年 MM月 dd日", { locale: ja })}の収支
+            {isValid(selectedDate) 
+              ? format(selectedDate, "yyyy年 MM月 dd日")
+              : "無効な日付"
+            }の収支
           </CardTitle>
         </CardHeader>
         <CardContent>

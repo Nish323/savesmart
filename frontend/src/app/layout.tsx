@@ -1,25 +1,27 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/utils/contexts/AuthContext";
 
-export const metadata = {
-  title: 'SaveSmart',
-  description: 'Smart personal finance app',
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "SaveSmart",
+  description: "あなたの家計簿アプリ",
   icons: {
-    icon: '/favicon.svg?v=4',
+    icon: "/favicon.svg?v=4",
   },
-}
+};
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="ja">
-      <body>
-			<AuthProvider>
-        {children}
-			</AuthProvider>
+      <body className={inter.className}>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

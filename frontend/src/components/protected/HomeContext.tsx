@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, isValid, parseISO } from "date-fns";
+import { format, isValid } from "date-fns";
 import { getExpenses } from "@/api/controllers/expenseController";
 import { getIncomes } from "@/api/controllers/incomeController";
-import { TransactionHeader } from "./homecontext/TransactionHeader";
-import { TransactionCalendar } from "./homecontext/TransactionCalendar";
-import { DailyTransactions } from "./homecontext/DailyTransactions";
-import { Transaction, Expense, Income } from "@/types/transaction";
+import { TransactionHeader } from "./homeContext/TransactionHeader";
+import { TransactionCalendar } from "./homeContext/TransactionCalendar";
+import { DailyTransactions } from "./homeContext/DailyTransactions";
+import { Expense, Income } from "@/types/transaction";
+import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 
 export function HomeContext() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -34,23 +35,37 @@ export function HomeContext() {
     fetchData();
   }, []);
 
-  const expenseTransactions = expenses.map((expense) => {
+  const expenseTransactions: ExpenseAndIncomeTransaction[] = expenses.map((expense) => {
+    // 安全な日付解析
+    let date: Date;
+    try {
+      if (expense.spentAt) {
+        const parsedDate = new Date(expense.spentAt);
+        date = isValid(parsedDate) ? parsedDate : new Date();
+      } else {
+        date = new Date();
+      }
+    } catch (error) {
+      console.warn('Invalid date format for expense:', expense.spentAt);
+      date = new Date();
+    }
+
     return {
       id: expense.id,
-      date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
+      date: date,
       type: "expense" as const,
       amount: expense.amount,
       normalCategory: expense.normalCategoryName,
       specialCategory: expense.specialCategoryName,
       emotionCategory: expense.emotionCategoryName,
-      normalCategoryColor: expense.normalCategoryColor,
-      specialCategoryColor: expense.specialCategoryColor,
-      emotionCategoryColor: expense.emotionCategoryColor,
+      normalCategoryColor: expense.normalCategoryColor || null,
+      specialCategoryColor: expense.specialCategoryColor || null,
+      emotionCategoryColor: expense.emotionCategoryColor || null,
       description: expense.memo || "詳細なし",
     };
   });
 
-  const incomeTransactionsFromApi = incomes.map((income) => {
+  const incomeTransactionsFromApi: ExpenseAndIncomeTransaction[] = incomes.map((income) => {
     return {
       id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
@@ -63,7 +78,7 @@ export function HomeContext() {
       normalCategoryColor: null,
       specialCategoryColor: null,
       emotionCategoryColor: null,
-      description: "収入",
+      description: income.memo || "収入",
     };
   });
 
@@ -72,12 +87,20 @@ export function HomeContext() {
     ...incomeTransactionsFromApi,
   ].filter((t) => isValid(t.date));
 
-  const selectedDateTransactions = allTransactions.filter(
-    (t) => format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
-  );
+  const selectedDateTransactions = allTransactions.filter((t) => {
+    try {
+      if (!isValid(t.date) || !isValid(selectedDate)) {
+        return false;
+      }
+      return format(t.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
+    } catch (error) {
+      console.warn('Date formatting error:', error);
+      return false;
+    }
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div>
       <div className="container mx-auto px-4 py-8">
         <TransactionHeader selectedDate={selectedDate} />
 

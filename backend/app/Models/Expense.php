@@ -10,6 +10,21 @@ class Expense extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $with = [
+        'normalCategory.color',
+        'specialCategory',
+        'emotionCategory',
+    ];
+
+    protected $appends = [
+        'normal_category_color',
+        'special_category_color',
+        'emotion_category_color',
+        'normal_category_name',
+        'special_category_name',
+        'emotion_category_name',
+    ];
+
     protected $fillable = [
         'user_id',
         'normal_category_id',
@@ -45,5 +60,35 @@ class Expense extends Model
     public function emotionCategory()
     {
         return $this->belongsTo(EmotionCategory::class, 'emotion_category_id', 'id');
+    }
+
+    public function getNormalCategoryColorAttribute(): ?string
+    {
+        return $this->normalCategory?->color?->color;
+    }
+
+    public function getSpecialCategoryColorAttribute(): ?string
+    {
+        return $this->specialCategory?->color;
+    }
+
+    public function getEmotionCategoryColorAttribute(): ?string
+    {
+        return $this->emotionCategory?->color;
+    }
+
+    public function getNormalCategoryNameAttribute(): ?string
+    {
+        return $this->normalCategory?->name;
+    }
+
+    public function getSpecialCategoryNameAttribute(): ?string
+    {
+        return $this->specialCategory?->name;
+    }
+
+    public function getEmotionCategoryNameAttribute(): ?string
+    {
+        return $this->emotionCategory?->name;
     }
 }
