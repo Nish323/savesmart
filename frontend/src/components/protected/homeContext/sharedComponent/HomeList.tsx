@@ -90,7 +90,7 @@ export function HomeList({ transaction, showDate = false }: HomeListProps) {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => router.push(`/edit/${transaction.id}`)}
+          onClick={() => router.push(`/edit/${transaction.type}/${transaction.id}`)}
         >
           <Pencil className="h-4 w-4" />
         </Button>

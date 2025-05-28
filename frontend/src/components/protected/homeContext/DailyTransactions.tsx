@@ -36,7 +36,7 @@ export function DailyTransactions({
             <div className="space-y-4">
               {transactions.map((transaction) => (
                 <HomeList
-                  key={transaction.id}
+                  key={`${transaction.type}-${transaction.id}`}
                   transaction={transaction}
                   showDate={false}
                 />
