@@ -65,7 +65,7 @@ export function HomeContext() {
     };
   });
 
-  const incomeTransactionsFromApi: ExpenseAndIncomeTransaction[] = incomes.map((income) => {
+  const incomeTransactions: ExpenseAndIncomeTransaction[] = incomes.map((income) => {
     return {
       id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
@@ -84,7 +84,7 @@ export function HomeContext() {
 
   const allTransactions = [
     ...expenseTransactions,
-    ...incomeTransactionsFromApi,
+    ...incomeTransactions,
   ].filter((t) => isValid(t.date));
 
   const selectedDateTransactions = allTransactions.filter((t) => {
@@ -111,7 +111,7 @@ export function HomeContext() {
             currentMonth={currentMonth}
             setCurrentMonth={setCurrentMonth}
             expenseTransactions={expenseTransactions}
-            incomeTransactions={incomeTransactionsFromApi}
+            incomeTransactions={incomeTransactions}
           />
 
           <DailyTransactions
