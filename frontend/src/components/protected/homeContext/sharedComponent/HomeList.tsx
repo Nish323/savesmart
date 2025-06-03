@@ -1,6 +1,6 @@
 import { CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getColorBackGround } from "@/components/protected/color/getColor";
+import { getColorBackGround } from "@/components/color/getColor";
 import { TrendingDown, TrendingUp, Pencil } from "lucide-react";
 import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 import { format } from "date-fns";
@@ -90,7 +90,9 @@ export function HomeList({ transaction, showDate = false }: HomeListProps) {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => router.push(`/edit/${transaction.type}/${transaction.id}`)}
+          onClick={() =>
+            router.push(`/edit/${transaction.type}/${transaction.id}`)
+          }
         >
           <Pencil className="h-4 w-4" />
         </Button>
