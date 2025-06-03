@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Income;
 use App\Models\MonthIncome;
+use App\Models\Saving;
 use App\Http\Requests\IncomeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +40,16 @@ class IncomeController extends Controller
         $monthIncome->income_total += $request->amount;
         $monthIncome->save();
 
+        // 貯金を取得または作成
+        $saving = Saving::firstOrCreate(
+            ['user_id' => Auth::id()],
+        );
+        // 貯金の合計を更新
+        $saving->current_amount += $request->amount;
+        $saving->save();
+
+
+        // 収入を保存
         $income = Income::create([
             'user_id' => Auth::id(),
             'income' => $request->amount,
