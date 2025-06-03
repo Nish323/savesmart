@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Models\MonthIncome;
 use App\Http\Requests\IncomeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class IncomeController extends Controller
 {
@@ -24,19 +26,26 @@ class IncomeController extends Controller
      */
     public function store(IncomeRequest $request)
     {
-        try {
-            $income = Income::create([
-                'user_id' => Auth::id(),
-                'income' => $request->amount,
-                'saved_at' => $request->saved_at,
-                'memo' => $request->memo,
-            ]);
-            return response()->json($income, 201);
-        } catch (\Exception $e) {
-            \Log::error('Error creating income: ' . $e->getMessage());
-            \Log::error('Request data: ' . json_encode($request->all()));
-            return response()->json(['error' => 'Failed to create income', 'message' => $e->getMessage()], 500);
-        }
+        $date = Carbon::parse($request->saved_at);
+        // 年と月を取得
+        $year = $date->year;
+        $month = $date->month;
+        // 月ごとの収入を取得または作成
+        $monthIncome = MonthIncome::firstOrCreate(
+            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
+            ['income_total' => 0],
+        );
+        // 収入の合計を更新
+        $monthIncome->income_total += $request->amount;
+        $monthIncome->save();
+
+        $income = Income::create([
+            'user_id' => Auth::id(),
+            'income' => $request->amount,
+            'saved_at' => $request->saved_at,
+            'memo' => $request->memo,
+         ]);
+        return response()->json($income, 201);
     }
 
     /**
