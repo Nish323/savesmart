@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -29,41 +28,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  TrendingDown, 
-  Plus, 
-  Trash2, 
-  Calculator, 
-  AlertTriangle, 
-  Rocket, 
-  CircleDot, 
-  Smile, 
-  Frown, 
-  Zap, 
-  Target 
+import {
+  TrendingDown,
+  Plus,
+  Trash2,
+  Calculator,
+  TriangleAlert,
+  Rocket,
+  CircleDot,
+  Smile,
+  Frown,
+  Zap,
+  Target,
 } from "lucide-react";
 import { createExpense } from "@/api/controllers/expenseController";
 import { DatePicker } from "./DatePicker";
 import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
-import { getColorText } from "../color/getColor";
-import * as LucideIcons from "lucide-react";
-
-// アイコンを動的に取得するヘルパー関数
-const getIconComponent = (iconName: string | null | undefined) => {
-  if (!iconName) return LucideIcons.Circle;
-  
-  // アイコン名をPascalCaseに変換
-  const iconKey = iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase();
-  
-  // LucideIconsから該当するアイコンを取得
-  const IconComponent = (LucideIcons as any)[iconKey];
-  
-  return IconComponent || LucideIcons.Circle;
-};
+import { getColorText } from "../../color/getColor";
+import { getIconComponent } from "../../Icon/GetIcon";
 
 const expenseItemSchema = z.object({
   amount: z.string().min(1, { message: "金額を入力してください" }),
-  normalCategoryId: z.string().min(1, { message: "通常カテゴリーを選択してください" }),
+  normalCategoryId: z
+    .string()
+    .min(1, { message: "通常カテゴリーを選択してください" }),
   specialCategoryId: z.string().optional(),
   emotionCategoryId: z.string().optional(),
   weight: z.string().min(1, { message: "重み付けを選択してください" }),
@@ -75,7 +63,9 @@ const formSchema = z.object({
   date: z.date({
     required_error: "日付を選択してください",
   }),
-  items: z.array(expenseItemSchema).min(1, { message: "最低1つの項目を入力してください" }),
+  items: z
+    .array(expenseItemSchema)
+    .min(1, { message: "最低1つの項目を入力してください" }),
   memo: z.string().optional(),
 });
 
@@ -96,22 +86,28 @@ export function ImprovedExpenseForm({
 }: ImprovedExpenseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
-  const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>({});
-  const [totalByEmotion, setTotalByEmotion] = useState<Record<string, number>>({});
+  const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
+    {}
+  );
+  const [totalByEmotion, setTotalByEmotion] = useState<Record<string, number>>(
+    {}
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: defaultDate || new Date(),
-      items: [{ 
-        amount: "", 
-        normalCategoryId: "", 
-        specialCategoryId: "",
-        emotionCategoryId: "",
-        weight: "normal", 
-        emotion: "planned", 
-        memo: "" 
-      }],
+      items: [
+        {
+          amount: "",
+          normalCategoryId: "",
+          specialCategoryId: "",
+          emotionCategoryId: "",
+          weight: "normal",
+          emotion: "planned",
+          memo: "",
+        },
+      ],
       memo: "",
     },
   });
@@ -127,7 +123,7 @@ export function ImprovedExpenseForm({
       const amount = parseInt(item.amount) || 0;
       return acc + amount;
     }, 0);
-    
+
     const specialTotals = items.reduce((acc, item) => {
       const amount = parseInt(item.amount) || 0;
       const specialId = item.specialCategoryId;
@@ -158,10 +154,14 @@ export function ImprovedExpenseForm({
       for (const item of values.items) {
         const expenseData = {
           amount: parseInt(item.amount),
-          spentAt: values.date.toISOString().split('T')[0],
+          spentAt: values.date.toISOString().split("T")[0],
           normalCategoryId: parseInt(item.normalCategoryId),
-          specialCategoryId: item.specialCategoryId ? parseInt(item.specialCategoryId) : null,
-          emotionCategoryId: item.emotionCategoryId ? parseInt(item.emotionCategoryId) : null,
+          specialCategoryId: item.specialCategoryId
+            ? parseInt(item.specialCategoryId)
+            : null,
+          emotionCategoryId: item.emotionCategoryId
+            ? parseInt(item.emotionCategoryId)
+            : null,
           memo: item.memo || values.memo || null,
           year: values.date.getFullYear(),
           month: values.date.getMonth() + 1,
@@ -170,14 +170,14 @@ export function ImprovedExpenseForm({
 
         await createExpense(expenseData as any);
       }
-      
+
       onSuccess(`${values.items.length}件の支出を登録しました`);
       form.reset();
       setTotal(0);
       setTotalBySpecial({});
       setTotalByEmotion({});
     } catch (error) {
-      console.error('Error creating expenses:', error);
+      console.error("Error creating expenses:", error);
     } finally {
       setIsLoading(false);
     }
@@ -190,9 +190,7 @@ export function ImprovedExpenseForm({
           <TrendingDown className="h-5 w-5" />
           支出を記録
         </CardTitle>
-        <CardDescription>
-          複数の支出項目を一度に記録できます
-        </CardDescription>
+        <CardDescription>複数の支出項目を一度に記録できます</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -216,15 +214,17 @@ export function ImprovedExpenseForm({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ 
-                    amount: "", 
-                    normalCategoryId: "", 
-                    specialCategoryId: "",
-                    emotionCategoryId: "",
-                    weight: "normal", 
-                    emotion: "planned", 
-                    memo: "" 
-                  })}
+                  onClick={() =>
+                    append({
+                      amount: "",
+                      normalCategoryId: "",
+                      specialCategoryId: "",
+                      emotionCategoryId: "",
+                      weight: "normal",
+                      emotion: "planned",
+                      memo: "",
+                    })
+                  }
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   項目を追加
@@ -243,7 +243,9 @@ export function ImprovedExpenseForm({
                           <FormLabel className="text-xs">金額</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">¥</span>
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                                ¥
+                              </span>
                               <Input
                                 className="pl-8"
                                 placeholder="1000"
@@ -265,8 +267,13 @@ export function ImprovedExpenseForm({
                       name={`items.${index}.normalCategoryId`}
                       render={({ field }) => (
                         <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">通常カテゴリー</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel className="text-xs">
+                            通常カテゴリー
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="選択" />
@@ -274,7 +281,10 @@ export function ImprovedExpenseForm({
                             </FormControl>
                             <SelectContent>
                               {normalCategories.map((category) => (
-                                <SelectItem key={category.id} value={category.id.toString()}>
+                                <SelectItem
+                                  key={category.id}
+                                  value={category.id.toString()}
+                                >
                                   {category.name}
                                 </SelectItem>
                               ))}
@@ -290,8 +300,13 @@ export function ImprovedExpenseForm({
                       name={`items.${index}.specialCategoryId`}
                       render={({ field }) => (
                         <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">特別カテゴリー</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel className="text-xs">
+                            特別カテゴリー
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="選択" />
@@ -301,9 +316,16 @@ export function ImprovedExpenseForm({
                               {specialCategories.map((category) => {
                                 const Icon = getIconComponent(category.icon);
                                 return (
-                                  <SelectItem key={category.id} value={category.id.toString()}>
+                                  <SelectItem
+                                    key={category.id}
+                                    value={category.id.toString()}
+                                  >
                                     <div className="flex items-center gap-2">
-                                      <Icon className={`h-4 w-4 ${getColorText(category.color)}`} />
+                                      <Icon
+                                        className={`h-4 w-4 ${getColorText(
+                                          category.color
+                                        )}`}
+                                      />
                                       {category.name}
                                     </div>
                                   </SelectItem>
@@ -321,8 +343,13 @@ export function ImprovedExpenseForm({
                       name={`items.${index}.emotionCategoryId`}
                       render={({ field }) => (
                         <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">感情カテゴリー</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel className="text-xs">
+                            感情カテゴリー
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="選択" />
@@ -332,9 +359,16 @@ export function ImprovedExpenseForm({
                               {emotionCategories.map((emotion) => {
                                 const Icon = getIconComponent(emotion.icon);
                                 return (
-                                  <SelectItem key={emotion.id} value={emotion.id.toString()}>
+                                  <SelectItem
+                                    key={emotion.id}
+                                    value={emotion.id.toString()}
+                                  >
                                     <div className="flex items-center gap-2">
-                                      <Icon className={`h-4 w-4 ${getColorText(emotion.color)}`} />
+                                      <Icon
+                                        className={`h-4 w-4 ${getColorText(
+                                          emotion.color
+                                        )}`}
+                                      />
                                       {emotion.name}
                                     </div>
                                   </SelectItem>
@@ -388,12 +422,19 @@ export function ImprovedExpenseForm({
                   {specialCategories.map((special) => {
                     const Icon = getIconComponent(special.icon);
                     return (
-                      <div key={special.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div
+                        key={special.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex items-center gap-2">
-                          <Icon className={`h-5 w-5 ${getColorText(special.color)}`} />
+                          <Icon
+                            className={`h-5 w-5 ${getColorText(special.color)}`}
+                          />
                           <span>{special.name}</span>
                         </div>
-                        <span className="font-bold">¥{totalBySpecial[special.id] || 0}</span>
+                        <span className="font-bold">
+                          ¥{totalBySpecial[special.id] || 0}
+                        </span>
                       </div>
                     );
                   })}
@@ -403,12 +444,19 @@ export function ImprovedExpenseForm({
                   {emotionCategories.map((emotion) => {
                     const Icon = getIconComponent(emotion.icon);
                     return (
-                      <div key={emotion.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div
+                        key={emotion.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex items-center gap-2">
-                          <Icon className={`h-5 w-5 ${getColorText(emotion.color)}`} />
+                          <Icon
+                            className={`h-5 w-5 ${getColorText(emotion.color)}`}
+                          />
                           <span>{emotion.name}</span>
                         </div>
-                        <span className="font-bold">¥{totalByEmotion[emotion.id] || 0}</span>
+                        <span className="font-bold">
+                          ¥{totalByEmotion[emotion.id] || 0}
+                        </span>
                       </div>
                     );
                   })}
@@ -419,7 +467,9 @@ export function ImprovedExpenseForm({
                 <div className="flex items-center gap-2 text-lg">
                   <Calculator className="h-5 w-5" />
                   <span>合計金額:</span>
-                  <span className="font-bold text-xl">¥{total.toLocaleString()}</span>
+                  <span className="font-bold text-xl">
+                    ¥{total.toLocaleString()}
+                  </span>
                 </div>
 
                 <div className="flex gap-4 w-full md:w-auto">
@@ -436,7 +486,11 @@ export function ImprovedExpenseForm({
                   >
                     リセット
                   </Button>
-                  <Button type="submit" disabled={isLoading} className="flex-1 md:flex-none">
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex-1 md:flex-none"
+                  >
                     {isLoading ? (
                       "登録中..."
                     ) : (

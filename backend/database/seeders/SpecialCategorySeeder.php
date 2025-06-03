@@ -18,7 +18,7 @@ class SpecialCategorySeeder extends Seeder
         DB::table('special_categories')->insert([
             [
                 'name'       => '無駄遣い',
-                'icon'       => 'AlertTriangle',
+                'icon'       => 'TriangleAlert',
                 'color'      => 'red',
             ],
             [
