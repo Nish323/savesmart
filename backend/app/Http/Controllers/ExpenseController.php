@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\MonthExpense;
+use Carbon\Carbon;
 use App\Http\Requests\ExpenseRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +22,20 @@ class ExpenseController extends Controller
 
     public function store(ExpenseRequest $request)
     {
+        $date = Carbon::parse($request->saved_at);
+        // 年と月を取得
+        $year = $date->year;
+        $month = $date->month;
+
+        // 月ごとの支出を取得または作成
+        $monthExpense = MonthExpense::firstOrCreate(
+            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
+            ['expense_total' => 0]
+        );
+        // 支出の合計を更新
+        $monthExpense->expense_total += $request->amount;
+        $monthExpense->save();
+
         $expense = Expense::create([    
             'user_id' => Auth::id(),
             'amount' => $request->amount,
