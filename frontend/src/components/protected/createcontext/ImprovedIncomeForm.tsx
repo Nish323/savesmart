@@ -17,9 +17,9 @@ import { TrendingUp, Plus } from "lucide-react";
 import { createIncome } from "@/api/controllers/incomeController";
 import { DatePicker } from "./DatePicker";
 import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
-import { IncomeItemForm } from "./IncomeItemForm";
-import { IncomeSummary } from "./IncomeSummary";
-import { IncomeFormActions } from "./IncomeFormActions";
+import { IncomeItemForm } from "./IncomeForm/IncomeItemForm";
+import { IncomeSummary } from "./IncomeForm/IncomeSummary";
+import { IncomeFormActions } from "./IncomeForm/IncomeFormActions";
 
 // 収入フォームのスキーマを定義
 const incomeItemSchema = z.object({

@@ -1,16 +1,28 @@
 "use client";
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
-import { getColorText } from "../../color/getColor";
-import { getIconComponent } from "../../Icon/GetIcon";
+import { getColorText } from "../../../color/getColor";
+import { getIconComponent } from "../../../Icon/GetIcon";
 import { UseFormReturn } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "./Schema";
+import { formSchema } from "../Schema";
 
 interface ExpenseItemFormProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -31,7 +43,7 @@ export function ExpenseItemForm({
   emotionCategories,
   onRemove,
   calculateTotals,
-  isRemoveDisabled
+  isRemoveDisabled,
 }: ExpenseItemFormProps) {
   return (
     <div className="p-4 border rounded-lg space-y-4">
@@ -68,9 +80,7 @@ export function ExpenseItemForm({
           name={`items.${index}.normalCategoryId`}
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-xs">
-                通常カテゴリー
-              </FormLabel>
+              <FormLabel className="text-xs">通常カテゴリー</FormLabel>
               <Select
                 onValueChange={(value: string) => {
                   field.onChange(value);
@@ -104,9 +114,7 @@ export function ExpenseItemForm({
           name={`items.${index}.specialCategoryId`}
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-xs">
-                特別カテゴリー
-              </FormLabel>
+              <FormLabel className="text-xs">特別カテゴリー</FormLabel>
               <Select
                 onValueChange={(value: string) => {
                   field.onChange(value);
@@ -150,9 +158,7 @@ export function ExpenseItemForm({
           name={`items.${index}.emotionCategoryId`}
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-xs">
-                感情カテゴリー
-              </FormLabel>
+              <FormLabel className="text-xs">感情カテゴリー</FormLabel>
               <Select
                 onValueChange={(value: string) => {
                   field.onChange(value);
@@ -175,9 +181,7 @@ export function ExpenseItemForm({
                       >
                         <div className="flex items-center gap-2">
                           <Icon
-                            className={`h-4 w-4 ${getColorText(
-                              emotion.color
-                            )}`}
+                            className={`h-4 w-4 ${getColorText(emotion.color)}`}
                           />
                           {emotion.name}
                         </div>

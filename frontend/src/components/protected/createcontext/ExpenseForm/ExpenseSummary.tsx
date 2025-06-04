@@ -2,8 +2,8 @@
 
 import { Calculator } from "lucide-react";
 import { SpecialCategory, EmotionCategory } from "@/types/form";
-import { getColorText } from "../../color/getColor";
-import { getIconComponent } from "../../Icon/GetIcon";
+import { getColorText } from "../../../color/getColor";
+import { getIconComponent } from "../../../Icon/GetIcon";
 
 interface ExpenseSummaryProps {
   specialCategories: SpecialCategory[];
@@ -18,7 +18,7 @@ export function ExpenseSummary({
   emotionCategories,
   totalBySpecial,
   totalByEmotion,
-  total
+  total,
 }: ExpenseSummaryProps) {
   return (
     <div className="space-y-4">
@@ -33,9 +33,7 @@ export function ExpenseSummary({
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div className="flex items-center gap-2">
-                  <Icon
-                    className={`h-5 w-5 ${getColorText(special.color)}`}
-                  />
+                  <Icon className={`h-5 w-5 ${getColorText(special.color)}`} />
                   <span>{special.name}</span>
                 </div>
                 <span className="font-bold">
@@ -55,9 +53,7 @@ export function ExpenseSummary({
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div className="flex items-center gap-2">
-                  <Icon
-                    className={`h-5 w-5 ${getColorText(emotion.color)}`}
-                  />
+                  <Icon className={`h-5 w-5 ${getColorText(emotion.color)}`} />
                   <span>{emotion.name}</span>
                 </div>
                 <span className="font-bold">
@@ -72,9 +68,7 @@ export function ExpenseSummary({
       <div className="flex items-center gap-2 text-lg">
         <Calculator className="h-5 w-5" />
         <span>合計金額:</span>
-        <span className="font-bold text-xl">
-          ¥{total.toLocaleString()}
-        </span>
+        <span className="font-bold text-xl">¥{total.toLocaleString()}</span>
       </div>
     </div>
   );

@@ -19,9 +19,9 @@ import { DatePicker } from "./DatePicker";
 import { ExpenseFormProps } from "@/types/form";
 import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
 import { formSchema } from "./Schema";
-import { ExpenseItemForm } from "./ExpenseItemForm";
-import { ExpenseSummary } from "./ExpenseSummary";
-import { ExpenseFormActions } from "./ExpenseFormActions";
+import { ExpenseItemForm } from "./ExpenseForm/ExpenseItemForm";
+import { ExpenseSummary } from "./ExpenseForm/ExpenseSummary";
+import { ExpenseFormActions } from "./ExpenseForm/ExpenseFormActions";
 
 export function ImprovedExpenseForm({
   normalCategories,
@@ -32,8 +32,12 @@ export function ImprovedExpenseForm({
 }: ExpenseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
-  const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>({});
-  const [totalByEmotion, setTotalByEmotion] = useState<Record<string, number>>({});
+  const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
+    {}
+  );
+  const [totalByEmotion, setTotalByEmotion] = useState<Record<string, number>>(
+    {}
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
