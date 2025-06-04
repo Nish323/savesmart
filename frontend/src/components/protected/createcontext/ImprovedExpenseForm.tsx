@@ -12,74 +12,16 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  TrendingDown,
-  Plus,
-  Trash2,
-  Calculator,
-  TriangleAlert,
-  Rocket,
-  CircleDot,
-  Smile,
-  Frown,
-  Zap,
-  Target,
-} from "lucide-react";
+import { Form, FormField } from "@/components/ui/form";
+import { Plus } from "lucide-react";
 import { createExpense } from "@/api/controllers/expenseController";
 import { DatePicker } from "./DatePicker";
-import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
-import { getColorText } from "../../color/getColor";
-import { getIconComponent } from "../../Icon/GetIcon";
-
-const expenseItemSchema = z.object({
-  amount: z.string().min(1, { message: "金額を入力してください" }),
-  normalCategoryId: z
-    .string()
-    .min(1, { message: "通常カテゴリーを選択してください" }),
-  specialCategoryId: z
-    .string()
-    .min(1, { message: "特別カテゴリーを選択してください" }),
-  emotionCategoryId: z
-    .string()
-    .min(1, { message: "感情カテゴリーを選択してください" }),
-  weight: z.string().min(1, { message: "重み付けを選択してください" }),
-  emotion: z.string().min(1, { message: "感情を選択してください" }),
-  memo: z.string().optional(),
-});
-
-const formSchema = z.object({
-  date: z.date({
-    required_error: "日付を選択してください",
-  }),
-  items: z
-    .array(expenseItemSchema)
-    .min(1, { message: "最低1つの項目を入力してください" }),
-  memo: z.string().optional(),
-});
-
-interface ImprovedExpenseFormProps {
-  normalCategories: Category[];
-  specialCategories: SpecialCategory[];
-  emotionCategories: EmotionCategory[];
-  onSuccess: (message: string) => void;
-  defaultDate?: Date;
-}
+import { ExpenseFormProps } from "@/types/form";
+import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
+import { formSchema } from "./Schema";
+import { ExpenseItemForm } from "./ExpenseForm/ExpenseItemForm";
+import { ExpenseSummary } from "./ExpenseForm/ExpenseSummary";
+import { ExpenseFormActions } from "./ExpenseForm/ExpenseFormActions";
 
 export function ImprovedExpenseForm({
   normalCategories,
@@ -87,13 +29,7 @@ export function ImprovedExpenseForm({
   emotionCategories,
   onSuccess,
   defaultDate,
-}: ImprovedExpenseFormProps) {
-  // 全角数字を半角数字に変換する関数
-  const convertToHalfWidth = (str: string): string => {
-    return str.replace(/[０-９]/g, (s) => {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-  };
+}: ExpenseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
   const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
@@ -160,6 +96,13 @@ export function ImprovedExpenseForm({
     setTotalByEmotion(emotionTotals);
   };
 
+  const handleReset = () => {
+    form.reset();
+    setTotal(0);
+    setTotalBySpecial({});
+    setTotalByEmotion({});
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
@@ -186,10 +129,7 @@ export function ImprovedExpenseForm({
       }
 
       onSuccess(`${values.items.length}件の支出を登録しました`);
-      form.reset();
-      setTotal(0);
-      setTotalBySpecial({});
-      setTotalByEmotion({});
+      handleReset();
     } catch (error) {
       console.error("Error creating expenses:", error);
     } finally {
@@ -201,7 +141,7 @@ export function ImprovedExpenseForm({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingDown className="h-5 w-5" />
+          <Plus className="h-5 w-5" />
           支出を記録
         </CardTitle>
         <CardDescription>複数の支出項目を一度に記録できます</CardDescription>
@@ -246,284 +186,38 @@ export function ImprovedExpenseForm({
               </div>
 
               {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg space-y-4">
-                  {/* モバイル: 縦並び、デスクトップ: グリッド */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.amount`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">金額</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                                ¥
-                              </span>
-                              <Input
-                                className="pl-8"
-                                placeholder="1000"
-                                {...field}
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  calculateTotals();
-                                }}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.normalCategoryId`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">
-                            通常カテゴリー
-                          </FormLabel>
-                          <Select
-                            onValueChange={(value: string) => {
-                              field.onChange(value);
-                              calculateTotals();
-                            }}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="選択" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {normalCategories.map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.id.toString()}
-                                >
-                                  {category.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.specialCategoryId`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">
-                            特別カテゴリー
-                          </FormLabel>
-                          <Select
-                            onValueChange={(value: string) => {
-                              field.onChange(value);
-                              calculateTotals();
-                            }}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="選択" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {specialCategories.map((category) => {
-                                const Icon = getIconComponent(category.icon);
-                                return (
-                                  <SelectItem
-                                    key={category.id}
-                                    value={category.id.toString()}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Icon
-                                        className={`h-4 w-4 ${getColorText(
-                                          category.color
-                                        )}`}
-                                      />
-                                      {category.name}
-                                    </div>
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.emotionCategoryId`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel className="text-xs">
-                            感情カテゴリー
-                          </FormLabel>
-                          <Select
-                            onValueChange={(value: string) => {
-                              field.onChange(value);
-                              calculateTotals();
-                            }}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="選択" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {emotionCategories.map((emotion) => {
-                                const Icon = getIconComponent(emotion.icon);
-                                return (
-                                  <SelectItem
-                                    key={emotion.id}
-                                    value={emotion.id.toString()}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Icon
-                                        className={`h-4 w-4 ${getColorText(
-                                          emotion.color
-                                        )}`}
-                                      />
-                                      {emotion.name}
-                                    </div>
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.memo`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-3">
-                          <FormLabel className="text-xs">メモ</FormLabel>
-                          <FormControl>
-                            <Input placeholder="詳細（任意）" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="md:col-span-1 flex justify-end">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="mt-6"
-                        onClick={() => {
-                          remove(index);
-                          calculateTotals();
-                        }}
-                        disabled={fields.length === 1}
-                      >
-                        <Trash2 className="h-4 w-4 text-gray-500" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <ExpenseItemForm
+                  key={field.id}
+                  form={form}
+                  index={index}
+                  normalCategories={normalCategories}
+                  specialCategories={specialCategories}
+                  emotionCategories={emotionCategories}
+                  onRemove={() => {
+                    remove(index);
+                    calculateTotals();
+                  }}
+                  calculateTotals={calculateTotals}
+                  isRemoveDisabled={fields.length === 1}
+                />
               ))}
             </div>
 
             <div className="border-t pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <h4 className="font-semibold">特別カテゴリー別集計</h4>
-                  {specialCategories.map((special) => {
-                    const Icon = getIconComponent(special.icon);
-                    return (
-                      <div
-                        key={special.id}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Icon
-                            className={`h-5 w-5 ${getColorText(special.color)}`}
-                          />
-                          <span>{special.name}</span>
-                        </div>
-                        <span className="font-bold">
-                          ¥{totalBySpecial[special.id] || 0}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="space-y-4">
-                  <h4 className="font-semibold">感情別集計</h4>
-                  {emotionCategories.map((emotion) => {
-                    const Icon = getIconComponent(emotion.icon);
-                    return (
-                      <div
-                        key={emotion.id}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Icon
-                            className={`h-5 w-5 ${getColorText(emotion.color)}`}
-                          />
-                          <span>{emotion.name}</span>
-                        </div>
-                        <span className="font-bold">
-                          ¥{totalByEmotion[emotion.id] || 0}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <ExpenseSummary
+                specialCategories={specialCategories}
+                emotionCategories={emotionCategories}
+                totalBySpecial={totalBySpecial}
+                totalByEmotion={totalByEmotion}
+                total={total}
+              />
 
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-lg">
-                  <Calculator className="h-5 w-5" />
-                  <span>合計金額:</span>
-                  <span className="font-bold text-xl">
-                    ¥{total.toLocaleString()}
-                  </span>
-                </div>
-
-                <div className="flex gap-4 w-full md:w-auto">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 md:flex-none"
-                    onClick={() => {
-                      form.reset();
-                      setTotal(0);
-                      setTotalBySpecial({});
-                      setTotalByEmotion({});
-                    }}
-                  >
-                    リセット
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="flex-1 md:flex-none"
-                  >
-                    {isLoading ? (
-                      "登録中..."
-                    ) : (
-                      <>
-                        <Plus className="mr-2 h-4 w-4" />
-                        支出を記録
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <div className="flex-grow"></div>
+                <ExpenseFormActions
+                  isLoading={isLoading}
+                  onReset={handleReset}
+                />
               </div>
             </div>
           </form>

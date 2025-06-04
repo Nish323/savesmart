@@ -12,19 +12,16 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { TrendingUp, Plus, Trash2, Calculator } from "lucide-react";
+import { Form, FormField } from "@/components/ui/form";
+import { TrendingUp, Plus } from "lucide-react";
 import { createIncome } from "@/api/controllers/incomeController";
 import { DatePicker } from "./DatePicker";
+import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
+import { IncomeItemForm } from "./IncomeForm/IncomeItemForm";
+import { IncomeSummary } from "./IncomeForm/IncomeSummary";
+import { IncomeFormActions } from "./IncomeForm/IncomeFormActions";
 
+// 収入フォームのスキーマを定義
 const incomeItemSchema = z.object({
   amount: z.string().min(1, { message: "金額を入力してください" }),
   memo: z.string().optional(),
@@ -44,13 +41,6 @@ interface ImprovedIncomeFormProps {
 }
 
 export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFormProps) {
-  // 全角数字を半角数字に変換する関数
-  const convertToHalfWidth = (str: string): string => {
-    return str.replace(/[０-９]/g, (s) => {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-  };
-  
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
 
@@ -78,6 +68,11 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
     setTotal(sum);
   };
 
+  const handleReset = () => {
+    form.reset();
+    setTotal(0);
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
@@ -94,8 +89,7 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
       }
       
       onSuccess(`${values.items.length}件の収入を登録しました`);
-      form.reset();
-      setTotal(0);
+      handleReset();
     } catch (error) {
       console.error('Error creating incomes:', error);
     } finally {
@@ -144,99 +138,28 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
               </div>
 
               {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg space-y-4">
-                  {/* モバイル: 縦並び、デスクトップ: グリッド */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.amount`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-5">
-                          <FormLabel className="text-xs">金額</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">¥</span>
-                              <Input
-                                className="pl-8"
-                                placeholder="50000"
-                                {...field}
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  calculateTotal();
-                                }}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`items.${index}.memo`}
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-6">
-                          <FormLabel className="text-xs">メモ</FormLabel>
-                          <FormControl>
-                            <Input placeholder="給与、賞与、副業など（任意）" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="md:col-span-1 flex justify-end">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="mt-6"
-                        onClick={() => {
-                          remove(index);
-                          calculateTotal();
-                        }}
-                        disabled={fields.length === 1}
-                      >
-                        <Trash2 className="h-4 w-4 text-gray-500" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <IncomeItemForm
+                  key={field.id}
+                  form={form}
+                  index={index}
+                  onRemove={() => {
+                    remove(index);
+                    calculateTotal();
+                  }}
+                  calculateTotal={calculateTotal}
+                  isRemoveDisabled={fields.length === 1}
+                />
               ))}
             </div>
 
             <div className="border-t pt-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-lg">
-                  <Calculator className="h-5 w-5" />
-                  <span>合計金額:</span>
-                  <span className="font-bold text-xl text-green-600">¥{total.toLocaleString()}</span>
-                </div>
+                <IncomeSummary total={total} />
 
-                <div className="flex gap-4 w-full md:w-auto">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 md:flex-none"
-                    onClick={() => {
-                      form.reset();
-                      setTotal(0);
-                    }}
-                  >
-                    リセット
-                  </Button>
-                  <Button type="submit" disabled={isLoading} className="bg-green-600 hover:bg-green-700 flex-1 md:flex-none">
-                    {isLoading ? (
-                      "登録中..."
-                    ) : (
-                      <>
-                        <Plus className="mr-2 h-4 w-4" />
-                        収入を記録
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <IncomeFormActions
+                  isLoading={isLoading}
+                  onReset={handleReset}
+                />
               </div>
             </div>
           </form>
