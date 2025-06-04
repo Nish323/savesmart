@@ -44,6 +44,13 @@ interface ImprovedIncomeFormProps {
 }
 
 export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFormProps) {
+  // 全角数字を半角数字に変換する関数
+  const convertToHalfWidth = (str: string): string => {
+    return str.replace(/[０-９]/g, (s) => {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+  };
+  
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
 
@@ -64,7 +71,8 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
   const calculateTotal = () => {
     const items = form.getValues("items");
     const sum = items.reduce((acc, item) => {
-      const amount = parseInt(item.amount) || 0;
+      const halfWidthAmount = convertToHalfWidth(item.amount);
+      const amount = parseInt(halfWidthAmount) || 0;
       return acc + amount;
     }, 0);
     setTotal(sum);
@@ -75,8 +83,9 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
     try {
       // 各項目を個別に送信
       for (const item of values.items) {
+        const halfWidthAmount = convertToHalfWidth(item.amount);
         const incomeData = {
-          amount: parseInt(item.amount),
+          amount: parseInt(halfWidthAmount),
           saved_at: values.date.toISOString().split('T')[0],
           memo: item.memo || "",
         };

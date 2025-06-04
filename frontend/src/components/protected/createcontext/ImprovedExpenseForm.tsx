@@ -52,8 +52,12 @@ const expenseItemSchema = z.object({
   normalCategoryId: z
     .string()
     .min(1, { message: "通常カテゴリーを選択してください" }),
-  specialCategoryId: z.string().optional(),
-  emotionCategoryId: z.string().optional(),
+  specialCategoryId: z
+    .string()
+    .min(1, { message: "特別カテゴリーを選択してください" }),
+  emotionCategoryId: z
+    .string()
+    .min(1, { message: "感情カテゴリーを選択してください" }),
   weight: z.string().min(1, { message: "重み付けを選択してください" }),
   emotion: z.string().min(1, { message: "感情を選択してください" }),
   memo: z.string().optional(),
@@ -84,6 +88,12 @@ export function ImprovedExpenseForm({
   onSuccess,
   defaultDate,
 }: ImprovedExpenseFormProps) {
+  // 全角数字を半角数字に変換する関数
+  const convertToHalfWidth = (str: string): string => {
+    return str.replace(/[０-９]/g, (s) => {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
   const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
@@ -120,12 +130,14 @@ export function ImprovedExpenseForm({
   const calculateTotals = () => {
     const items = form.getValues("items");
     const sum = items.reduce((acc, item) => {
-      const amount = parseInt(item.amount) || 0;
+      const halfWidthAmount = convertToHalfWidth(item.amount);
+      const amount = parseInt(halfWidthAmount) || 0;
       return acc + amount;
     }, 0);
 
     const specialTotals = items.reduce((acc, item) => {
-      const amount = parseInt(item.amount) || 0;
+      const halfWidthAmount = convertToHalfWidth(item.amount);
+      const amount = parseInt(halfWidthAmount) || 0;
       const specialId = item.specialCategoryId;
       if (specialId) {
         acc[specialId] = (acc[specialId] || 0) + amount;
@@ -134,7 +146,8 @@ export function ImprovedExpenseForm({
     }, {} as Record<string, number>);
 
     const emotionTotals = items.reduce((acc, item) => {
-      const amount = parseInt(item.amount) || 0;
+      const halfWidthAmount = convertToHalfWidth(item.amount);
+      const amount = parseInt(halfWidthAmount) || 0;
       const emotionId = item.emotionCategoryId;
       if (emotionId) {
         acc[emotionId] = (acc[emotionId] || 0) + amount;
@@ -152,8 +165,9 @@ export function ImprovedExpenseForm({
     try {
       // 各項目を個別に送信
       for (const item of values.items) {
+        const halfWidthAmount = convertToHalfWidth(item.amount);
         const expenseData = {
-          amount: parseInt(item.amount),
+          amount: parseInt(halfWidthAmount),
           spentAt: values.date.toISOString().split("T")[0],
           normalCategoryId: parseInt(item.normalCategoryId),
           specialCategoryId: item.specialCategoryId
@@ -271,7 +285,10 @@ export function ImprovedExpenseForm({
                             通常カテゴリー
                           </FormLabel>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(value: string) => {
+                              field.onChange(value);
+                              calculateTotals();
+                            }}
                             defaultValue={field.value}
                           >
                             <FormControl>
@@ -304,7 +321,10 @@ export function ImprovedExpenseForm({
                             特別カテゴリー
                           </FormLabel>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(value: string) => {
+                              field.onChange(value);
+                              calculateTotals();
+                            }}
                             defaultValue={field.value}
                           >
                             <FormControl>
@@ -347,7 +367,10 @@ export function ImprovedExpenseForm({
                             感情カテゴリー
                           </FormLabel>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(value: string) => {
+                              field.onChange(value);
+                              calculateTotals();
+                            }}
                             defaultValue={field.value}
                           >
                             <FormControl>
