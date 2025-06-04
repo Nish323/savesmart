@@ -46,40 +46,10 @@ import { DatePicker } from "./DatePicker";
 import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
 import { getColorText } from "../../color/getColor";
 import { getIconComponent } from "../../Icon/GetIcon";
-
-const expenseItemSchema = z.object({
-  amount: z.string().min(1, { message: "金額を入力してください" }),
-  normalCategoryId: z
-    .string()
-    .min(1, { message: "通常カテゴリーを選択してください" }),
-  specialCategoryId: z
-    .string()
-    .min(1, { message: "特別カテゴリーを選択してください" }),
-  emotionCategoryId: z
-    .string()
-    .min(1, { message: "感情カテゴリーを選択してください" }),
-  weight: z.string().min(1, { message: "重み付けを選択してください" }),
-  emotion: z.string().min(1, { message: "感情を選択してください" }),
-  memo: z.string().optional(),
-});
-
-const formSchema = z.object({
-  date: z.date({
-    required_error: "日付を選択してください",
-  }),
-  items: z
-    .array(expenseItemSchema)
-    .min(1, { message: "最低1つの項目を入力してください" }),
-  memo: z.string().optional(),
-});
-
-interface ImprovedExpenseFormProps {
-  normalCategories: Category[];
-  specialCategories: SpecialCategory[];
-  emotionCategories: EmotionCategory[];
-  onSuccess: (message: string) => void;
-  defaultDate?: Date;
-}
+import { formSchema } from "./Schema";
+import { expenseItemSchema } from "./Schema";
+import { ExpenseFormProps } from "@/types/form";
+import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
 
 export function ImprovedExpenseForm({
   normalCategories,
@@ -87,13 +57,7 @@ export function ImprovedExpenseForm({
   emotionCategories,
   onSuccess,
   defaultDate,
-}: ImprovedExpenseFormProps) {
-  // 全角数字を半角数字に変換する関数
-  const convertToHalfWidth = (str: string): string => {
-    return str.replace(/[０-９]/g, (s) => {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-  };
+}: ExpenseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
   const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
