@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\Saving;
 use App\Models\MonthExpense;
 use App\Models\NormalCategory;
 use App\Models\SpecialCategory;
@@ -61,6 +62,14 @@ class ExpenseController extends Controller
         );
         $monthEmotionExpense->expense_total += $request->amount;
         $monthEmotionExpense->save();
+
+         // 貯金を取得または作成
+         $saving = Saving::firstOrCreate(
+            ['user_id' => Auth::id()],
+        );
+        // 貯金の合計を更新
+        $saving->current_amount -= $request->amount;
+        $saving->save();
 
         $expense = Expense::create([    
             'user_id' => Auth::id(),
