@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('special_category_id')->constrained();
-            $table->bigInteger('total_amount')->default(0);
+            $table->bigInteger('expense_total')->default(0);
             $table->integer('year');
             $table->tinyInteger('month');
             $table->timestamps();

@@ -8,6 +8,9 @@ use App\Models\MonthExpense;
 use App\Models\NormalCategory;
 use App\Models\SpecialCategory;
 use App\Models\EmotionCategory;
+use App\Models\MonthNormalExpense;
+use App\Models\MonthSpecialExpense;
+use App\Models\MonthEmotionExpense;
 use Carbon\Carbon;
 use App\Http\Requests\ExpenseRequest;
 use Illuminate\Support\Facades\Auth;
@@ -33,35 +36,31 @@ class ExpenseController extends Controller
         // 月ごとの支出を取得または作成
         $monthExpense = MonthExpense::firstOrCreate(
             ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
-            ['expense_total' => 0]
         );
         // 支出の合計を更新
         $monthExpense->expense_total += $request->amount;
         $monthExpense->save();
 
         //通常カテゴリーの月合計
-        MonthExpense::firstOrCreate(
+        $monthNormalExpense = MonthNormalExpense::firstOrCreate(
             ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'normal_category_id' => $request->normal_category_id],
-            ['expense_total' => 0]
         );
-        $normalCategory->expense_total += $request->amount;
-        $normalCategory->save();
+        $monthNormalExpense->expense_total += $request->amount;
+        $monthNormalExpense->save();
 
         // 特別カテゴリーの月合計
-        MonthExpense::firstOrCreate(
+        $monthSpecialExpense = MonthSpecialExpense::firstOrCreate(
             ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'special_category_id' => $request->special_category_id],
-            ['expense_total' => 0]
         );
-        $specialCategory->expense_total += $request->amount;
-        $specialCategory->save();
+        $monthSpecialExpense->expense_total += $request->amount;
+        $monthSpecialExpense->save();
 
         // 感情カテゴリーの月合計
-        MonthExpense::firstOrCreate(
+        $monthEmotionExpense = MonthEmotionExpense::firstOrCreate(
             ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'emotion_category_id' => $request->emotion_category_id],
-            ['expense_total' => 0]
         );
-        $emotionCategory->expense_total += $request->amount;
-        $emotionCategory->save();
+        $monthEmotionExpense->expense_total += $request->amount;
+        $monthEmotionExpense->save();
 
         $expense = Expense::create([    
             'user_id' => Auth::id(),
