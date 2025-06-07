@@ -5,6 +5,7 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { useEffect } from "react";
 import {
   FormControl,
   FormItem,
@@ -31,6 +32,39 @@ export function DatePicker({
   label, 
   placeholder = "日付を選択" 
 }: DatePickerProps) {
+  // 日付選択時にローカルタイムゾーンの00:00:00に設定する
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      // 選択された日付のローカルタイムゾーンの00:00:00を設定
+      const localDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        0, 0, 0
+      );
+      onChange(localDate);
+    } else {
+      onChange(date);
+    }
+  };
+
+  // 初期値がUTC日付の場合、ローカルタイムゾーンに調整
+  useEffect(() => {
+    if (value) {
+      // 現在の値がUTCで、日本時間で日付がずれている可能性があるため調整
+      const currentLocalDate = new Date(
+        value.getFullYear(),
+        value.getMonth(),
+        value.getDate(),
+        0, 0, 0
+      );
+      
+      // 日付が異なる場合のみ更新（無限ループ防止）
+      if (value.getDate() !== currentLocalDate.getDate()) {
+        onChange(currentLocalDate);
+      }
+    }
+  }, [value, onChange]);
   return (
     <FormItem className="flex flex-col">
       <FormLabel>{label}</FormLabel>
@@ -57,7 +91,7 @@ export function DatePicker({
           <Calendar
             mode="single"
             selected={value}
-            onSelect={onChange}
+            onSelect={handleDateChange}
             disabled={(date) =>
               date < new Date("1900-01-01")
             }

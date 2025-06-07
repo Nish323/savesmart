@@ -19,7 +19,16 @@ export const getColorBackGround = (colorName: string | null | undefined): string
     violet: "bg-violet-500",
   };
 
-  return colorMap[colorName.toLowerCase()] || "bg-gray-200";
+  try {
+    // colorNameが文字列であることを確認
+    if (typeof colorName === 'string') {
+      return colorMap[colorName.toLowerCase()] || "bg-gray-200";
+    }
+    return "bg-gray-200";
+  } catch (error) {
+    console.error("Error in getColorBackGround:", error);
+    return "bg-gray-200";
+  }
 };
 
 export const getColorText = (colorName: string | null | undefined): string => {
@@ -43,5 +52,14 @@ export const getColorText = (colorName: string | null | undefined): string => {
     violet: "text-violet-500",
   };
 
-  return colorMap[colorName.toLowerCase()] || "text-gray-200";
+  try {
+    // colorNameが文字列であることを確認
+    if (typeof colorName === 'string') {
+      return colorMap[colorName.toLowerCase()] || "text-gray-200";
+    }
+    return "text-gray-200";
+  } catch (error) {
+    console.error("Error in getColorText:", error);
+    return "text-gray-200";
+  }
 };

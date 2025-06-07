@@ -11,9 +11,10 @@ import { useRouter } from "next/navigation";
 interface HomeListProps {
   transaction: ExpenseAndIncomeTransaction;
   showDate?: boolean;
+  onEditClick?: () => void;
 }
 
-export function HomeList({ transaction, showDate = false }: HomeListProps) {
+export function HomeList({ transaction, showDate = false, onEditClick }: HomeListProps) {
   const router = useRouter();
 
   return (
@@ -90,7 +91,7 @@ export function HomeList({ transaction, showDate = false }: HomeListProps) {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() =>
+          onClick={onEditClick ? onEditClick : () =>
             router.push(`/edit/${transaction.type}/${transaction.id}`)
           }
         >
