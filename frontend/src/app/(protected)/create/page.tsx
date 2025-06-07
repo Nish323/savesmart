@@ -27,6 +27,7 @@ function CreateContent() {
 }
 
 export default function Create() {
+  //日付の確認
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <CreateContent />

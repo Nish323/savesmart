@@ -20,7 +20,7 @@ class MonthExpense extends Model
             ['user_id' => $userId, 'year' => $year, 'month' => $month],
         );
         // 支出の合計を更新
-        $monthExpense->expense_total += $amount;
+        $monthExpense->expense_total += $expense;
         $monthExpense->save();
     }
 

@@ -3,6 +3,10 @@ FROM node:20.12.2
 
 WORKDIR /app
 
+# JSTに設定
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    && echo "Asia/Tokyo" > /etc/timezone
+		
 # パッケージファイルだけ先にコピー（キャッシュ効かせるため）
 COPY package.json package-lock.json ./
 

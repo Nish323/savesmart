@@ -28,25 +28,20 @@ class IncomeController extends Controller
     public function store(IncomeRequest $request)
     {
         $date = Carbon::parse($request->saved_at);
-        // 年と月を取得
+        // 年月日を取得
         $year = $date->year;
         $month = $date->month;
+        $day = $date->day;
+        //ユーザの取得
+        $userId = Auth::id();
+        //値段の取得
+        $amount = $request->amount;
+
         // 月ごとの収入を取得または作成
-        $monthIncome = MonthIncome::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
-            ['income_total' => 0],
-        );
-        // 収入の合計を更新
-        $monthIncome->income_total += $request->amount;
-        $monthIncome->save();
+        MonthIncome::addMonthIncome($userId, $year, $month, $amount);
 
         // 貯金を取得または作成
-        $saving = Saving::firstOrCreate(
-            ['user_id' => Auth::id()],
-        );
-        // 貯金の合計を更新
-        $saving->current_amount += $request->amount;
-        $saving->save();
+        $saving = Saving::addSaving($userId, $amount);
 
 
         // 収入を保存

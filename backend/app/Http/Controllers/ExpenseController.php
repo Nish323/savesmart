@@ -30,59 +30,64 @@ class ExpenseController extends Controller
     public function store(ExpenseRequest $request)
     {
         $date = Carbon::parse($request->saved_at);
-        // 年と月を取得
+        // 年月日を取得
         $year = $date->year;
         $month = $date->month;
+        $day = $date->day;
 
         //ユーザの取得
         $userId = Auth::id();
-
         //値段の取得
         $amount = $request->amount;
+        //各カテゴリーIdの取得
+        $normalCategoryId = $request->normal_category_id;
+        $specialCategoryId = $request->special_category_id;
+        $emotionCategoryId = $request->emotion_category_id;
 
         // 月ごとの支出を取得または作成
-        MonthExpense::addExpense($userId, $year, $month, $amount);
+        MonthExpense::addMonthExpense($userId, $year, $month, $amount);
 
         //通常カテゴリーの月合計
-        $monthNormalExpense = MonthNormalExpense::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'normal_category_id' => $request->normal_category_id],
+        MonthNormalExpense::addMonthNormalExpense(
+            $userId,
+            $year,
+            $month,
+            $normalCategoryId,
+            $amount
         );
-        $monthNormalExpense->expense_total += $request->amount;
-        $monthNormalExpense->save();
 
         // 特別カテゴリーの月合計
-        $monthSpecialExpense = MonthSpecialExpense::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'special_category_id' => $request->special_category_id],
+        MonthSpecialExpense::addMonthSpecialExpense(
+            $userId,
+            $year,
+            $month,
+            $specialCategoryId,
+            $amount
         );
-        $monthSpecialExpense->expense_total += $request->amount;
-        $monthSpecialExpense->save();
 
         // 感情カテゴリーの月合計
-        $monthEmotionExpense = MonthEmotionExpense::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month, 'emotion_category_id' => $request->emotion_category_id],
+        MonthEmotionExpense::addMonthEmotionExpense(
+            $userId,
+            $year,
+            $month,
+            $emotionCategoryId,
+            $amount
         );
-        $monthEmotionExpense->expense_total += $request->amount;
-        $monthEmotionExpense->save();
 
-         // 貯金を取得または作成
-         $saving = Saving::firstOrCreate(
-            ['user_id' => Auth::id()],
-        );
-        // 貯金の合計を更新
-        $saving->current_amount -= $request->amount;
-        $saving->save();
+        // 貯金を取得または作成
+        $saving = Saving::subtractSaving($userId, $amount);
 
         $expense = Expense::create([    
             'user_id' => Auth::id(),
-            'amount' => $request->amount,
+            'amount' => $amount,
             'spent_at' => $request->spent_at,
-            'normal_category_id' => $request->normal_category_id,
-            'special_category_id' => $request->special_category_id,
-            'emotion_category_id' => $request->emotion_category_id,
+            'normal_category_id' => $normalCategoryId,
+            'special_category_id' => $specialCategoryId,
+            'emotion_category_id' => $emotionCategoryId,
             'memo' => $request->memo,
-            'year' => $request->year,
-            'month' => $request->month,
-            'day' => $request->day,
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
         ]);
         return response()->json($expense, 201);
     }
