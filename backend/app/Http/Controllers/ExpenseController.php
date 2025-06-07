@@ -41,7 +41,7 @@ class ExpenseController extends Controller
         $amount = $request->amount;
 
         // 月ごとの支出を取得または作成
-        MonthExpense::addExpense($userId, $year, $month, $amount);
+        MonthExpense::addMonthExpense($userId, $year, $month, $amount);
 
         //通常カテゴリーの月合計
         $monthNormalExpense = MonthNormalExpense::firstOrCreate(
