@@ -16,6 +16,17 @@ class MonthNormalExpense extends Model
         'expense_total',
     ];
 
+    public static function addMonthNormalExpense($userId, $year, $month, $normalCategoryId, $expense)
+    {
+        // 月ごとの通常カテゴリー支出を取得または作成
+        $monthNormalExpense = self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month, 'normal_category_id' => $normalCategoryId],
+        );
+        // 支出の合計を更新
+        $monthNormalExpense->expense_total += $expense;
+        $monthNormalExpense->save();
+    }
+
     public function normalCategory()
     {
         return $this->belongsTo(NormalCategory::class, 'normal_category_id');
