@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\Saving;
 use App\Models\MonthExpense;
 use App\Models\NormalCategory;
 use App\Models\SpecialCategory;
@@ -33,13 +34,14 @@ class ExpenseController extends Controller
         $year = $date->year;
         $month = $date->month;
 
+        //ユーザの取得
+        $userId = Auth::id();
+
+        //値段の取得
+        $amount = $request->amount;
+
         // 月ごとの支出を取得または作成
-        $monthExpense = MonthExpense::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
-        );
-        // 支出の合計を更新
-        $monthExpense->expense_total += $request->amount;
-        $monthExpense->save();
+        MonthExpense::addExpense($userId, $year, $month, $amount);
 
         //通常カテゴリーの月合計
         $monthNormalExpense = MonthNormalExpense::firstOrCreate(
@@ -61,6 +63,14 @@ class ExpenseController extends Controller
         );
         $monthEmotionExpense->expense_total += $request->amount;
         $monthEmotionExpense->save();
+
+         // 貯金を取得または作成
+         $saving = Saving::firstOrCreate(
+            ['user_id' => Auth::id()],
+        );
+        // 貯金の合計を更新
+        $saving->current_amount -= $request->amount;
+        $saving->save();
 
         $expense = Expense::create([    
             'user_id' => Auth::id(),
