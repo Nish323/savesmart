@@ -75,7 +75,7 @@ class ExpenseController extends Controller
         );
 
         // 貯金を取得または作成
-        $saving = Saving::getOrCreateSaving($userId, $amount);
+        $saving = Saving::subtractSaving($userId, $amount);
 
         $expense = Expense::create([    
             'user_id' => Auth::id(),
