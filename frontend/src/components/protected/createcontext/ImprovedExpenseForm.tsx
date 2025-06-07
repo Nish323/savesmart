@@ -109,20 +109,27 @@ export function ImprovedExpenseForm({
       // 各項目を個別に送信
       for (const item of values.items) {
         const halfWidthAmount = convertToHalfWidth(item.amount);
-        const expenseData = {
-          amount: parseInt(halfWidthAmount),
-          spentAt: values.date.toISOString().split("T")[0],
-          normalCategoryId: parseInt(item.normalCategoryId),
-          specialCategoryId: item.specialCategoryId
-            ? parseInt(item.specialCategoryId)
-            : null,
-          emotionCategoryId: item.emotionCategoryId
-            ? parseInt(item.emotionCategoryId)
-            : null,
-          memo: item.memo || values.memo || null,
-          year: values.date.getFullYear(),
-          month: values.date.getMonth() + 1,
-          day: values.date.getDate(),
+      // 日付をローカルタイムゾーンで処理
+      const year = values.date.getFullYear();
+      const month = values.date.getMonth() + 1;
+      const day = values.date.getDate();
+      // YYYY-MM-DD形式の文字列を作成
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      
+      const expenseData = {
+        amount: parseInt(halfWidthAmount),
+        spentAt: formattedDate,
+        normalCategoryId: parseInt(item.normalCategoryId),
+        specialCategoryId: item.specialCategoryId
+          ? parseInt(item.specialCategoryId)
+          : null,
+        emotionCategoryId: item.emotionCategoryId
+          ? parseInt(item.emotionCategoryId)
+          : null,
+        memo: item.memo || values.memo || null,
+        year: year,
+        month: month,
+        day: day,
         };
 
         await createExpense(expenseData as any);

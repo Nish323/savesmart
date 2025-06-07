@@ -79,9 +79,17 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
       // 各項目を個別に送信
       for (const item of values.items) {
         const halfWidthAmount = convertToHalfWidth(item.amount);
+        
+        // 日付をローカルタイムゾーンで処理
+        const year = values.date.getFullYear();
+        const month = values.date.getMonth() + 1;
+        const day = values.date.getDate();
+        // YYYY-MM-DD形式の文字列を作成
+        const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        
         const incomeData = {
           amount: parseInt(halfWidthAmount),
-          saved_at: values.date.toISOString().split('T')[0],
+          saved_at: formattedDate,
           memo: item.memo || "",
         };
 
