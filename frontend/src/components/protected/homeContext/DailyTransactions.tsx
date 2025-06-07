@@ -1,27 +1,126 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { format, isValid } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { HomeList } from "./sharedComponent/HomeList";
 import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
+import { EditExpenseModal } from "./EditExpenseModal";
+import { EditIncomeModal } from "./EditIncomeModal";
+import { 
+  getNormalCategories, 
+  getSpecialCategories, 
+  getEmotionCategories 
+} from "@/api/controllers/categoryController";
 
 interface DailyTransactionsProps {
   selectedDate: Date;
   transactions: ExpenseAndIncomeTransaction[];
+  normalCategories?: any[];
+  specialCategories?: any[];
+  emotionCategories?: any[];
+  onTransactionUpdated?: () => void;
 }
 
 export function DailyTransactions({
   selectedDate,
   transactions,
+  normalCategories = [],
+  specialCategories = [],
+  emotionCategories = [],
+  onTransactionUpdated,
 }: DailyTransactionsProps) {
+  const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] = useState(false);
+  const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
+  const [selectedTransactionType, setSelectedTransactionType] = useState<"expense" | "income" | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<ExpenseAndIncomeTransaction | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [localNormalCategories, setLocalNormalCategories] = useState<any[]>([]);
+  const [localSpecialCategories, setLocalSpecialCategories] = useState<any[]>([]);
+  const [localEmotionCategories, setLocalEmotionCategories] = useState<any[]>([]);
+
+  // 親コンポーネントからカテゴリーが渡された場合の処理
+  useEffect(() => {
+    if (normalCategories.length > 0) {
+      setLocalNormalCategories(normalCategories);
+    }
+    if (specialCategories.length > 0) {
+      setLocalSpecialCategories(specialCategories);
+    }
+    if (emotionCategories.length > 0) {
+      setLocalEmotionCategories(emotionCategories);
+    }
+  }, [normalCategories, specialCategories, emotionCategories]);
+
+  // APIからカテゴリーデータを取得（初回のみ）
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // 親コンポーネントからカテゴリーが渡されていない場合のみAPIから取得
+        if (normalCategories.length === 0) {
+          const normalCategoriesData = await getNormalCategories();
+          setLocalNormalCategories(normalCategoriesData);
+        }
+
+        if (specialCategories.length === 0) {
+          const specialCategoriesData = await getSpecialCategories();
+          setLocalSpecialCategories(specialCategoriesData);
+        }
+
+        if (emotionCategories.length === 0) {
+          const emotionCategoriesData = await getEmotionCategories();
+          setLocalEmotionCategories(emotionCategoriesData);
+        }
+        
+        console.log("DailyTransactions - Categories loaded from API");
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // 修正ボタンがクリックされたときの処理
+  const handleEditClick = (transaction: ExpenseAndIncomeTransaction) => {
+    setSelectedTransactionId(transaction.id);
+    setSelectedTransactionType(transaction.type);
+    setSelectedTransaction(transaction);
+    
+    if (transaction.type === "expense") {
+      setIsEditExpenseModalOpen(true);
+    } else if (transaction.type === "income") {
+      setIsEditIncomeModalOpen(true);
+    }
+  };
+
+  // 更新成功時の処理
+  const handleUpdateSuccess = (message: string) => {
+    setSuccessMessage(message);
+    // 3秒後にメッセージをクリア
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000);
+    
+    // 親コンポーネントに更新を通知
+    if (onTransactionUpdated) {
+      onTransactionUpdated();
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+          <span className="block sm:inline">{successMessage}</span>
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>
@@ -39,6 +138,7 @@ export function DailyTransactions({
                   key={`${transaction.type}-${transaction.id}`}
                   transaction={transaction}
                   showDate={false}
+                  onEditClick={() => handleEditClick(transaction)}
                 />
               ))}
             </div>
@@ -49,6 +149,31 @@ export function DailyTransactions({
           )}
         </CardContent>
       </Card>
+
+      {/* 支出編集モーダル */}
+      {selectedTransaction && selectedTransactionType === "expense" && (
+        <EditExpenseModal
+          isOpen={isEditExpenseModalOpen}
+          onClose={() => setIsEditExpenseModalOpen(false)}
+          expenseId={selectedTransactionId}
+          onSuccess={handleUpdateSuccess}
+          normalCategories={localNormalCategories}
+          specialCategories={localSpecialCategories}
+          emotionCategories={localEmotionCategories}
+          initialData={selectedTransaction}
+        />
+      )}
+
+      {/* 収入編集モーダル */}
+      {selectedTransaction && selectedTransactionType === "income" && (
+        <EditIncomeModal
+          isOpen={isEditIncomeModalOpen}
+          onClose={() => setIsEditIncomeModalOpen(false)}
+          incomeId={selectedTransactionId}
+          onSuccess={handleUpdateSuccess}
+          initialData={selectedTransaction}
+        />
+      )}
     </motion.div>
   );
 }
