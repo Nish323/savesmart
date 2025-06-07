@@ -34,13 +34,14 @@ class ExpenseController extends Controller
         $year = $date->year;
         $month = $date->month;
 
+        //ユーザの取得
+        $userId = Auth::id();
+
+        //値段の取得
+        $amount = $request->amount;
+
         // 月ごとの支出を取得または作成
-        $monthExpense = MonthExpense::firstOrCreate(
-            ['user_id' => Auth::id(), 'year' => $year, 'month' => $month],
-        );
-        // 支出の合計を更新
-        $monthExpense->expense_total += $request->amount;
-        $monthExpense->save();
+        MonthExpense::addExpense($userId, $year, $month, $amount);
 
         //通常カテゴリーの月合計
         $monthNormalExpense = MonthNormalExpense::firstOrCreate(
