@@ -94,9 +94,12 @@ class ExpenseController extends Controller
 
     public function show(Expense $expense)
     {
-        if ($expense->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        return response()->json($expense);
+    }
+
+    public function update(Request $request, Expense $expense)
+    {
+        $expense->update($request->all());
         return response()->json($expense);
     }
 }

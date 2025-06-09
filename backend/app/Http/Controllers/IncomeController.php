@@ -59,10 +59,6 @@ class IncomeController extends Controller
      */
     public function show(Income $income)
     {
-        // 認証されているユーザーの収入のみを取得
-        if ($income->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
         return response()->json($income);
     }
 
@@ -71,7 +67,30 @@ class IncomeController extends Controller
      */
     public function update(Request $request, Income $income)
     {
-        //
+        //年月日を取得
+        $date = Carbon::parse($request->saved_at);
+        $year = $date->year;
+        $month = $date->month;
+        $day = $date->day;
+        // ユーザーIDの取得
+        $userId = Auth::id();
+        // 収入の金額を取得
+        $currentIncome = $request->amount;
+        // 収入の過去の金額を取得
+        $pastIncome = $income->income;
+
+        // 月ごとの収入を更新
+        MonthIncome::updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome);
+        // 貯金を更新
+        $saving = Saving::updateSaving($userId, $currentIncome, $pastIncome);
+        // 収入の更新
+        $income->update([
+            'income' => $currentIncome,
+            'saved_at' => $request->saved_at,
+            'memo' => $request->memo,
+        ]);
+
+        return response()->json($income);
     }
 
     /**
