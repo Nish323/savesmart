@@ -101,51 +101,59 @@ export function EditExpenseModal({
         try {
           setIsLoading(true);
 
-          // 初期データを使用
+          // APIからデータを取得
           let data;
-          if (initialData) {
-            data = {
-              amount: initialData.amount,
-              spentAt: initialData.date.toISOString().split("T")[0],
-              normalCategoryId: getNormalCategoryIdFromName(
-                initialData.normalCategory
-              ),
-              specialCategoryId: getSpecialCategoryIdFromName(
-                initialData.specialCategory
-              ),
-              emotionCategoryId: getEmotionCategoryIdFromName(
-                initialData.emotionCategory
-              ),
-              memo:
-                initialData.description !== "詳細なし"
-                  ? initialData.description
-                  : "",
-            };
-            setExpense(data as any);
-          } else {
-            // 初期データがない場合は処理を中止
-            console.error("No initial data provided");
-            setIsLoading(false);
-            onClose();
-            return;
+          try {
+            // APIから支出データを取得
+            data = await getExpenseById(expenseId);
+            setExpense(data);
+          } catch (error) {
+            
+            // APIからの取得に失敗した場合は初期データを使用
+            if (initialData) {
+              console.log("Using initial data instead:", initialData);
+              data = {
+                amount: initialData.amount,
+                spentAt: initialData.date.toISOString().split("T")[0],
+                normalCategoryId: getNormalCategoryIdFromName(
+                  initialData.normalCategory
+                ),
+                specialCategoryId: getSpecialCategoryIdFromName(
+                  initialData.specialCategory
+                ),
+                emotionCategoryId: getEmotionCategoryIdFromName(
+                  initialData.emotionCategory
+                ),
+                memo:
+                  initialData.description !== "詳細なし"
+                    ? initialData.description
+                    : "",
+              };
+              setExpense(data as any);
+            } else {
+              // 初期データがない場合は処理を中止
+              setIsLoading(false);
+              onClose();
+              return;
+            }
           }
 
           // フォームの値を設定
           form.reset({
             amount: data.amount.toString(),
-            date: data.spentAt
-              ? typeof data.spentAt === "string"
-                ? parseISO(data.spentAt)
-                : data.spentAt
+            date: data.spentAt || data.spent_at
+              ? typeof (data.spentAt || data.spent_at) === "string"
+                ? parseISO(data.spentAt || data.spent_at)
+                : data.spentAt || data.spent_at
               : new Date(),
-            normalCategoryId: data.normalCategoryId
-              ? data.normalCategoryId.toString()
+            normalCategoryId: data.normalCategoryId || data.normal_category_id
+              ? (data.normalCategoryId || data.normal_category_id).toString()
               : "",
-            specialCategoryId: data.specialCategoryId
-              ? data.specialCategoryId.toString()
+            specialCategoryId: data.specialCategoryId || data.special_category_id
+              ? (data.specialCategoryId || data.special_category_id).toString()
               : specialCategories.length > 0 ? specialCategories[0].id.toString() : "",
-            emotionCategoryId: data.emotionCategoryId
-              ? data.emotionCategoryId.toString()
+            emotionCategoryId: data.emotionCategoryId || data.emotion_category_id
+              ? (data.emotionCategoryId || data.emotion_category_id).toString()
               : emotionCategories.length > 0 ? emotionCategories[0].id.toString() : "",
             memo: data.memo || "",
           });
@@ -180,19 +188,6 @@ export function EditExpenseModal({
       return category ? category.id : null;
     };
 
-    // デバッグ用にカテゴリー情報をコンソールに出力
-    console.log("Normal Categories:", normalCategories);
-    console.log("Special Categories:", specialCategories);
-    console.log("Emotion Categories:", emotionCategories);
-    if (initialData) {
-      console.log("Initial Data:", initialData);
-      console.log("Normal Category Name:", initialData.normalCategory);
-      console.log(
-        "Normal Category ID:",
-        getNormalCategoryIdFromName(initialData.normalCategory)
-      );
-    }
-
     setupForm();
   }, [
     expenseId,
@@ -209,9 +204,6 @@ export function EditExpenseModal({
 
     setIsLoading(true);
     try {
-      // フォームの値をコンソールに出力（デバッグ用）
-      console.log("Form values:", values);
-
       // 日付をローカルタイムゾーンで処理
       const year = values.date.getFullYear();
       const month = values.date.getMonth() + 1;

@@ -59,7 +59,11 @@ class IncomeController extends Controller
      */
     public function show(Income $income)
     {
-        //
+        // 認証されているユーザーの収入のみを取得
+        if ($income->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        return response()->json($income);
     }
 
     /**

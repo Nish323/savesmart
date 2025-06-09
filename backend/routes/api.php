@@ -29,4 +29,10 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/normal-categories', [NormalCategoryController::class, 'index']);
     Route::get('/special-categories', [SpecialCategoryController::class, 'index']);
     Route::get('/emotion-categories', [EmotionCategoryController::class, 'index']);
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update']);
+    Route::put('/incomes/{income}', [IncomeController::class, 'update']);
+    Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy']);
+    Route::delete('/incomes/{income}', [IncomeController::class, 'destroy']);
+    Route::get('/expenses/{expense}', [ExpenseController::class, 'show']);
+    Route::get('/incomes/{income}', [IncomeController::class, 'show']);
 });

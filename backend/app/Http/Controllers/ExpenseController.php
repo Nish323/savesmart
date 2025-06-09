@@ -91,4 +91,12 @@ class ExpenseController extends Controller
         ]);
         return response()->json($expense, 201);
     }
+
+    public function show(Expense $expense)
+    {
+        if ($expense->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        return response()->json($expense);
+    }
 }
