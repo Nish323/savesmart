@@ -110,6 +110,15 @@ class ExpenseController extends Controller
         $currentExpense = $request->amount;
         // 支出の過去の金額を取得
         $pastExpense = $expense->amount;
+        // 現在のカテゴリーIDを取得
+        $currentNormalCategoryId = $request->normal_category_id;
+        $currentSpecialCategoryId = $request->special_category_id;
+        $currentEmotionCategoryId = $request->emotion_category_id;
+        // 過去のカテゴリーIDを取得
+        $pastNormalCategoryId = $expense->normal_category_id;
+        $pastSpecialCategoryId = $expense->special_category_id;
+        $pastEmotionCategoryId = $expense->emotion_category_id;
+
         // 月ごとの支出を更新
         MonthExpense::updateMonthExpense($userId, $year, $month, $currentExpense, $pastExpense);
         // 通常カテゴリーの月合計を更新
@@ -117,7 +126,8 @@ class ExpenseController extends Controller
             $userId,
             $year,
             $month,
-            $expense->normal_category_id,
+            $currentNormalCategoryId,
+            $pastNormalCategoryId,
             $currentExpense,
             $pastExpense
         );
@@ -126,7 +136,8 @@ class ExpenseController extends Controller
             $userId,
             $year,
             $month,
-            $expense->special_category_id,
+            $currentSpecialCategoryId,
+            $pastSpecialCategoryId,
             $currentExpense,
             $pastExpense
         );
@@ -135,10 +146,11 @@ class ExpenseController extends Controller
             $userId,
             $year,
             $month,
-            $expense->emotion_category_id,
+            $currentEmotionCategoryId,
+            $pastEmotionCategoryId,
             $currentExpense,
             $pastExpense
-        ); 
+        );
         // 貯金を更新
         $saving = Saving::updateSaving($userId, $pastExpense, $currentExpense);
         // 支出の更新
