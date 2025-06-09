@@ -1,7 +1,7 @@
 export interface Income {
 	id: number;
 	userId: number;
-	income: number;
+	amount: number;
 	savedAt: string;
 	description: string;
 	memo?: string;

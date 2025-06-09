@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->bigInteger('income');
+            $table->bigInteger('amount');
             $table->string('memo')->nullable();
             $table->date('saved_at');
             $table->timestamps();

@@ -91,4 +91,80 @@ class ExpenseController extends Controller
         ]);
         return response()->json($expense, 201);
     }
+
+    public function show(Expense $expense)
+    {
+        return response()->json($expense);
+    }
+
+    public function update(Request $request, Expense $expense)
+    {
+        //年月日を取得
+        $date = Carbon::parse($request->spent_at);
+        $year = $date->year;
+        $month = $date->month;
+        $day = $date->day; 
+        // ユーザーIDの取得
+        $userId = Auth::id();
+        // 支出の金額を取得
+        $currentExpense = $request->amount;
+        // 支出の過去の金額を取得
+        $pastExpense = $expense->amount;
+        // 現在のカテゴリーIDを取得
+        $currentNormalCategoryId = $request->normal_category_id;
+        $currentSpecialCategoryId = $request->special_category_id;
+        $currentEmotionCategoryId = $request->emotion_category_id;
+        // 過去のカテゴリーIDを取得
+        $pastNormalCategoryId = $expense->normal_category_id;
+        $pastSpecialCategoryId = $expense->special_category_id;
+        $pastEmotionCategoryId = $expense->emotion_category_id;
+
+        // 月ごとの支出を更新
+        MonthExpense::updateMonthExpense($userId, $year, $month, $currentExpense, $pastExpense);
+        // 通常カテゴリーの月合計を更新
+        MonthNormalExpense::updateMonthNormalExpense(
+            $userId,
+            $year,
+            $month,
+            $currentNormalCategoryId,
+            $pastNormalCategoryId,
+            $currentExpense,
+            $pastExpense
+        );
+        // 特別カテゴリーの月合計を更新
+        MonthSpecialExpense::updateMonthSpecialExpense(
+            $userId,
+            $year,
+            $month,
+            $currentSpecialCategoryId,
+            $pastSpecialCategoryId,
+            $currentExpense,
+            $pastExpense
+        );
+        // 感情カテゴリーの月合計を更新
+        MonthEmotionExpense::updateMonthEmotionExpense(
+            $userId,
+            $year,
+            $month,
+            $currentEmotionCategoryId,
+            $pastEmotionCategoryId,
+            $currentExpense,
+            $pastExpense
+        );
+        // 貯金を更新
+        $saving = Saving::updateSaving($userId, $pastExpense, $currentExpense);
+        // 支出の更新
+        $expense->update([
+            'amount' => $currentExpense,
+            'spent_at' => $request->spent_at,
+            'normal_category_id' => $request->normal_category_id,
+            'special_category_id' => $request->special_category_id,
+            'emotion_category_id' => $request->emotion_category_id,
+            'memo' => $request->memo,
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+        ]);
+        return response()->json($expense);
+    }
 }

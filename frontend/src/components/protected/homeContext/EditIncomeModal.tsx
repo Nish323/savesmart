@@ -64,28 +64,45 @@ export function EditIncomeModal({
         try {
           setIsLoading(true);
           
-          // 初期データを使用
+          // APIからデータを取得
           let data;
-          if (initialData) {
-            data = {
-              income: initialData.amount,
-              savedAt: initialData.date.toISOString().split('T')[0],
-              memo: initialData.description !== "詳細なし" ? initialData.description : "",
-            };
-            setIncome(data as any);
-          } else {
-            // 初期データがない場合は処理を中止
-            console.error("No initial data provided");
-            setIsLoading(false);
-            onClose();
-            return;
+          try {
+            // APIから収入データを取得
+            data = await getIncomeById(incomeId);
+            console.log("Fetched income data:", data);
+            setIncome(data);
+          } catch (error) {
+            console.error("Error fetching income data:", error);
+            
+            // APIからの取得に失敗した場合は初期データを使用
+            if (initialData) {
+              console.log("Using initial data instead:", initialData);
+              data = {
+                income: initialData.amount,
+                amount: initialData.amount,
+                savedAt: initialData.date.toISOString().split('T')[0],
+                saved_at: initialData.date.toISOString().split('T')[0],
+                memo: initialData.description !== "詳細なし" ? initialData.description : "",
+              };
+              setIncome(data as any);
+            } else {
+              // 初期データがない場合は処理を中止
+              console.error("No data available");
+              setIsLoading(false);
+              onClose();
+              return;
+            }
           }
           
           // フォームの値を設定
           form.reset({
-            amount: data.income ? data.income.toString() : initialData.amount.toString(),
-            date: data.savedAt ? (typeof data.savedAt === 'string' ? parseISO(data.savedAt) : data.savedAt) : initialData.date,
-            memo: data.memo || "",
+            amount: data.amount ? data.amount.toString() : "",
+            date: data.savedAt
+              ? typeof data.savedAt === 'string'
+                ? parseISO(data.savedAt)
+                : data.savedAt
+              : new Date(),
+            memo: data.memo || data.description || "",
           });
         } catch (error) {
           console.error("Error setting up form:", error);
@@ -120,17 +137,13 @@ export function EditIncomeModal({
         memo: values.memo || "",
       };
 
-      // 更新データをコンソールに出力（デバッグ用）
-      console.log("Income data to update:", incomeData);
-
       // 収入データを更新
       const result = await updateIncome(incomeId, incomeData);
-      console.log("Update result:", result);
       
       onSuccess("収入を更新しました");
       onClose();
     } catch (error) {
-      console.error("Error updating income:", error);
+      onSuccess("収入の更新に失敗しました");
     } finally {
       setIsLoading(false);
     }

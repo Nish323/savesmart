@@ -29,4 +29,24 @@ class Saving extends Model
         $saving->current_amount += $amount;
         $saving->save();
     }
+
+    public static function getSaving($userId)
+    {
+        // ユーザーの貯金情報を取得
+        return self::where('user_id', $userId)->first();
+    }
+
+    public static function updateSaving($userId, $addAmount, $subtractAmount)
+    {
+        // ユーザーの貯金情報を取得
+        $saving = self::getSaving($userId);
+        if ($saving) {
+            // 貯金の合計を更新
+            $saving->current_amount += $addAmount - $subtractAmount;
+            $saving->save();
+        } else {
+            // 存在しない場合は新規作成
+            self::addSaving($userId, $currentAmount);
+        }
+    }
 }

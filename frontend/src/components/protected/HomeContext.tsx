@@ -17,23 +17,31 @@ export function HomeContext() {
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const expenseData = await getExpenses();
-        setExpenses(expenseData);
-        const incomeData = await getIncomes();
-        setIncomes(incomeData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // データを取得する関数
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const expenseData = await getExpenses();
+      setExpenses(expenseData);
+      const incomeData = await getIncomes();
+      setIncomes(incomeData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // 初回レンダリング時にデータを取得
+  useEffect(() => {
     fetchData();
   }, []);
+
+  // トランザクションが更新されたときの処理
+  const handleTransactionUpdated = () => {
+    console.log("Transaction updated, refreshing data...");
+    fetchData();
+  };
 
   const expenseTransactions: ExpenseAndIncomeTransaction[] = expenses.map((expense) => {
     // 安全な日付解析
@@ -70,7 +78,7 @@ export function HomeContext() {
       id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
       type: "income" as const,
-      amount: income.income,
+      amount: income.amount,
       category: "収入",
       normalCategory: null,
       specialCategory: null,
@@ -117,6 +125,7 @@ export function HomeContext() {
           <DailyTransactions
             selectedDate={selectedDate}
             transactions={selectedDateTransactions}
+            onTransactionUpdated={handleTransactionUpdated}
           />
         </div>
       </div>
