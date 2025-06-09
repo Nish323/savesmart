@@ -18,7 +18,7 @@ class IncomeSeeder extends Seeder
         DB::table('incomes')->insert([
             [
                 'user_id'    => 1,
-                'income'     => 250000,
+                'amount'     => 250000,
                 'saved_at'   => '2025-01-10',
                 'memo'       => 'memo',
                 'created_at' => $now,
@@ -27,7 +27,7 @@ class IncomeSeeder extends Seeder
             ],
             [
                 'user_id'    => 1,
-                'income'     => 180000,
+                'amount'     => 180000,
                 'saved_at'   => '2025-02-10',
                 'memo'       => 'memo',
                 'created_at' => $now,
@@ -36,7 +36,7 @@ class IncomeSeeder extends Seeder
             ],
             [
                 'user_id'    => 1,
-                'income'     => 320000,
+                'amount'     => 320000,
                 'saved_at'   => '2025-01-15',
                 'memo'       => 'memo',
                 'created_at' => $now,
@@ -45,7 +45,7 @@ class IncomeSeeder extends Seeder
             ],
             [
                 'user_id'    => 1,
-                'income'     => 210000,
+                'amount'     => 210000,
                 'saved_at'   => '2025-03-05',
                 'memo'       => 'memo',
                 'created_at' => $now,

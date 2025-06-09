@@ -49,7 +49,7 @@ export interface Expense {
 export interface Income {
   id: number;
   userId: number;
-  income: number;
+  amount: number;
   savedAt: string;
   memo?: string;
   createdAt: string;

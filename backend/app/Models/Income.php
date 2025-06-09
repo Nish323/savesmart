@@ -12,7 +12,7 @@ class Income extends Model
 
     protected $fillable = [
         'user_id',
-        'income',
+        'amount',
         'memo',
         'saved_at',
     ];

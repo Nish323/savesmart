@@ -96,7 +96,7 @@ export function EditIncomeModal({
           
           // フォームの値を設定
           form.reset({
-            amount: data.income ? data.income.toString() : "",
+            amount: data.amount ? data.amount.toString() : "",
             date: data.savedAt
               ? typeof data.savedAt === 'string'
                 ? parseISO(data.savedAt)

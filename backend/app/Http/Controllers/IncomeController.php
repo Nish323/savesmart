@@ -47,7 +47,7 @@ class IncomeController extends Controller
         // 収入を保存
         $income = Income::create([
             'user_id' => Auth::id(),
-            'income' => $request->amount,
+            'amount' => $request->amount,
             'saved_at' => $request->saved_at,
             'memo' => $request->memo,
          ]);
@@ -77,7 +77,7 @@ class IncomeController extends Controller
         // 収入の金額を取得
         $currentIncome = $request->amount;
         // 収入の過去の金額を取得
-        $pastIncome = $income->income;
+        $pastIncome = $income->amount;
 
         // 月ごとの収入を更新
         MonthIncome::updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome);
@@ -85,7 +85,7 @@ class IncomeController extends Controller
         $saving = Saving::updateSaving($userId, $currentIncome, $pastIncome);
         // 収入の更新
         $income->update([
-            'income' => $currentIncome,
+            'amount' => $currentIncome,
             'saved_at' => $request->saved_at,
             'memo' => $request->memo,
         ]);

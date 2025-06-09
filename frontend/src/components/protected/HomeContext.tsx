@@ -78,7 +78,7 @@ export function HomeContext() {
       id: income.id,
       date: income.savedAt ? new Date(income.savedAt) : new Date(),
       type: "income" as const,
-      amount: income.income,
+      amount: income.amount,
       category: "収入",
       normalCategory: null,
       specialCategory: null,
