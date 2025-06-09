@@ -119,7 +119,7 @@ export function HomeContext() {
         <TransactionHeader selectedDate={selectedDate} />
 
         <div className="grid grid-cols-1 lg:grid-cols-16 gap-4 lg:gap-8">
-          <div className="lg:col-span-10">
+          <div className="lg:col-span-9">
             <TransactionCalendar
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
