@@ -112,6 +112,7 @@ export function ExpensesList() {
 
   return (
     <>
+    <h1 className="text-2xl font-bold mt-6 mb-6">支出一覧</h1>
       {successMessage && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
           <span className="block sm:inline">{successMessage}</span>

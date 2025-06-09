@@ -7,7 +7,6 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 pt-24">
         <div>
           <HomeContext />
-          <h1 className="text-2xl font-bold mt-6 mb-6">支出一覧</h1>
           <ExpensesList />
         </div>
       </div>
