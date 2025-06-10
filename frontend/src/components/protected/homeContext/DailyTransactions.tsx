@@ -84,7 +84,7 @@ export function DailyTransactions({
     fetchCategories();
   }, []);
 
-  // 修正ボタンがクリックされたときの処理
+  // 修正ボタンがクリックされたときの処理（非推奨：HomeListで直接処理するように変更）
   const handleEditClick = (transaction: ExpenseAndIncomeTransaction) => {
     setSelectedTransactionId(transaction.id);
     setSelectedTransactionType(transaction.type);
@@ -138,7 +138,10 @@ export function DailyTransactions({
                   key={`${transaction.type}-${transaction.id}`}
                   transaction={transaction}
                   showDate={false}
-                  onEditClick={() => handleEditClick(transaction)}
+                  onUpdateSuccess={handleUpdateSuccess}
+                  normalCategories={localNormalCategories}
+                  specialCategories={localSpecialCategories}
+                  emotionCategories={localEmotionCategories}
                 />
               ))}
             </div>
@@ -149,31 +152,6 @@ export function DailyTransactions({
           )}
         </CardContent>
       </Card>
-
-      {/* 支出編集モーダル */}
-      {selectedTransaction && selectedTransactionType === "expense" && (
-        <EditExpenseModal
-          isOpen={isEditExpenseModalOpen}
-          onClose={() => setIsEditExpenseModalOpen(false)}
-          expenseId={selectedTransactionId}
-          onSuccess={handleUpdateSuccess}
-          normalCategories={localNormalCategories}
-          specialCategories={localSpecialCategories}
-          emotionCategories={localEmotionCategories}
-          initialData={selectedTransaction}
-        />
-      )}
-
-      {/* 収入編集モーダル */}
-      {selectedTransaction && selectedTransactionType === "income" && (
-        <EditIncomeModal
-          isOpen={isEditIncomeModalOpen}
-          onClose={() => setIsEditIncomeModalOpen(false)}
-          incomeId={selectedTransactionId}
-          onSuccess={handleUpdateSuccess}
-          initialData={selectedTransaction}
-        />
-      )}
     </motion.div>
   );
 }
