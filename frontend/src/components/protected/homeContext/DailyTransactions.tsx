@@ -124,10 +124,7 @@ export function DailyTransactions({
       <Card>
         <CardHeader>
           <CardTitle>
-            {isValid(selectedDate) 
-              ? format(selectedDate, "yyyy年 MM月 dd日")
-              : "無効な日付"
-            }の収支
+            {format(selectedDate, "yyyy年 MM月 dd日")}の収支
           </CardTitle>
         </CardHeader>
         <CardContent>

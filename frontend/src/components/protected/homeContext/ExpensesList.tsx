@@ -9,10 +9,10 @@ import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAnd
 import { parseISO } from "date-fns/parseISO";
 import { EditExpenseModal } from "./EditExpenseModal";
 import { EditIncomeModal } from "./EditIncomeModal";
-import { 
-  getNormalCategories, 
-  getSpecialCategories, 
-  getEmotionCategories 
+import {
+  getNormalCategories,
+  getSpecialCategories,
+  getEmotionCategories,
 } from "@/api/controllers/categoryController";
 
 export function ExpensesList() {
@@ -20,8 +20,12 @@ export function ExpensesList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] = useState(false);
   const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
-  const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
-  const [selectedTransactionType, setSelectedTransactionType] = useState<"expense" | "income" | null>(null);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<
+    number | null
+  >(null);
+  const [selectedTransactionType, setSelectedTransactionType] = useState<
+    "expense" | "income" | null
+  >(null);
   const [normalCategories, setNormalCategories] = useState<any[]>([]);
   const [specialCategories, setSpecialCategories] = useState<any[]>([]);
   const [emotionCategories, setEmotionCategories] = useState<any[]>([]);
@@ -35,15 +39,15 @@ export function ExpensesList() {
         const normalCategoriesData = await getNormalCategories();
         const specialCategoriesData = await getSpecialCategories();
         const emotionCategoriesData = await getEmotionCategories();
-        
+
         setNormalCategories(normalCategoriesData);
         setSpecialCategories(specialCategoriesData);
         setEmotionCategories(emotionCategoriesData);
-        
+
         console.log("Categories loaded:", {
           normal: normalCategoriesData,
           special: specialCategoriesData,
-          emotion: emotionCategoriesData
+          emotion: emotionCategoriesData,
         });
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -93,7 +97,7 @@ export function ExpensesList() {
   const handleEditClick = (transaction: ExpenseAndIncomeTransaction) => {
     setSelectedTransactionId(transaction.id);
     setSelectedTransactionType(transaction.type);
-    
+
     if (transaction.type === "expense") {
       setIsEditExpenseModalOpen(true);
     } else if (transaction.type === "income") {
@@ -112,7 +116,7 @@ export function ExpensesList() {
 
   return (
     <>
-    <h1 className="text-2xl font-bold mt-6 mb-6">支出一覧</h1>
+      <h1 className="text-2xl font-bold mt-6 mb-6">支出一覧</h1>
       {successMessage && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
           <span className="block sm:inline">{successMessage}</span>
@@ -138,7 +142,9 @@ export function ExpensesList() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">支出はありません</div>
+            <div className="text-center py-8 text-gray-500">
+              支出はありません
+            </div>
           )}
         </CardContent>
       </Card>

@@ -108,7 +108,6 @@ export function EditExpenseModal({
             data = await getExpenseById(expenseId);
             setExpense(data);
           } catch (error) {
-            
             // APIからの取得に失敗した場合は初期データを使用
             if (initialData) {
               console.log("Using initial data instead:", initialData);
@@ -141,20 +140,32 @@ export function EditExpenseModal({
           // フォームの値を設定
           form.reset({
             amount: data.amount.toString(),
-            date: data.spentAt || data.spent_at
-              ? typeof (data.spentAt || data.spent_at) === "string"
-                ? parseISO(data.spentAt || data.spent_at)
-                : data.spentAt || data.spent_at
-              : new Date(),
-            normalCategoryId: data.normalCategoryId || data.normal_category_id
-              ? (data.normalCategoryId || data.normal_category_id).toString()
-              : "",
-            specialCategoryId: data.specialCategoryId || data.special_category_id
-              ? (data.specialCategoryId || data.special_category_id).toString()
-              : specialCategories.length > 0 ? specialCategories[0].id.toString() : "",
-            emotionCategoryId: data.emotionCategoryId || data.emotion_category_id
-              ? (data.emotionCategoryId || data.emotion_category_id).toString()
-              : emotionCategories.length > 0 ? emotionCategories[0].id.toString() : "",
+            date:
+              data.spentAt || data.spent_at
+                ? typeof (data.spentAt || data.spent_at) === "string"
+                  ? parseISO(data.spentAt || data.spent_at)
+                  : data.spentAt || data.spent_at
+                : new Date(),
+            normalCategoryId:
+              data.normalCategoryId || data.normal_category_id
+                ? (data.normalCategoryId || data.normal_category_id).toString()
+                : "",
+            specialCategoryId:
+              data.specialCategoryId || data.special_category_id
+                ? (
+                    data.specialCategoryId || data.special_category_id
+                  ).toString()
+                : specialCategories.length > 0
+                ? specialCategories[0].id.toString()
+                : "",
+            emotionCategoryId:
+              data.emotionCategoryId || data.emotion_category_id
+                ? (
+                    data.emotionCategoryId || data.emotion_category_id
+                  ).toString()
+                : emotionCategories.length > 0
+                ? emotionCategories[0].id.toString()
+                : "",
             memo: data.memo || "",
           });
         } catch (error) {
@@ -232,7 +243,7 @@ export function EditExpenseModal({
       // 支出データを更新
       const result = await updateExpense(expenseId, expenseData);
       console.log("Update result:", result);
-      
+
       onSuccess("支出を更新しました");
       onClose();
     } catch (error) {
@@ -439,8 +450,8 @@ export function EditExpenseModal({
               >
                 キャンセル
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isLoading}
                 className="bg-gray-700 hover:bg-gray-900"
               >

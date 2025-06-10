@@ -146,6 +146,7 @@ export function HomeList({
           <Trash2 className="h-4 w-4" />
         </Button>
 
+        {/* 削除モーダル */}
         <DeleteTransactionModal
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}

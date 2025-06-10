@@ -21,24 +21,28 @@ export function CreateExpenseAndIncome({
 }: CreateExpenseFormProps) {
   const [type, setType] = useState<"expense" | "income">(defaultType);
   const [normalCategories, setNormalCategories] = useState<Category[]>([]);
-  const [specialCategories, setSpecialCategories] = useState<SpecialCategory[]>([]);
-  const [emotionCategories, setEmotionCategories] = useState<EmotionCategory[]>([]);
+  const [specialCategories, setSpecialCategories] = useState<SpecialCategory[]>(
+    []
+  );
+  const [emotionCategories, setEmotionCategories] = useState<EmotionCategory[]>(
+    []
+  );
   const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const [normalRes, specialRes, emotionRes] = await Promise.all([
-          client.get('/normal-categories'),
-          client.get('/special-categories'),
-          client.get('/emotion-categories'),
+          client.get("/normal-categories"),
+          client.get("/special-categories"),
+          client.get("/emotion-categories"),
         ]);
-        
+
         setNormalCategories(normalRes.data);
         setSpecialCategories(specialRes.data);
         setEmotionCategories(emotionRes.data);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
 
@@ -66,9 +70,7 @@ export function CreateExpenseAndIncome({
             </p>
           </div>
 
-          {successMessage && (
-            <SuccessMessage message={successMessage} />
-          )}
+          {successMessage && <SuccessMessage message={successMessage} />}
 
           <Tabs
             value={type}
