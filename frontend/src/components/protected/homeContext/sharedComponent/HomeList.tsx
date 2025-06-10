@@ -7,15 +7,57 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { DeleteTransactionModal } from "../DeleteTransactionModal";
+import { EditExpenseModal } from "../EditExpenseModal";
+import { EditIncomeModal } from "../EditIncomeModal";
 
 interface HomeListProps {
   transaction: ExpenseAndIncomeTransaction;
   showDate?: boolean;
   onEditClick?: () => void;
+  onDeleteClick?: () => void;
+  onUpdateSuccess?: (message: string) => void;
+  normalCategories?: any[];
+  specialCategories?: any[];
+  emotionCategories?: any[];
 }
 
-export function HomeList({ transaction, showDate = false, onEditClick }: HomeListProps) {
+export function HomeList({
+  transaction,
+  showDate = false,
+  onEditClick,
+  onDeleteClick,
+  onUpdateSuccess,
+  normalCategories = [],
+  specialCategories = [],
+  emotionCategories = [],
+}: HomeListProps) {
   const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] = useState(false);
+  const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
+
+  const handleEditClick = () => {
+    if (onEditClick) {
+      onEditClick();
+    } else {
+      if (transaction.type === "expense") {
+        setIsEditExpenseModalOpen(true);
+      } else {
+        setIsEditIncomeModalOpen(true);
+      }
+    }
+  };
+
+  const handleUpdateSuccess = (message: string) => {
+    if (onUpdateSuccess) {
+      onUpdateSuccess(message);
+    } else {
+      router.refresh();
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-gray-50 rounded-lg gap-2">
@@ -91,12 +133,50 @@ export function HomeList({ transaction, showDate = false, onEditClick }: HomeLis
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={onEditClick ? onEditClick : () =>
-            router.push(`/edit/${transaction.type}/${transaction.id}`)
-          }
+          onClick={handleEditClick}
         >
           <Pencil className="h-4 w-4" />
         </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => setIsDeleteDialogOpen(true)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+
+        <DeleteTransactionModal
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          transaction={transaction}
+          onSuccess={onDeleteClick ? onDeleteClick : () => router.refresh()}
+        />
+
+        {/* 支出編集モーダル */}
+        {transaction.type === "expense" && (
+          <EditExpenseModal
+            isOpen={isEditExpenseModalOpen}
+            onClose={() => setIsEditExpenseModalOpen(false)}
+            expenseId={transaction.id}
+            onSuccess={handleUpdateSuccess}
+            normalCategories={normalCategories}
+            specialCategories={specialCategories}
+            emotionCategories={emotionCategories}
+            initialData={transaction}
+          />
+        )}
+
+        {/* 収入編集モーダル */}
+        {transaction.type === "income" && (
+          <EditIncomeModal
+            isOpen={isEditIncomeModalOpen}
+            onClose={() => setIsEditIncomeModalOpen(false)}
+            incomeId={transaction.id}
+            onSuccess={handleUpdateSuccess}
+            initialData={transaction}
+          />
+        )}
       </div>
     </div>
   );

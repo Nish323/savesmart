@@ -89,7 +89,7 @@ export function ExpensesList() {
     fetchExpenses();
   }, [isEditExpenseModalOpen, isEditIncomeModalOpen]); // モーダルが閉じられたときにデータを再取得
 
-  // 修正ボタンがクリックされたときの処理
+  // 修正ボタンがクリックされたときの処理（非推奨：HomeListで直接処理するように変更）
   const handleEditClick = (transaction: ExpenseAndIncomeTransaction) => {
     setSelectedTransactionId(transaction.id);
     setSelectedTransactionType(transaction.type);
@@ -130,7 +130,10 @@ export function ExpensesList() {
                   key={expense.id}
                   transaction={expense}
                   showDate={true}
-                  onEditClick={() => handleEditClick(expense)}
+                  onUpdateSuccess={handleUpdateSuccess}
+                  normalCategories={normalCategories}
+                  specialCategories={specialCategories}
+                  emotionCategories={emotionCategories}
                 />
               ))}
             </div>
@@ -139,31 +142,6 @@ export function ExpensesList() {
           )}
         </CardContent>
       </Card>
-
-      {/* 支出編集モーダル */}
-      {selectedTransactionType === "expense" && (
-        <EditExpenseModal
-          isOpen={isEditExpenseModalOpen}
-          onClose={() => setIsEditExpenseModalOpen(false)}
-          expenseId={selectedTransactionId}
-          onSuccess={handleUpdateSuccess}
-          normalCategories={normalCategories}
-          specialCategories={specialCategories}
-          emotionCategories={emotionCategories}
-          initialData={expenses.find(e => e.id === selectedTransactionId)}
-        />
-      )}
-
-      {/* 収入編集モーダル */}
-      {selectedTransactionType === "income" && (
-        <EditIncomeModal
-          isOpen={isEditIncomeModalOpen}
-          onClose={() => setIsEditIncomeModalOpen(false)}
-          incomeId={selectedTransactionId}
-          onSuccess={handleUpdateSuccess}
-          initialData={expenses.find(e => e.id === selectedTransactionId)}
-        />
-      )}
     </>
   );
 }
