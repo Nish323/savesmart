@@ -7,15 +7,25 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { DeleteTransactionModal } from "../DeleteTransactionModal";
 
 interface HomeListProps {
   transaction: ExpenseAndIncomeTransaction;
   showDate?: boolean;
   onEditClick?: () => void;
+  onDeleteClick?: () => void;
 }
 
-export function HomeList({ transaction, showDate = false, onEditClick }: HomeListProps) {
+export function HomeList({
+  transaction,
+  showDate = false,
+  onEditClick,
+  onDeleteClick,
+}: HomeListProps) {
   const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-gray-50 rounded-lg gap-2">
@@ -91,12 +101,29 @@ export function HomeList({ transaction, showDate = false, onEditClick }: HomeLis
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={onEditClick ? onEditClick : () =>
-            router.push(`/edit/${transaction.type}/${transaction.id}`)
+          onClick={
+            onEditClick
+              ? onEditClick
+              : () => router.push(`/edit/${transaction.type}/${transaction.id}`)
           }
         >
           <Pencil className="h-4 w-4" />
         </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => setIsDeleteDialogOpen(true)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+
+        <DeleteTransactionModal
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          transaction={transaction}
+          onSuccess={onDeleteClick ? onDeleteClick : () => router.refresh()}
+        />
       </div>
     </div>
   );
