@@ -151,7 +151,12 @@ export function HomeList({
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
           transaction={transaction}
-          onSuccess={onDeleteClick ? onDeleteClick : () => router.refresh()}
+          onSuccess={() => {
+            setIsDeleteDialogOpen(false);
+            if (onDeleteClick) {
+              onDeleteClick();
+            }
+          }}
         />
 
         {/* 支出編集モーダル */}

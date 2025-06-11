@@ -41,7 +41,24 @@ export function HomeContext() {
   const handleTransactionUpdated = () => {
     console.log("Transaction updated, refreshing data...");
     fetchData();
+    
+    // カスタムイベントを発行して他のコンポーネントに通知
+    window.dispatchEvent(new CustomEvent('transaction-updated'));
   };
+
+  // 他のコンポーネントからのトランザクション更新イベントをリッスン
+  useEffect(() => {
+    const handleTransactionUpdatedEvent = () => {
+      console.log("Transaction updated event received, refreshing data...");
+      fetchData();
+    };
+    
+    window.addEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    
+    return () => {
+      window.removeEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    };
+  }, []);
 
   const expenseTransactions: ExpenseAndIncomeTransaction[] = expenses.map(
     (expense) => {

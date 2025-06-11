@@ -24,12 +24,17 @@ class MonthExpense extends Model
         $monthExpense->save();
     }
 
+    public static function getMonthExpense($userId, $year, $month)
+    {
+        // 月ごとの支出を取得
+        return self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month],
+        );
+    }
+
     public static function updateMonthExpense($userId, $year, $month, $currentExpense, $pastExpense)
     {
-        $monthExpense = self::where('user_id', $userId)
-            ->where('year', $year)
-            ->where('month', $month)
-            ->first();
+        $monthExpense = self::getMonthExpense($userId, $year, $month);
 
         if ($monthExpense) {
             // 支出の合計を更新
@@ -39,6 +44,23 @@ class MonthExpense extends Model
         } else {
             // 存在しない場合は新規作成
             self::addMonthExpense($userId, $year, $month, $currentExpense);
+        }
+    }
+
+    public static function deleteMonthExpense($userId, $year, $month, $expense)
+    {
+        // 月ごとの支出を取得
+        $monthExpense = self::getMonthExpense($userId, $year, $month);
+        if ($monthExpense) {
+            // 支出の合計を更新
+            $monthExpense->expense_total -= $expense;
+            // 支出が0以下になった場合は削除
+            if ($monthExpense->expense_total <= 0) {
+                $monthExpense->delete();
+            } else {
+                // 変更を保存
+                $monthExpense->save();
+            }
         }
     }
 

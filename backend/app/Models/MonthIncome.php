@@ -27,10 +27,10 @@ class MonthIncome extends Model
     public static function getMonthIncome($userId, $year, $month)
     {
         // 月ごとの収入を取得
-        return self::where('user_id', $userId)
-            ->where('year', $year)
-            ->where('month', $month)
-            ->first();
+        $monthIncome = self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month],
+        );
+        return $monthIncome;
     }
 
     public static function updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome)

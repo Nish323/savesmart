@@ -57,39 +57,41 @@ export function ExpensesList() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        setLoading(true);
-        const data = await getExpenses();
-        // Expense型からExpenseAndIncomeTransaction型に変換
-        const convertedExpenses = data.map((expense: Expense) => ({
-          id: expense.id,
-          date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
-          type: "expense" as const,
-          amount: expense.amount,
-          normalCategory: expense.normalCategoryName || "",
-          specialCategory: expense.specialCategoryName || "",
-          emotionCategory: expense.emotionCategoryName || "",
-          normalCategoryColor: expense.normalCategoryColor || "",
-          specialCategoryColor: expense.specialCategoryColor || "",
-          emotionCategoryColor: expense.emotionCategoryColor || "",
-          description: expense.memo || "詳細なし",
-        }));
-        // 日付で降順ソートして最新の5件を取得
-        const sortedExpenses = convertedExpenses.sort(
-          (a: ExpenseAndIncomeTransaction, b: ExpenseAndIncomeTransaction) =>
-            b.date.getTime() - a.date.getTime()
-        );
-        const latestExpenses = sortedExpenses.slice(0, 5);
-        setExpenses(latestExpenses);
-      } catch (error) {
-        console.error("Error fetching expenses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // 支出データを取得する関数
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const data = await getExpenses();
+      // Expense型からExpenseAndIncomeTransaction型に変換
+      const convertedExpenses = data.map((expense: Expense) => ({
+        id: expense.id,
+        date: expense.spentAt ? parseISO(expense.spentAt) : new Date(),
+        type: "expense" as const,
+        amount: expense.amount,
+        normalCategory: expense.normalCategoryName || "",
+        specialCategory: expense.specialCategoryName || "",
+        emotionCategory: expense.emotionCategoryName || "",
+        normalCategoryColor: expense.normalCategoryColor || "",
+        specialCategoryColor: expense.specialCategoryColor || "",
+        emotionCategoryColor: expense.emotionCategoryColor || "",
+        description: expense.memo || "詳細なし",
+      }));
+      // 日付で降順ソートして最新の5件を取得
+      const sortedExpenses = convertedExpenses.sort(
+        (a: ExpenseAndIncomeTransaction, b: ExpenseAndIncomeTransaction) =>
+          b.date.getTime() - a.date.getTime()
+      );
+      const latestExpenses = sortedExpenses.slice(0, 5);
+      setExpenses(latestExpenses);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // 初回レンダリング時とモーダルが閉じられたときにデータを取得
+  useEffect(() => {
     fetchExpenses();
   }, [isEditExpenseModalOpen, isEditIncomeModalOpen]); // モーダルが閉じられたときにデータを再取得
 
@@ -106,13 +108,33 @@ export function ExpensesList() {
   };
 
   // 更新成功時の処理
-  const handleUpdateSuccess = (message: string) => {
+  const handleUpdateSuccess = async (message: string) => {
     setSuccessMessage(message);
     // 3秒後にメッセージをクリア
     setTimeout(() => {
       setSuccessMessage(null);
     }, 3000);
+    
+    // データを再取得
+    await fetchExpenses();
+    
+    // カスタムイベントを発行して他のコンポーネントに通知
+    window.dispatchEvent(new CustomEvent('transaction-updated'));
   };
+
+  // 他のコンポーネントからのトランザクション更新イベントをリッスン
+  useEffect(() => {
+    const handleTransactionUpdatedEvent = () => {
+      console.log("Transaction updated event received in ExpensesList, refreshing data...");
+      fetchExpenses();
+    };
+    
+    window.addEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    
+    return () => {
+      window.removeEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    };
+  }, []);
 
   return (
     <>
@@ -135,6 +157,7 @@ export function ExpensesList() {
                   transaction={expense}
                   showDate={true}
                   onUpdateSuccess={handleUpdateSuccess}
+                  onDeleteClick={() => handleUpdateSuccess("支出が削除されました")}
                   normalCategories={normalCategories}
                   specialCategories={specialCategories}
                   emotionCategories={emotionCategories}

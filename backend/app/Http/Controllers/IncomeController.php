@@ -111,7 +111,7 @@ class IncomeController extends Controller
         // 月ごとの収入を削除
         MonthIncome::deleteMonthIncome($userId, $year, $month, $amount);
         // 貯金を更新
-        Saving::deleteSaving($userId, $amount);
+        Saving::subtractSaving($userId, $amount);
         
         // 収入の削除
         $income->delete();

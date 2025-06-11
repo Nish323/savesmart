@@ -167,4 +167,58 @@ class ExpenseController extends Controller
         ]);
         return response()->json($expense);
     }
+
+    public function destroy(Expense $expense)
+    {
+        // 年月日を取得
+        $date = Carbon::parse($expense->spent_at);
+        $year = $date->year;
+        $month = $date->month;
+        $day = $date->day;
+        // ユーザーIDの取得
+        $userId = Auth::id();
+        // 支出の金額を取得
+        $amount = $expense->amount;
+        // 現在のカテゴリーIDを取得
+        $currentNormalCategoryId = $expense->normal_category_id;
+        $currentSpecialCategoryId = $expense->special_category_id;
+        $currentEmotionCategoryId = $expense->emotion_category_id;
+
+        // 月ごとの支出を削除
+        MonthExpense::deleteMonthExpense($userId, $year, $month, $amount);
+        // 通常カテゴリーの月合計を削除
+        MonthNormalExpense::deleteMonthNormalExpense(
+            $userId,
+            $year,
+            $month,
+            $currentNormalCategoryId,
+            $amount
+        );
+        // 特別カテゴリーの月合計を削除
+        MonthSpecialExpense::deleteMonthSpecialExpense(
+            $userId,
+            $year,
+            $month,
+            $currentSpecialCategoryId,
+            $amount
+        );
+        // 感情カテゴリーの月合計を削除
+        MonthEmotionExpense::deleteMonthEmotionExpense(
+            $userId,
+            $year,
+            $month,
+            $currentEmotionCategoryId,
+            $amount
+        );
+        
+        // 貯金を更新
+        Saving::addSaving($userId, $amount);
+
+        // 支出の削除
+        if ($expense->delete()) {
+            return response()->json(['message' => '支出が削除されました。'], 200);
+        } else {
+            return response()->json(['message' => '支出の削除に失敗しました。'], 500);
+        }
+    }
 }
