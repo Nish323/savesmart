@@ -49,4 +49,16 @@ class Saving extends Model
             self::addSaving($userId, $currentAmount);
         }
     }
+
+    public static function deleteSaving($userId, $amount)
+    {
+        // ユーザーの貯金情報を取得
+        $saving = self::getSaving($userId);
+        if ($saving) {
+            // 貯金の合計を更新
+            $saving->current_amount -= $amount;
+           
+            $saving->save();
+        }
+    }
 }

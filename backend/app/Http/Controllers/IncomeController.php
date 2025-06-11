@@ -98,6 +98,24 @@ class IncomeController extends Controller
      */
     public function destroy(Income $income)
     {
-        //
+        // 年月日を取得
+        $date = Carbon::parse($income->saved_at);
+        $year = $date->year;
+        $month = $date->month;
+        $day = $date->day;
+        // ユーザーIDの取得
+        $userId = Auth::id();
+        // 収入の金額を取得
+        $amount = $income->amount;
+
+        // 月ごとの収入を削除
+        MonthIncome::deleteMonthIncome($userId, $year, $month, $amount);
+        // 貯金を更新
+        Saving::deleteSaving($userId, $amount);
+        
+        // 収入の削除
+        $income->delete();
+
+        return response()->json(null, 204);
     }
 }
