@@ -77,7 +77,7 @@ class ExpenseController extends Controller
             );
 
             // 貯金を取得または作成
-            $saving = Saving::subtractSaving($userId, $amount);
+            $saving = Saving::subtractSaving($userId, $year, $month, $amount);
 
             $expense = Expense::create([    
                 'user_id' => Auth::id(),
@@ -156,7 +156,7 @@ class ExpenseController extends Controller
                 $pastExpense
             );
             // 貯金を更新
-            $saving = Saving::updateSaving($userId, $pastExpense, $currentExpense);
+            $saving = Saving::updateSaving($userId, $year, $month, $pastExpense, $currentExpense);
             // 支出の更新
             $expense->update([
                 'amount' => $currentExpense,
@@ -218,7 +218,7 @@ class ExpenseController extends Controller
             );
             
             // 貯金を更新
-            Saving::addSaving($userId, $amount);
+            Saving::addSaving($userId, $year, $month, $amount);
 
             // 支出の削除
             if ($expense->delete()) {

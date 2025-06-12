@@ -43,7 +43,7 @@ class IncomeController extends Controller
             MonthIncome::addMonthIncome($userId, $year, $month, $amount);
 
             // 貯金を取得または作成
-            $saving = Saving::addSaving($userId, $amount);
+            $saving = Saving::addSaving($userId, $year, $month, $amount);
 
 
             // 収入を保存
@@ -86,7 +86,7 @@ class IncomeController extends Controller
             // 月ごとの収入を更新
             MonthIncome::updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome);
             // 貯金を更新
-            $saving = Saving::updateSaving($userId, $currentIncome, $pastIncome);
+            $saving = Saving::updateSaving($userId, $year, $month, $currentIncome, $pastIncome);
             // 収入の更新
             $income->update([
                 'amount' => $currentIncome,
@@ -117,7 +117,7 @@ class IncomeController extends Controller
             // 月ごとの収入を削除
             MonthIncome::deleteMonthIncome($userId, $year, $month, $amount);
             // 貯金を更新
-            Saving::subtractSaving($userId, $amount);
+            Saving::subtractSaving($userId, $year, $month, $amount);
             
             // 収入の削除
             $income->delete();
