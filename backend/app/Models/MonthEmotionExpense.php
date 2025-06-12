@@ -29,11 +29,11 @@ class MonthEmotionExpense extends Model
 
     public static function getMonthEmotionExpense($userId, $year, $month, $emotionCategoryId)
     {
-        return self::where('user_id', $userId)
-            ->where('year', $year)
-            ->where('month', $month)
-            ->where('emotion_category_id', $emotionCategoryId)
-            ->first();
+        // 月ごとの感情カテゴリー支出を取得
+        $monthEmotionExpense = self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month, 'emotion_category_id' => $emotionCategoryId],
+        );
+        return $monthEmotionExpense;
     }
 
     public static function updateMonthEmotionExpense($userId, $year, $month, $currentCategoryId, $pastCategoryId, $currentExpense, $pastExpense)
@@ -52,6 +52,22 @@ class MonthEmotionExpense extends Model
         } else {
             // 存在しない場合は新規作成
             self::addMonthEmotionExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
+        }
+    }
+
+    public static function deleteMonthEmotionExpense($userId, $year, $month, $emotionCategoryId, $expense)
+    {
+        // 月ごとの感情カテゴリー支出を取得
+        $monthEmotionExpense = self::getMonthEmotionExpense($userId, $year, $month, $emotionCategoryId);
+        if ($monthEmotionExpense) {
+            // 支出の合計を更新
+            $monthEmotionExpense->expense_total -= $expense;
+            // 支出が0以下になった場合は削除
+            if ($monthEmotionExpense->expense_total <= 0) {
+                $monthEmotionExpense->delete();
+            } else {
+                $monthEmotionExpense->save();
+            }
         }
     }
 

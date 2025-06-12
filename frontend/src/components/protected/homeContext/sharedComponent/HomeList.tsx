@@ -146,11 +146,17 @@ export function HomeList({
           <Trash2 className="h-4 w-4" />
         </Button>
 
+        {/* 削除モーダル */}
         <DeleteTransactionModal
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
           transaction={transaction}
-          onSuccess={onDeleteClick ? onDeleteClick : () => router.refresh()}
+          onSuccess={() => {
+            setIsDeleteDialogOpen(false);
+            if (onDeleteClick) {
+              onDeleteClick();
+            }
+          }}
         />
 
         {/* 支出編集モーダル */}

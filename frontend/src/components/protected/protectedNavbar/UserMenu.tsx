@@ -32,7 +32,7 @@ export const UserMenu = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>アカウント</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/dashboard/settings/profile">
+        <Link href="/settingProfile">
           <DropdownMenuItem className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
             アカウント設定

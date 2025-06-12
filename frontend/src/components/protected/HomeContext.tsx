@@ -11,7 +11,7 @@ import { Expense, Income } from "@/types/transaction";
 import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 
 export function HomeContext() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
@@ -41,7 +41,24 @@ export function HomeContext() {
   const handleTransactionUpdated = () => {
     console.log("Transaction updated, refreshing data...");
     fetchData();
+    
+    // カスタムイベントを発行して他のコンポーネントに通知
+    window.dispatchEvent(new CustomEvent('transaction-updated'));
   };
+
+  // 他のコンポーネントからのトランザクション更新イベントをリッスン
+  useEffect(() => {
+    const handleTransactionUpdatedEvent = () => {
+      console.log("Transaction updated event received, refreshing data...");
+      fetchData();
+    };
+    
+    window.addEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    
+    return () => {
+      window.removeEventListener('transaction-updated', handleTransactionUpdatedEvent);
+    };
+  }, []);
 
   const expenseTransactions: ExpenseAndIncomeTransaction[] = expenses.map(
     (expense) => {
@@ -101,7 +118,7 @@ export function HomeContext() {
 
   const selectedDateTransactions = allTransactions.filter((t) => {
     try {
-      if (!isValid(t.date) || !isValid(selectedDate)) {
+      if (!isValid(t.date) || !selectedDate || !isValid(selectedDate)) {
         return false;
       }
       return (
@@ -116,12 +133,12 @@ export function HomeContext() {
   return (
     <div>
       <div className="container mx-auto px-4 py-8">
-        <TransactionHeader selectedDate={selectedDate} />
+        <TransactionHeader selectedDate={selectedDate || new Date()} />
 
         <div className="grid grid-cols-1 lg:grid-cols-16 gap-4 lg:gap-8">
           <div className="lg:col-span-9">
             <TransactionCalendar
-              selectedDate={selectedDate}
+              selectedDate={selectedDate || new Date()}
               setSelectedDate={setSelectedDate}
               currentMonth={currentMonth}
               setCurrentMonth={setCurrentMonth}
@@ -132,7 +149,7 @@ export function HomeContext() {
 
           <div className="lg:col-span-7">
             <DailyTransactions
-              selectedDate={selectedDate}
+              selectedDate={selectedDate || new Date()}
               transactions={selectedDateTransactions}
               onTransactionUpdated={handleTransactionUpdated}
             />

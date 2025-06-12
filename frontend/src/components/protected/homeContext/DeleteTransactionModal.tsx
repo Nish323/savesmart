@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -54,9 +54,11 @@ export function DeleteTransactionModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{transaction.type === "expense" ? "支出" : "収入"}の削除</DialogTitle>
+          <DialogTitle>
+            {transaction.type === "expense" ? "支出" : "収入"}の削除
+          </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6 py-4">
           <div className="space-y-2">
             <div className="font-medium">日付</div>
@@ -64,14 +66,14 @@ export function DeleteTransactionModal({
               {format(transaction.date, "yyyy年MM月dd日")}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <div className="font-medium">金額</div>
             <div className="p-2 bg-gray-50 rounded-md">
               ¥{transaction.amount.toLocaleString()}
             </div>
           </div>
-          
+
           {transaction.type === "expense" && (
             <>
               {transaction.normalCategory && (
@@ -89,7 +91,7 @@ export function DeleteTransactionModal({
                   </div>
                 </div>
               )}
-              
+
               {transaction.specialCategory && (
                 <div className="space-y-2">
                   <div className="font-medium">特別カテゴリー</div>
@@ -105,7 +107,7 @@ export function DeleteTransactionModal({
                   </div>
                 </div>
               )}
-              
+
               {transaction.emotionCategory && (
                 <div className="space-y-2">
                   <div className="font-medium">感情カテゴリー</div>
@@ -123,31 +125,30 @@ export function DeleteTransactionModal({
               )}
             </>
           )}
-          
+
           <div className="space-y-2">
             <div className="font-medium">メモ</div>
             <div className="p-2 bg-gray-50 rounded-md">
               {transaction.description || "詳細なし"}
             </div>
           </div>
-          
+
           <div className="space-y-2">
-            <div className="font-medium text-red-600">この{transaction.type === "expense" ? "支出" : "収入"}を削除してもよろしいですか？</div>
+            <div className="font-medium text-red-600">
+              この{transaction.type === "expense" ? "支出" : "収入"}
+              を削除してもよろしいですか？
+            </div>
             <div className="text-sm text-gray-500">
               削除すると、このデータは完全に削除され、復元できません。
             </div>
           </div>
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            type="button"
-            variant="outline" 
-            onClick={onClose}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             キャンセル
           </Button>
-          <Button 
+          <Button
             type="button"
             onClick={handleDelete}
             disabled={isDeleting}

@@ -12,11 +12,21 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/protected/createcontext/DatePicker";
-import { getIncomeById, updateIncome } from "@/api/controllers/incomeController";
+import {
+  getIncomeById,
+  updateIncome,
+} from "@/api/controllers/incomeController";
 import { Income } from "@/types/income";
 import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
 import { parseISO } from "date-fns/parseISO";
@@ -63,7 +73,7 @@ export function EditIncomeModal({
       if (incomeId && isOpen) {
         try {
           setIsLoading(true);
-          
+
           // APIからデータを取得
           let data;
           try {
@@ -73,16 +83,19 @@ export function EditIncomeModal({
             setIncome(data);
           } catch (error) {
             console.error("Error fetching income data:", error);
-            
+
             // APIからの取得に失敗した場合は初期データを使用
             if (initialData) {
               console.log("Using initial data instead:", initialData);
               data = {
                 income: initialData.amount,
                 amount: initialData.amount,
-                savedAt: initialData.date.toISOString().split('T')[0],
-                saved_at: initialData.date.toISOString().split('T')[0],
-                memo: initialData.description !== "詳細なし" ? initialData.description : "",
+                savedAt: initialData.date.toISOString().split("T")[0],
+                saved_at: initialData.date.toISOString().split("T")[0],
+                memo:
+                  initialData.description !== "詳細なし"
+                    ? initialData.description
+                    : "",
               };
               setIncome(data as any);
             } else {
@@ -93,12 +106,12 @@ export function EditIncomeModal({
               return;
             }
           }
-          
+
           // フォームの値を設定
           form.reset({
             amount: data.amount ? data.amount.toString() : "",
             date: data.savedAt
-              ? typeof data.savedAt === 'string'
+              ? typeof data.savedAt === "string"
                 ? parseISO(data.savedAt)
                 : data.savedAt
               : new Date(),
@@ -117,7 +130,7 @@ export function EditIncomeModal({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!incomeId) return;
-    
+
     setIsLoading(true);
     try {
       // フォームの値をコンソールに出力（デバッグ用）
@@ -128,8 +141,10 @@ export function EditIncomeModal({
       const month = values.date.getMonth() + 1;
       const day = values.date.getDate();
       // YYYY-MM-DD形式の文字列を作成
-      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-      
+      const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}`;
+
       const halfWidthAmount = convertToHalfWidth(values.amount);
       const incomeData = {
         amount: parseInt(halfWidthAmount),
@@ -139,7 +154,7 @@ export function EditIncomeModal({
 
       // 収入データを更新
       const result = await updateIncome(incomeId, incomeData);
-      
+
       onSuccess("収入を更新しました");
       onClose();
     } catch (error) {
@@ -155,7 +170,7 @@ export function EditIncomeModal({
         <DialogHeader>
           <DialogTitle>収入の編集</DialogTitle>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -169,7 +184,7 @@ export function EditIncomeModal({
                 />
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="amount"
@@ -190,7 +205,7 @@ export function EditIncomeModal({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="memo"
@@ -208,13 +223,18 @@ export function EditIncomeModal({
                 </FormItem>
               )}
             />
-            
+
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+              >
                 キャンセル
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isLoading}
                 className="bg-gray-700 hover:bg-gray-900"
               >

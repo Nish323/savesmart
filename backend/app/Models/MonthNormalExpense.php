@@ -55,6 +55,23 @@ class MonthNormalExpense extends Model
         }
     }
 
+    public static function deleteMonthNormalExpense($userId, $year, $month, $normalCategoryId, $expense)
+    {
+        // 月ごとの通常カテゴリー支出を取得
+        $monthNormalExpense = self::getMonthNormalExpense($userId, $year, $month, $normalCategoryId);
+        if ($monthNormalExpense) {
+            // 支出の合計を更新
+            $monthNormalExpense->expense_total -= $expense;
+            // 支出が0以下になった場合は削除
+            if ($monthNormalExpense->expense_total <= 0) {
+                $monthNormalExpense->delete();
+            } else {
+                // 変更を保存
+                $monthNormalExpense->save();
+            }
+        }
+    }
+
     public function normalCategory()
     {
         return $this->belongsTo(NormalCategory::class, 'normal_category_id');

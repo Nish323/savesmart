@@ -84,7 +84,7 @@ export function DailyTransactions({
     fetchCategories();
   }, []);
 
-  // 修正ボタンがクリックされたときの処理（非推奨：HomeListで直接処理するように変更）
+  // 修正ボタンがクリックされたときの処理
   const handleEditClick = (transaction: ExpenseAndIncomeTransaction) => {
     setSelectedTransactionId(transaction.id);
     setSelectedTransactionType(transaction.type);
@@ -124,10 +124,7 @@ export function DailyTransactions({
       <Card>
         <CardHeader>
           <CardTitle>
-            {isValid(selectedDate) 
-              ? format(selectedDate, "yyyy年 MM月 dd日")
-              : "無効な日付"
-            }の収支
+            {format(selectedDate, "yyyy年 MM月 dd日")}の収支
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -139,6 +136,7 @@ export function DailyTransactions({
                   transaction={transaction}
                   showDate={false}
                   onUpdateSuccess={handleUpdateSuccess}
+                  onDeleteClick={() => handleUpdateSuccess("削除されました")}
                   normalCategories={localNormalCategories}
                   specialCategories={localSpecialCategories}
                   emotionCategories={localEmotionCategories}

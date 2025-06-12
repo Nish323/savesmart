@@ -21,8 +21,8 @@ interface Transaction {
 }
 
 interface TransactionCalendarProps {
-  selectedDate: Date;
-  setSelectedDate: (date: Date) => void;
+  selectedDate: Date | undefined;
+  setSelectedDate: (date: Date | undefined) => void;
   currentMonth: Date;
   setCurrentMonth: (date: Date) => void;
   expenseTransactions: Transaction[];
@@ -66,7 +66,7 @@ export function TransactionCalendar({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
-              {format(currentMonth, "yyyy年 MM月", { locale: ja })}
+              {format(currentMonth, "yyyy年 MM月")}
             </CardTitle>
             <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
               <div className="flex gap-1">
@@ -84,7 +84,7 @@ export function TransactionCalendar({
                   onClick={() => setCurrentMonth(new Date())}
                   className="h-8"
                 >
-                  {format(currentMonth, "yyyy年", { locale: ja })}
+                  {format(currentMonth, "yyyy年")}
                 </Button>
                 <Button
                   variant="outline"
@@ -110,7 +110,7 @@ export function TransactionCalendar({
                   onClick={() => setCurrentMonth(new Date())}
                   className="h-8"
                 >
-                  {format(currentMonth, "MM月", { locale: ja })}
+                  {format(currentMonth, "MM月")}
                 </Button>
                 <Button
                   variant="outline"

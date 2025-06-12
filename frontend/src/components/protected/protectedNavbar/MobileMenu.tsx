@@ -56,7 +56,7 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
           </Button>
         </Link>
         <div className="border-t pt-2">
-          <Link href="/dashboard/settings/profile" onClick={onClose}>
+          <Link href="/settingProfile" onClick={onClose}>
             <Button
               variant="ghost"
               className="w-full text-left flex gap-2"

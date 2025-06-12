@@ -55,6 +55,22 @@ class MonthSpecialExpense extends Model
         }
     }
 
+    public static function deleteMonthSpecialExpense($userId, $year, $month, $specialCategoryId, $expense)
+    {
+        // 月ごとの特別カテゴリー支出を取得
+        $monthSpecialExpense = self::getMonthSpecialExpense($userId, $year, $month, $specialCategoryId);
+        if ($monthSpecialExpense) {
+            // 支出の合計を更新
+            $monthSpecialExpense->expense_total -= $expense;
+            // 支出が0以下になった場合は削除
+            if ($monthSpecialExpense->expense_total <= 0) {
+                $monthSpecialExpense->delete();
+            } else {
+                $monthSpecialExpense->save();
+            }
+        }
+    }
+
     public function specialCategory()
     {
         return $this->belongsTo(SpecialCategory::class, 'special_category_id');
