@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'Asia/Tokyo'),
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'ja'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
@@ -122,5 +122,19 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scheduler Token
+    |--------------------------------------------------------------------------
+    |
+    | This token is used to secure the scheduler endpoint. It should be a
+    | random, secret token that is not easily guessable. You can set this
+    | in your .env file to ensure that only authorized requests can trigger
+    | the scheduler.
+    |
+    */
+    
+    'scheduler_token' => env('SCHEDULER_TOKEN', 'your-default-secret-token'), 
 
 ];

@@ -8,6 +8,19 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\NormalCategoryController;
 use App\Http\Controllers\SpecialCategoryController;
 use App\Http\Controllers\EmotionCategoryController;
+use Illuminate\Support\Facades\Artisan;
+
+Route::post('/tasks/run-scheduler', function (Request $request) {
+    // config/app.php で定義したトークンと一致するか確認
+    if ($request->bearerToken() !== config('app.scheduler_token')) {
+        abort(403, 'Unauthorized');
+    }
+
+    // 'schedule:run'コマンドを実行
+    Artisan::call('schedule:run');
+
+    return response('Scheduler executed successfully.', 200);
+});
 
 Route::get('/', function () {
     return redirect('client/login');

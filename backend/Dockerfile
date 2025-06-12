@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-# カスタム php.ini を追加する（ファイル名は任意ですが、わかりやすくするため custom.ini とする）
+# カスタム php.ini を追加する
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
 # 必要なパッケージをインストール
