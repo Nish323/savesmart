@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->bigInteger('current_amount')->default(0);
+            $table->bigInteger('amount')->default(0);
+            $table->integer('year');
+            $table->tinyInteger('month');
             $table->timestamps();
         });
     }

@@ -8,45 +8,61 @@ class Saving extends Model
 {
     protected $fillable = [
         'user_id',
-        'current_amount',
+        'amount',
+        'year',
+        'month',
     ];
 
-    public static function subtractSaving($userId, $amount)
+    public static function subtractSaving($userId, $year, $month, $amount)
     {
         // ユーザーの貯金情報を取得または作成
-        return self::firstOrCreate(['user_id' => $userId], ['current_amount' => 0]);
+        return self::firstOrCreate(['user_id' => $userId, 'year' => $year, 'month' => $month], ['amount' => 0]);
 
-        $saving->current_amount -= $amount;
+        $saving->amount -= $amount;
         $saving->save();
     }
 
-    public static function addSaving($userId, $amount)
+    public static function addSaving($userId, $year, $month, $amount)
     {
         // ユーザーの貯金情報を取得または作成
-        $saving = self::firstOrCreate(['user_id' => $userId], ['current_amount' => 0]);
+        $saving = self::firstOrCreate(['user_id' => $userId, 'year' => $year,'month' => $month], ['amount' => 0]);
         
         // 貯金の合計を更新
-        $saving->current_amount += $amount;
+        $saving->amount += $amount;
         $saving->save();
     }
 
-    public static function getSaving($userId)
+    public static function getSaving($userId, $year, $month)
     {
         // ユーザーの貯金情報を取得
-        return self::where('user_id', $userId)->first();
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->first();
     }
 
-    public static function updateSaving($userId, $addAmount, $subtractAmount)
+    public static function getCurrentSaving($userId)
+    {
+        // ユーザーの現在の貯金情報を取得
+        return self::where('user_id', $userId)->first();
+    }
+    public static function getAllSavings($userId)
+    {
+        // ユーザーの全ての貯金情報を取得
+        return self::where('user_id', $userId)->get();
+    }
+
+    public static function updateSaving($userId, $year, $month, $addAmount, $subtractAmount)
     {
         // ユーザーの貯金情報を取得
-        $saving = self::getSaving($userId);
+        $saving = self::getSaving($userId, $year, $month);
         if ($saving) {
             // 貯金の合計を更新
-            $saving->current_amount += $addAmount - $subtractAmount;
+            $saving->amount += $addAmount - $subtractAmount;
             $saving->save();
         } else {
             // 存在しない場合は新規作成
-            self::addSaving($userId, $currentAmount);
+            self::addSaving($userId, $year, $month, $currentAmount);
         }
     }
 }
