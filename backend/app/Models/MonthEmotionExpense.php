@@ -36,25 +36,6 @@ class MonthEmotionExpense extends Model
         return $monthEmotionExpense;
     }
 
-    public static function updateMonthEmotionExpense($userId, $year, $month, $currentCategoryId, $pastCategoryId, $currentExpense, $pastExpense)
-    {
-        $pastMonthEmotionExpense = self::getMonthEmotionExpense($userId, $year, $month, $pastCategoryId);
-        // 支出の合計を更新
-        $pastMonthEmotionExpense->expense_total -= $pastExpense;
-        $pastMonthEmotionExpense->save();
-
-        // 新しいカテゴリーの支出を追加
-        $currentMonthEmotionExpense = self::getMonthEmotionExpense($userId, $year, $month, $currentCategoryId);
-        if ($currentMonthEmotionExpense) {
-            // 支出合計を更新
-            $currentMonthEmotionExpense->expense_total += $currentExpense;
-            $currentMonthEmotionExpense->save();
-        } else {
-            // 存在しない場合は新規作成
-            self::addMonthEmotionExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
-        }
-    }
-
     public static function deleteMonthEmotionExpense($userId, $year, $month, $emotionCategoryId, $expense)
     {
         // 月ごとの感情カテゴリー支出を取得
@@ -69,6 +50,12 @@ class MonthEmotionExpense extends Model
                 $monthEmotionExpense->save();
             }
         }
+    }
+
+    public static function updateMonthEmotionExpense($userId, $year, $month, $pastYear, $pastMonth, $currentCategoryId, $pastCategoryId, $currentExpense, $pastExpense)
+    {
+        self::deleteMonthEmotionExpense($userId, $pastYear, $pastMonth, $pastCategoryId, $pastExpense);
+        self::addMonthEmotionExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
     }
 
     public function emotionCategory()

@@ -15,21 +15,41 @@ class Saving extends Model
 
     public static function subtractSaving($userId, $year, $month, $amount)
     {
-        // ユーザーの貯金情報を取得または作成
-        return self::firstOrCreate(['user_id' => $userId, 'year' => $year, 'month' => $month], ['amount' => 0]);
+        // 処理の起点となる月のレコードが存在しない場合に備え、なければ作成します。
+        self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month],
+            ['amount' => 0]
+        );
 
-        $saving->amount -= $amount;
-        $saving->save();
+        // 指定された年月以降のすべてのレコードの amount を減額
+        return self::where('user_id', $userId)
+            ->where(function ($q) use ($year, $month) {
+                $q->where('year', '>', $year)
+                ->orWhere(function ($q) use ($year, $month) {
+                    $q->where('year', $year)
+                        ->where('month', '>=', $month);
+                });
+            })
+            ->decrement('amount', $amount);
     }
 
     public static function addSaving($userId, $year, $month, $amount)
     {
-        // ユーザーの貯金情報を取得または作成
-        $saving = self::firstOrCreate(['user_id' => $userId, 'year' => $year,'month' => $month], ['amount' => 0]);
-        
-        // 貯金の合計を更新
-        $saving->amount += $amount;
-        $saving->save();
+        // 処理の起点となる月のレコードが存在しない場合に備え、なければ作成
+        self::firstOrCreate(
+            ['user_id' => $userId, 'year' => $year, 'month' => $month],
+            ['amount' => 0]
+        );
+
+        // 指定された年月以降のすべてのレコードの amount を増額
+        return self::where('user_id', $userId)
+            ->where(function ($q) use ($year, $month) {
+                $q->where('year', '>', $year)
+                  ->orWhere(function ($q) use ($year, $month) {
+                      $q->where('year', $year)->where('month', '>=', $month);
+                  });
+            })
+            ->increment('amount', $amount);
     }
 
     public static function getSaving($userId, $year, $month)
@@ -41,28 +61,29 @@ class Saving extends Model
             ->first();
     }
 
-    public static function getCurrentSaving($userId)
+    public static function getMostRecentSaving($userId)
     {
-        // ユーザーの現在の貯金情報を取得
-        return self::where('user_id', $userId)->first();
-    }
-    public static function getAllSavings($userId)
-    {
-        // ユーザーの全ての貯金情報を取得
-        return self::where('user_id', $userId)->get();
+        return self::where('user_id', $userId)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->first();
     }
 
-    public static function updateSaving($userId, $year, $month, $addAmount, $subtractAmount)
+    public static function getAllSavings($userId)
     {
-        // ユーザーの貯金情報を取得
-        $saving = self::getSaving($userId, $year, $month);
-        if ($saving) {
-            // 貯金の合計を更新
-            $saving->amount += $addAmount - $subtractAmount;
-            $saving->save();
-        } else {
-            // 存在しない場合は新規作成
-            self::addSaving($userId, $year, $month, $currentAmount);
-        }
+        // 年月で昇順
+        return self::where('user_id', $userId)
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+    }
+
+    public static function updateSaving($userId, $newYear, $newMonth, $oldYear, $oldMonth, $addAmount, $subtractAmount)
+    {
+        // 1. 元の取引を、元の年月から取り消す
+        self::subtractSaving($userId, $oldYear, $oldMonth, $subtractAmount);
+
+        // 2. 新しい取引を、新しい年月から適用する
+        self::addSaving($userId, $newYear, $newMonth, $addAmount);
     }
 }

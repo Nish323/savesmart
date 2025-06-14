@@ -11,7 +11,16 @@ import { Expense, Income } from "@/types/transaction";
 import { ExpenseAndIncomeTransaction } from "@/types/expenseandincome/ExpenseAndIncomeTransaction";
 
 export function HomeContext() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  // 選択された日付の状態
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  
+  // TransactionCalendarコンポーネントに渡すためのラッパー関数
+  // Date | undefinedを受け取り、Dateのみをsetする
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
@@ -44,6 +53,11 @@ export function HomeContext() {
     
     // カスタムイベントを発行して他のコンポーネントに通知
     window.dispatchEvent(new CustomEvent('transaction-updated'));
+  };
+  
+  // 日付が変更された場合に選択された日付を更新する関数
+  const handleDateChanged = (newDate: Date) => {
+    setSelectedDate(newDate);
   };
 
   // 他のコンポーネントからのトランザクション更新イベントをリッスン
@@ -138,8 +152,8 @@ export function HomeContext() {
         <div className="grid grid-cols-1 lg:grid-cols-16 gap-4 lg:gap-8">
           <div className="lg:col-span-9">
             <TransactionCalendar
-              selectedDate={selectedDate || new Date()}
-              setSelectedDate={setSelectedDate}
+              selectedDate={selectedDate}
+              setSelectedDate={handleDateSelect}
               currentMonth={currentMonth}
               setCurrentMonth={setCurrentMonth}
               expenseTransactions={expenseTransactions}
@@ -152,6 +166,7 @@ export function HomeContext() {
               selectedDate={selectedDate || new Date()}
               transactions={selectedDateTransactions}
               onTransactionUpdated={handleTransactionUpdated}
+              onDateChanged={handleDateChanged}
             />
           </div>
         </div>
