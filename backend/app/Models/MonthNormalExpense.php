@@ -36,25 +36,6 @@ class MonthNormalExpense extends Model
         $monthNormalExpense->save();
     }
 
-    public static function updateMonthNormalExpense($userId, $year, $month, $currentCategoryId, $pastCategoryId, $currentExpense, $pastExpense)
-    {
-        $pastMonthNormalExpense = self::getMonthNormalExpense($userId, $year, $month, $pastCategoryId);
-        // 支出の合計を更新
-        $pastMonthNormalExpense->expense_total -= $pastExpense;
-        $pastMonthNormalExpense->save();
-
-        // 新しいカテゴリーの支出を追加
-        $currentMonthNormalExpense = self::getMonthNormalExpense($userId, $year, $month, $currentCategoryId);
-        if ($currentMonthNormalExpense) {
-            // 支出合計を更新
-            $currentMonthNormalExpense->expense_total += $currentExpense;
-            $currentMonthNormalExpense->save();
-        } else {
-            // 存在しない場合は新規作成
-            self::addMonthNormalExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
-        }
-    }
-
     public static function deleteMonthNormalExpense($userId, $year, $month, $normalCategoryId, $expense)
     {
         // 月ごとの通常カテゴリー支出を取得
@@ -70,6 +51,12 @@ class MonthNormalExpense extends Model
                 $monthNormalExpense->save();
             }
         }
+    }
+
+    public static function updateMonthNormalExpense($userId, $year, $month, $pastYear, $pastMonth, $currentCategoryId, $pastCategoryId, $currentExpense, $pastExpense)
+    {
+        self::deleteMonthNormalExpense($userId, $pastYear, $pastMonth, $pastCategoryId, $pastExpense);
+        self::addMonthNormalExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
     }
 
     public function normalCategory()

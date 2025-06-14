@@ -40,7 +40,7 @@ const categoryExpenseData = [
 ];
 
 // 重み付け別支出データ
-const weightExpenseData = [
+const specialExpenseData = [
   { name: '無駄遣い', value: 28000, color: 'hsl(346.8 77.2% 49.8%)' },
   { name: '自己投資', value: 65000, color: 'hsl(142.1 76.2% 36.3%)' },
   { name: '通常支出', value: 92000, color: 'hsl(var(--chart-3))' },
@@ -208,7 +208,7 @@ export function DashboardContent() {
                       <ResponsiveContainer width="100%" height="100%">
                         <RechartsPieChart>
                           <Pie
-                            data={weightExpenseData}
+                            data={specialExpenseData}
                             cx="50%"
                             cy="50%"
                             innerRadius={60}
@@ -216,7 +216,7 @@ export function DashboardContent() {
                             paddingAngle={5}
                             dataKey="value"
                           >
-                            {weightExpenseData.map((entry, index) => (
+                            {specialExpenseData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>

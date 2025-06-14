@@ -33,20 +33,6 @@ class MonthIncome extends Model
         return $monthIncome;
     }
 
-    public static function updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome)
-    {
-        // 月ごとの収入を取得
-        $monthIncome = self::getMonthIncome($userId, $year, $month);
-        if ($monthIncome) {
-            // 収入の合計を更新
-            $monthIncome->income_total += $currentIncome - $pastIncome;
-            $monthIncome->save();
-        } else {
-            // 存在しない場合は新規作成
-            self::addMonthIncome($userId, $year, $month, $income);
-        }
-    }
-
     public static function deleteMonthIncome($userId, $year, $month, $income)
     {
         // 月ごとの収入を取得
@@ -61,5 +47,12 @@ class MonthIncome extends Model
                 $monthIncome->save();
             }
         }
+    }
+
+    public static function updateMonthIncome($userId, $year, $month, $pastYear, $pastMonth, $currentIncome, $pastIncome)
+    {
+        // 月ごとの収入を取得
+        self::deleteMonthIncome($userId, $pastYear, $pastMonth, $pastIncome);
+        self::addMonthIncome($userId, $year, $month, $currentIncome);
     }
 }

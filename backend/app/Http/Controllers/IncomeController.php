@@ -76,6 +76,10 @@ class IncomeController extends Controller
             $year = $date->year;
             $month = $date->month;
             $day = $date->day;
+            // 過去の年月日を取得
+            $pastDate = Carbon::parse($income->saved_at);
+            $pastYear = $pastDate->year;
+            $pastMonth = $pastDate->month;
             // ユーザーIDの取得
             $userId = Auth::id();
             // 収入の金額を取得
@@ -84,9 +88,9 @@ class IncomeController extends Controller
             $pastIncome = $income->amount;
 
             // 月ごとの収入を更新
-            MonthIncome::updateMonthIncome($userId, $year, $month, $currentIncome, $pastIncome);
+            MonthIncome::updateMonthIncome($userId, $year, $month, $pastYear, $pastMonth, $currentIncome, $pastIncome);
             // 貯金を更新
-            $saving = Saving::updateSaving($userId, $year, $month, $currentIncome, $pastIncome);
+            $saving = Saving::updateSaving($userId, $year, $month, $pastYear, $pastMonth, $currentIncome, $pastIncome);
             // 収入の更新
             $income->update([
                 'amount' => $currentIncome,

@@ -108,6 +108,11 @@ class ExpenseController extends Controller
             $year = $date->year;
             $month = $date->month;
             $day = $date->day; 
+            //　過去の年月日を取得
+            $pastDate = Carbon::parse($expense->spent_at);
+            $pastYear = $pastDate->year;
+            $pastMonth = $pastDate->month;
+            $pastDay = $pastDate->day;
             // ユーザーIDの取得
             $userId = Auth::id();
             // 支出の金額を取得
@@ -123,13 +128,16 @@ class ExpenseController extends Controller
             $pastSpecialCategoryId = $expense->special_category_id;
             $pastEmotionCategoryId = $expense->emotion_category_id;
 
+
             // 月ごとの支出を更新
-            MonthExpense::updateMonthExpense($userId, $year, $month, $currentExpense, $pastExpense);
+            MonthExpense::updateMonthExpense($userId, $year, $month, $pastYear, $pastMonth, $currentExpense, $pastExpense);
             // 通常カテゴリーの月合計を更新
             MonthNormalExpense::updateMonthNormalExpense(
                 $userId,
                 $year,
                 $month,
+                $pastYear,
+                $pastMonth,
                 $currentNormalCategoryId,
                 $pastNormalCategoryId,
                 $currentExpense,
@@ -140,6 +148,8 @@ class ExpenseController extends Controller
                 $userId,
                 $year,
                 $month,
+                $pastYear,
+                $pastMonth,
                 $currentSpecialCategoryId,
                 $pastSpecialCategoryId,
                 $currentExpense,
@@ -150,13 +160,15 @@ class ExpenseController extends Controller
                 $userId,
                 $year,
                 $month,
+                $pastYear,
+                $pastMonth,
                 $currentEmotionCategoryId,
                 $pastEmotionCategoryId,
                 $currentExpense,
                 $pastExpense
             );
             // 貯金を更新
-            $saving = Saving::updateSaving($userId, $year, $month, $pastExpense, $currentExpense);
+            $saving = Saving::updateSaving($userId, $year, $month, $pastYear, $pastMonth, $pastExpense, $currentExpense);
             // 支出の更新
             $expense->update([
                 'amount' => $currentExpense,
