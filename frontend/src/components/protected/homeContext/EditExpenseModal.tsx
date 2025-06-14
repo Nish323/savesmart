@@ -215,6 +215,9 @@ export function EditExpenseModal({
 
     setIsLoading(true);
     try {
+      // 選択された日付をコンソールに出力（デバッグ用）
+      console.log("Selected date:", values.date);
+      
       // 日付をローカルタイムゾーンで処理
       const year = values.date.getFullYear();
       const month = values.date.getMonth() + 1;
@@ -223,14 +226,16 @@ export function EditExpenseModal({
       const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}`;
+      
+      console.log("Formatted date:", formattedDate);
 
       const halfWidthAmount = convertToHalfWidth(values.amount);
       const expenseData = {
         amount: parseInt(halfWidthAmount),
-        spentAt: formattedDate,
-        normalCategoryId: parseInt(values.normalCategoryId),
-        specialCategoryId: parseInt(values.specialCategoryId),
-        emotionCategoryId: parseInt(values.emotionCategoryId),
+        spent_at: formattedDate, // APIのキー名を修正
+        normal_category_id: parseInt(values.normalCategoryId), // APIのキー名を修正
+        special_category_id: parseInt(values.specialCategoryId), // APIのキー名を修正
+        emotion_category_id: parseInt(values.emotionCategoryId), // APIのキー名を修正
         memo: values.memo || null,
         year: year,
         month: month,
@@ -240,11 +245,24 @@ export function EditExpenseModal({
       // 更新データをコンソールに出力（デバッグ用）
       console.log("Expense data to update:", expenseData);
 
+      // 日付が変更されたかどうかを確認
+      const dateChanged = expense && expense.spentAt && 
+        new Date(expense.spentAt).toDateString() !== values.date.toDateString();
+      
+      console.log("Date changed:", dateChanged);
+      console.log("Original date:", expense?.spentAt);
+      console.log("New date:", values.date.toDateString());
+      
       // 支出データを更新
       const result = await updateExpense(expenseId, expenseData);
       console.log("Update result:", result);
 
-      onSuccess("支出を更新しました");
+      // 日付が変更された場合は、その旨をメッセージに含める
+      const message = dateChanged 
+        ? "支出を更新しました（日付が変更されました）" 
+        : "支出を更新しました";
+      
+      onSuccess(message);
       onClose();
     } catch (error) {
       console.error("Error updating expense:", error);
@@ -254,25 +272,41 @@ export function EditExpenseModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose} modal={false}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>支出の編集</DialogTitle>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* 日付選択フォームを最上部に配置 */}
+        <div className="mb-4 pb-4 border-b">
+          <Form {...form}>
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
                 <DatePicker
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(date) => {
+                    console.log("EditExpenseModal - Date changed to:", date);
+                    field.onChange(date);
+                    // フォームの値を強制的に更新
+                    form.setValue('date', date as Date, { 
+                      shouldValidate: true,
+                      shouldDirty: true,
+                      shouldTouch: true
+                    });
+                  }}
                   label="日付"
                 />
               )}
             />
+          </Form>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
+            {/* 日付選択フォームは上部に移動したので、ここでは表示しない */}
 
             <FormField
               control={form.control}

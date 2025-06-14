@@ -22,6 +22,7 @@ interface DailyTransactionsProps {
   specialCategories?: any[];
   emotionCategories?: any[];
   onTransactionUpdated?: () => void;
+  onDateChanged?: (newDate: Date) => void;
 }
 
 export function DailyTransactions({
@@ -31,6 +32,7 @@ export function DailyTransactions({
   specialCategories = [],
   emotionCategories = [],
   onTransactionUpdated,
+  onDateChanged,
 }: DailyTransactionsProps) {
   const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] = useState(false);
   const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
@@ -105,9 +107,25 @@ export function DailyTransactions({
       setSuccessMessage(null);
     }, 3000);
     
+    // 日付が変更されたかどうかを確認
+    const dateChanged = message.includes("日付が変更されました");
+    
     // 親コンポーネントに更新を通知
     if (onTransactionUpdated) {
       onTransactionUpdated();
+    }
+    
+    // 日付が変更された場合は、メッセージを追加してカレンダーを更新
+    if (dateChanged) {
+      // 既存のメッセージに追加情報を付加
+      setSuccessMessage(prev => 
+        `${prev || message} (カレンダーを確認してください)`
+      );
+      
+      // 親コンポーネントに日付変更を通知（もし日付が変更されたトランザクションがあれば）
+      if (onDateChanged && selectedTransaction) {
+        onDateChanged(selectedTransaction.date);
+      }
     }
   };
   return (
