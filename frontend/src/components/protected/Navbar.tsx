@@ -27,7 +27,7 @@ export function Navbar() {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed w-full bg-white/80 backdrop-blur-sm z-50 border-b"
+        className="fixed w-full bg-white/80 backdrop-blur-sm z-30 border-b"
       >
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Logo />
