@@ -30,6 +30,7 @@ import {
 import { Income } from "@/types/income";
 import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
 import { parseISO } from "date-fns/parseISO";
+import { CustomOverlay } from "@/components/ui/custum-overlay";
 
 // 収入編集フォームのスキーマを定義
 const formSchema = z.object({
@@ -133,9 +134,6 @@ export function EditIncomeModal({
 
     setIsLoading(true);
     try {
-      // 選択された日付をコンソールに出力（デバッグ用）
-      console.log("Selected date:", values.date);
-      
       // 日付をローカルタイムゾーンで処理
       const year = values.date.getFullYear();
       const month = values.date.getMonth() + 1;
@@ -144,8 +142,6 @@ export function EditIncomeModal({
       const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}`;
-      
-      console.log("Formatted date:", formattedDate);
 
       const halfWidthAmount = convertToHalfWidth(values.amount);
       const incomeData = {
@@ -157,30 +153,13 @@ export function EditIncomeModal({
         day: day,
       };
 
-      // 更新データをコンソールに出力（デバッグ用）
-      console.log("Income data to update:", incomeData);
-
-      // 日付が変更されたかどうかを確認
-      const dateChanged = income && income.savedAt && 
-        new Date(income.savedAt).toDateString() !== values.date.toDateString();
-      
-      console.log("Date changed:", dateChanged);
-      console.log("Original date:", income?.savedAt);
-      console.log("New date:", values.date.toDateString());
-
       // 収入データを更新
       const result = await updateIncome(incomeId, incomeData);
       console.log("Update result:", result);
-
-      // 日付が変更された場合は、その旨をメッセージに含める
-      const message = dateChanged 
-        ? "収入を更新しました（日付が変更されました）" 
-        : "収入を更新しました";
-      
+      const message = "収入を更新しました";
       onSuccess(message);
       onClose();
     } catch (error) {
-      console.error("Error updating income:", error);
       onSuccess("収入の更新に失敗しました");
     } finally {
       setIsLoading(false);
@@ -189,16 +168,14 @@ export function EditIncomeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal={false}>
+      {isOpen && <CustomOverlay />}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>収入の編集</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          {/* 2. <form>タグで全ての入力フィールドとボタンを囲む */}
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            
-            {/* 3. DatePickerのFormFieldをフォーム内に移動 */}
             <FormField
               control={form.control}
               name="date"
@@ -206,11 +183,10 @@ export function EditIncomeModal({
                 <FormItem>
                   <FormLabel>日付</FormLabel>
                   <FormControl>
-                    {/* DatePickerコンポーネント自体には変更なし */}
                     <DatePicker
+                      label="日付を選択"
                       value={field.value}
                       onChange={(date) => {
-                        // setValueは不要な場合が多いですが、動作が不安定な場合は残してください
                         field.onChange(date);
                       }}
                     />

@@ -36,13 +36,15 @@ export default function ProtectedLayout({
     );
   }
 
-  // If authenticated, show the protected content
-  return (
-    <>
-      <Navbar />
-      {children}
-      <Footer />
-      <AuthDialog />
-    </>
-  );
+  if (isAuthenticated) {
+    return (
+      <>
+        <Navbar />
+        {children}
+        <Footer />
+        <AuthDialog />
+      </>
+    );
+  }
+
 }

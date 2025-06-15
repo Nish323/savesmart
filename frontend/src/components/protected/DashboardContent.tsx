@@ -75,7 +75,7 @@ const recentTransactions = [
 export function DashboardContent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-24">
-      <div className="container mx-auto px-4 py-8">
+      <div className="conttainer">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -86,12 +86,11 @@ export function DashboardContent() {
           <p className="text-gray-600">資産状況の概要</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
           {[
             { title: "総資産", value: "¥1,680,000", icon: Wallet, trend: "+9.5%", trendUp: true },
             { title: "今月の収入", value: "¥320,000", icon: ArrowUp, trend: "+2.1%", trendUp: true },
             { title: "今月の支出", value: "¥185,000", icon: ArrowDown, trend: "-1.5%", trendUp: false },
-            { title: "貯金目標達成率", value: "68%", icon: TrendingUp, trend: "+12%", trendUp: true }
           ].map((stat, index) => (
             <motion.div
               key={stat.title}

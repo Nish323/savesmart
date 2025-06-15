@@ -39,6 +39,7 @@ import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
 import { parseISO } from "date-fns/parseISO";
 import { getIconComponent } from "@/components/Icon/GetIcon";
 import { getColorText } from "@/components/color/getColor";
+import { CustomOverlay } from "@/components/ui/custum-overlay";
 
 // 支出編集フォームのスキーマを定義
 const formSchema = z.object({
@@ -242,25 +243,12 @@ export function EditExpenseModal({
         day: day,
       };
 
-      // 更新データをコンソールに出力（デバッグ用）
-      console.log("Expense data to update:", expenseData);
-
-      // 日付が変更されたかどうかを確認
-      const dateChanged = expense && expense.spentAt && 
-        new Date(expense.spentAt).toDateString() !== values.date.toDateString();
-      
-      console.log("Date changed:", dateChanged);
-      console.log("Original date:", expense?.spentAt);
-      console.log("New date:", values.date.toDateString());
-      
       // 支出データを更新
       const result = await updateExpense(expenseId, expenseData);
       console.log("Update result:", result);
 
       // 日付が変更された場合は、その旨をメッセージに含める
-      const message = dateChanged 
-        ? "支出を更新しました（日付が変更されました）" 
-        : "支出を更新しました";
+      const message = "支出を更新しました";
       
       onSuccess(message);
       onClose();
@@ -273,6 +261,7 @@ export function EditExpenseModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal={false}>
+      {isOpen && <CustomOverlay />}
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>支出の編集</DialogTitle>
@@ -306,8 +295,6 @@ export function EditExpenseModal({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
-            {/* 日付選択フォームは上部に移動したので、ここでは表示しない */}
-
             <FormField
               control={form.control}
               name="amount"
