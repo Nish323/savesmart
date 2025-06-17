@@ -1,7 +1,7 @@
 "use client";
 
 import { Calculator } from "lucide-react";
-import { SpecialCategory, EmotionCategory } from "@/types/form";
+import { SpecialCategory, EmotionCategory } from "@/types/category";
 import { getColorText } from "../../../color/getColor";
 import { getIconComponent } from "../../../Icon/GetIcon";
 

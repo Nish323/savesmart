@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
+import { NormalCategory, SpecialCategory, EmotionCategory } from "@/types/category";
 import { getColorText } from "../../../color/getColor";
 import { getIconComponent } from "../../../Icon/GetIcon";
 import { UseFormReturn } from "react-hook-form";
@@ -27,7 +27,7 @@ import { formSchema } from "../Schema";
 interface ExpenseItemFormProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   index: number;
-  normalCategories: Category[];
+  normalCategories: NormalCategory[];
   specialCategories: SpecialCategory[];
   emotionCategories: EmotionCategory[];
   onRemove: () => void;

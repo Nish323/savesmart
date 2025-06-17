@@ -22,6 +22,11 @@ class EmotionCategorySeeder extends Seeder
                 'color'      => 'green',
             ],
             [
+                'name'       => '不満',
+                'icon'       => 'ThumbsDown',
+                'color'      => 'blue',
+            ],
+            [
                 'name'       => '後悔',
                 'icon'       => 'Frown',
                 'color'      => 'red',
