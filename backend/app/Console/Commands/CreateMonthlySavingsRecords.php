@@ -23,19 +23,39 @@ class CreateMonthlySavingsRecords extends Command
 
         $this->info("{$targetYear}年{$targetMonth}月 の貯金データ作成を開始します...");
 
-        // 全ユーザーを対象に処理
         User::chunk(200, function ($users) use ($targetYear, $targetMonth, $previousYear, $previousMonth) {
-            foreach ($users as $user) {
-                $previousSaving = Saving::where('user_id', $user->id)
-                                        ->where('year', $previousYear)
-                                        ->where('month', $previousMonth)
-                                        ->first();
+            
+            // チャンク内のユーザーIDリストを取得
+            $userIds = $users->pluck('id');
 
+            // 1回のクエリで、チャンク内全ユーザーの前月のデータを取得し、user_idをキーにする
+            $previousSavings = Saving::whereIn('user_id', $userIds)
+                                    ->where('year', $previousYear)
+                                    ->where('month', $previousMonth)
+                                    ->get()
+                                    ->keyBy('user_id');
+
+            $upsertData = [];
+            foreach ($users as $user) {
+                // DB問い合わせの代わりに、上で取得したコレクションからデータを取得
+                $previousSaving = $previousSavings->get($user->id);
                 $initialAmount = $previousSaving ? $previousSaving->amount : 0;
 
-                Saving::updateOrCreate(
-                    [ 'user_id' => $user->id, 'year' => $targetYear, 'month' => $targetMonth ],
-                    [ 'amount' => $initialAmount ]
+                // upsert用のデータ配列を作成
+                $upsertData[] = [
+                    'user_id' => $user->id,
+                    'year' => $targetYear,
+                    'month' => $targetMonth,
+                    'amount' => $initialAmount,
+                ];
+            }
+
+            // 1回のupsertクエリで、チャンク内全ユーザーの今月分データを一括で作成・更新
+            if (!empty($upsertData)) {
+                Saving::upsert(
+                    $upsertData,
+                    ['user_id', 'year', 'month'], // レコードを一意に識別するキー
+                    ['amount'] // 更新対象のカラム
                 );
             }
         });
