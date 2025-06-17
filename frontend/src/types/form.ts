@@ -1,3 +1,5 @@
+import { NormalCategory, SpecialCategory, EmotionCategory } from './category';
+
 export interface ExpenseFormData {
   date: Date;
   amount: string;
@@ -8,7 +10,7 @@ export interface ExpenseFormData {
 }
 
 export interface ExpenseFormProps {
-  normalCategories: Category[];
+  normalCategories: NormalCategory[];
   specialCategories: SpecialCategory[];
   emotionCategories: EmotionCategory[];
   onSuccess: (message: string) => void;

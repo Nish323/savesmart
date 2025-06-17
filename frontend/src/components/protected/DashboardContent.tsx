@@ -25,6 +25,9 @@ import {
   Radar,
   ComposedChart
 } from 'recharts';
+import { NormalCategory, SpecialCategory, EmotionCategory } from "@/types/category";
+import { MonthIncome, MonthExpensen, MonthNormalExpense, MonthSpecialExpense, MonthEmotionExpense } from "@/types/monthTransactions"; 
+import { getColorBackGround, getColorText } from "../color/getColor";
 
 // 資産推移のサンプルデータ
 const assetData = [

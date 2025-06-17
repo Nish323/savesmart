@@ -8,6 +8,12 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\NormalCategoryController;
 use App\Http\Controllers\SpecialCategoryController;
 use App\Http\Controllers\EmotionCategoryController;
+use App\Http\Controllers\SavingController;
+use App\Http\Controllers\MonthIncomeController;
+use App\Http\Controllers\MonthExpenseController;
+use App\Http\Controllers\MonthNormalExpenseController;
+use App\Http\Controllers\MonthSpecialExpenseController;
+use App\Http\Controllers\MonthEmotionExpenseController;
 use Illuminate\Support\Facades\Artisan;
 
 Route::post('/tasks/run-scheduler', function (Request $request) {
@@ -48,4 +54,10 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::delete('/incomes/{income}', [IncomeController::class, 'destroy']);
     Route::get('/expenses/{expense}', [ExpenseController::class, 'show']);
     Route::get('/incomes/{income}', [IncomeController::class, 'show']);
+    Route::get('/savings', [SavingController::class, 'index']);
+    Route::get('/month-incomes', [MonthIncomeController::class, 'index']);
+    Route::get('/month-expenses', [MonthExpenseController::class, 'index']);
+    Route::get('/month-normal-expenses', [MonthNormalExpenseController::class, 'index']);
+    Route::get('/month-special-expenses', [MonthSpecialExpenseController::class, 'index']);
+    Route::get('/month-emotion-expenses', [MonthEmotionExpenseController::class, 'index']);
 });
