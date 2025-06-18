@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import client from "@/utils/axios/client";
-import { Category, SpecialCategory, EmotionCategory } from "@/types/form";
+import { NormalCategory, SpecialCategory, EmotionCategory } from "@/types/category";
 import { SuccessMessage } from "./createcontext/SuccessMessage";
 import { ImprovedExpenseForm } from "./createcontext/ImprovedExpenseForm";
 import { ImprovedIncomeForm } from "./createcontext/ImprovedIncomeForm";
@@ -20,7 +20,7 @@ export function CreateExpenseAndIncome({
   defaultDate,
 }: CreateExpenseFormProps) {
   const [type, setType] = useState<"expense" | "income">(defaultType);
-  const [normalCategories, setNormalCategories] = useState<Category[]>([]);
+  const [normalCategories, setNormalCategories] = useState<NormalCategory[]>([]);
   const [specialCategories, setSpecialCategories] = useState<SpecialCategory[]>(
     []
   );
@@ -61,7 +61,7 @@ export function CreateExpenseAndIncome({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-2xl lg:max-w-4xl mx-auto"
         >
           <div className="mb-8">
             <h1 className="text-3xl font-bold">収支を記録</h1>

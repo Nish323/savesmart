@@ -47,7 +47,7 @@ export function ExpenseItemForm({
 }: ExpenseItemFormProps) {
   return (
     <div className="p-4 border rounded-lg space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         <FormField
           control={form.control}
           name={`items.${index}.amount`}
@@ -114,7 +114,7 @@ export function ExpenseItemForm({
           name={`items.${index}.specialCategoryId`}
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-xs">特別カテゴリー</FormLabel>
+              <FormLabel className="text-xs">自己管理カテゴリー</FormLabel>
               <Select
                 onValueChange={(value: string) => {
                   field.onChange(value);

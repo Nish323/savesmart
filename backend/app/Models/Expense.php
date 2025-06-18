@@ -23,6 +23,8 @@ class Expense extends Model
         'normal_category_name',
         'special_category_name',
         'emotion_category_name',
+        'special_categoty_icon',
+        'emotion_category_icon',
     ];
 
     protected $fillable = [
@@ -90,5 +92,32 @@ class Expense extends Model
     public function getEmotionCategoryNameAttribute(): ?string
     {
         return $this->emotionCategory?->name;
+    }
+
+    public function getSpecialCategotyIconAttribute(): ?string
+    {
+        return $this->specialCategory?->icon;
+    }
+    
+    public function getEmotionCategoryIconAttribute(): ?string
+    {
+        return $this->emotionCategory?->icon;
+    }
+
+    public static function get6MonthsExpenses($userId, $year, $month)
+    {
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->orderBy('spent_at', 'desc')
+            ->get();
+    }
+
+    public static function getCurrentMonthExpenses($userId, $year, $month)
+    {
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
     }
 }

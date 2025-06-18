@@ -3,7 +3,6 @@ export interface MonthIncome {
 	year: number;
 	month: number;
 	income_total: number;
-	memo: string;
 	createdAt: string;
 	updatedAt: string;
 }

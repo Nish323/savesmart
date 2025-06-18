@@ -94,7 +94,7 @@ export function DeleteTransactionModal({
 
               {transaction.specialCategory && (
                 <div className="space-y-2">
-                  <div className="font-medium">特別カテゴリー</div>
+                  <div className="font-medium">自己管理カテゴリー</div>
                   <div className="p-2 bg-gray-50 rounded-md flex items-center">
                     <Badge
                       className={`${getColorBackGround(

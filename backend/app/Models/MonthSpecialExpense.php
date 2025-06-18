@@ -16,6 +16,16 @@ class MonthSpecialExpense extends Model
         'expense_total',
     ];
 
+    protected $with = [
+        'specialCategory',
+    ];
+
+    protected $appends = [
+        'special_category_color',
+        'special_category_name',
+        'special_category_icon',
+    ];
+
     public static function getMonthSpecialExpense($userId, $year, $month, $specialCategoryId)
     {
         return self::where('user_id', $userId)
@@ -66,5 +76,28 @@ class MonthSpecialExpense extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getSpecialCategoryNameAttribute(): ?string
+    {
+        return $this->specialCategory?->name;
+    }
+
+    public function getSpecialCategoryColorAttribute(): ?string
+    {
+        return $this->specialCategory?->color;
+    }
+
+    public function getSpecialCategoryIconAttribute(): ?string
+    {
+        return $this->specialCategory?->icon;
+    }
+
+    public static function getAllMonthSpecialExpense($userId, $year, $month)
+    {
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
     }
 }

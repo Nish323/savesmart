@@ -8,6 +8,16 @@ class MonthEmotionExpense extends Model
 {
     protected $table = 'month_emotion_expenses';
 
+    protected $with = [
+        'emotionCategory',
+    ];
+
+    protected $appends = [
+        'emotion_category_color',
+        'emotion_category_name',
+        'emotion_category_icon',
+    ];
+
     protected $fillable = [
         'user_id',
         'year',
@@ -66,5 +76,29 @@ class MonthEmotionExpense extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getEmotionCategoryColorAttribute(): ?string
+    {
+        return $this->emotionCategory?->color;
+    }
+
+    public function getEmotionCategoryNameAttribute(): ?string
+    {
+        return $this->emotionCategory?->name;
+    }
+
+    public function getEmotionCategoryIconAttribute(): ?string
+    {
+        return $this->emotionCategory?->icon;
+    }
+
+    public static function getAllMonthEmotionExpense($userId, $year, $month)
+    {
+        // ユーザーの特定の年月の感情カテゴリー支出を取得
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
     }
 }

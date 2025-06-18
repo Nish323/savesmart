@@ -14,6 +14,7 @@ use App\Http\Controllers\MonthExpenseController;
 use App\Http\Controllers\MonthNormalExpenseController;
 use App\Http\Controllers\MonthSpecialExpenseController;
 use App\Http\Controllers\MonthEmotionExpenseController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Artisan;
 
 Route::post('/tasks/run-scheduler', function (Request $request) {
@@ -60,4 +61,5 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/month-normal-expenses', [MonthNormalExpenseController::class, 'index']);
     Route::get('/month-special-expenses', [MonthSpecialExpenseController::class, 'index']);
     Route::get('/month-emotion-expenses', [MonthEmotionExpenseController::class, 'index']);
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'getData']);
 });

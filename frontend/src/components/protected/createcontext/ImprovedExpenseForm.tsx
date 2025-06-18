@@ -145,7 +145,7 @@ export function ImprovedExpenseForm({
   }
 
   return (
-    <Card>
+    <Card className="lg:max-w-5xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Plus className="h-5 w-5" />

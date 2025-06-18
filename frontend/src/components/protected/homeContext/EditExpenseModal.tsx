@@ -357,7 +357,7 @@ export function EditExpenseModal({
               name="specialCategoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>特別カテゴリー</FormLabel>
+                  <FormLabel>自己管理カテゴリー</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -365,7 +365,7 @@ export function EditExpenseModal({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="特別カテゴリーを選択" />
+                        <SelectValue placeholder="自己管理カテゴリーを選択" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
