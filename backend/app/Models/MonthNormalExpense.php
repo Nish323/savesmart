@@ -16,6 +16,16 @@ class MonthNormalExpense extends Model
         'expense_total',
     ];
 
+    protected $with = [
+        'normalCategory.color',
+        'normalCategory',
+    ];
+
+    protected $appends = [
+        'normal_category_color',
+        'normal_category_name',
+    ];
+
     public static function getMonthNormalExpense($userId, $year, $month, $normalCategoryId)
     {
         return self::where('user_id', $userId)
@@ -59,6 +69,8 @@ class MonthNormalExpense extends Model
         self::addMonthNormalExpense($userId, $year, $month, $currentCategoryId, $currentExpense);
     }
 
+
+
     public function normalCategory()
     {
         return $this->belongsTo(NormalCategory::class, 'normal_category_id');
@@ -67,5 +79,23 @@ class MonthNormalExpense extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getNormalCategoryColorAttribute(): ?string
+    {
+        return $this->normalCategory?->color?->color;
+    }
+
+    public function getNormalCategoryNameAttribute(): ?string
+    {
+        return $this->normalCategory?->name;
+    }
+
+    public static function getAllMonthNormalExpense($userId, $year, $month)
+    {
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
     }
 }

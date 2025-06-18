@@ -12,7 +12,7 @@ class MonthExpense extends Model
         'year',
         'month',
     ];
-
+    
     public static function addMonthExpense($userId, $year, $month, $expense)
     {
         // 月ごとの支出を取得または作成
@@ -53,6 +53,25 @@ class MonthExpense extends Model
     {
         self::deleteMonthExpense($userId, $pastYear, $pastMonth, $pastExpense);
         self::addMonthExpense($userId, $year, $month, $currentExpense);
+    }
+
+    public static function get6MonthsExpenses($userId)
+    {
+        // 現在の年月の Carbon を取得
+        $end = \Carbon\Carbon::now()->startOfMonth(); // 今月の初め
+        $start = (clone $end)->subMonths(5);          // 6ヶ月前の月初
+
+        // 年と月のカラムを対象にした絞り込み
+        return self::where('user_id', $userId)
+            ->where(function ($query) use ($start, $end) {
+                $query->whereRaw("STR_TO_DATE(CONCAT(year, '-', LPAD(month, 2, '0'), '-01'), '%Y-%m-%d') BETWEEN ? AND ?", [
+                    $start->toDateString(),
+                    $end->toDateString()
+                ]);
+            })
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
     }
 
     /**
