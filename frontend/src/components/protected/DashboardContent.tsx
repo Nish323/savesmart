@@ -64,6 +64,7 @@ import {
 import { getColorBackGround, getColorText } from "../color/getColor";
 import { Saving } from "@/types/saving";
 import { SavingLineGraph } from "./dashboard/SavingLineGraph";
+import { getDashboardData } from "@/api/controllers/dashboardControllr";
 
 // カテゴリー別支出データ
 const categoryExpenseData = [
@@ -126,15 +127,6 @@ const wasteRankingData = [
   { name: "食べ残し", amount: 3000, category: "食費", date: "3/12" },
 ];
 
-// 最近の取引のサンプルデータ
-const recentTransactions = [
-  { date: "3/15", type: "expense", category: "食費", amount: -3000 },
-  { date: "3/15", type: "income", category: "給与", amount: 280000 },
-  { date: "3/14", type: "expense", category: "交通費", amount: -500 },
-  { date: "3/14", type: "expense", category: "娯楽費", amount: -5000 },
-  { date: "3/13", type: "expense", category: "食費", amount: -1200 },
-];
-
 export function DashboardContent() {
   const [savings, setSavings] = useState<Saving>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -142,9 +134,9 @@ export function DashboardContent() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const savingData = await getSavings();
-      setSavings(savingData);
-      console.log("Savings data fetched successfully:", savingData);
+      const Data = await getDashboardData();
+      console.log("Data fetched successfully:", Data);
+      setSavings(Data.savings);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -156,6 +148,16 @@ export function DashboardContent() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // 今月の貯金額
+  const latestAmount: number = savings[5]?.amount ?? 0;
+  const savingTrendUp = savings[5]?.amount > savings[4]?.amount;
+  let savingTrend: number = 0;
+  if(savingTrendUp){
+    savingTrend = savings[5]?.amount / savings[4]?.amount || 0;
+  } else {
+    savingTrend = savings[4]?.amount / savings[5]?.amount || 0;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-24">
@@ -174,23 +176,23 @@ export function DashboardContent() {
           {[
             {
               title: "貯金額",
-              value: "¥1,680,000",
+              value: `¥${latestAmount.toLocaleString()}`,
               icon: Wallet,
-              trend: "+9.5%",
-              trendUp: true,
+              trend: savingTrend.toFixed(1) + "%",
+              trendUp: savingTrendUp,
             },
             {
               title: "今月の収入",
               value: "¥320,000",
               icon: ArrowUp,
-              trend: "+2.1%",
+              trend: "2.1%",
               trendUp: true,
             },
             {
               title: "今月の支出",
               value: "¥185,000",
               icon: ArrowDown,
-              trend: "-1.5%",
+              trend: "1.5%",
               trendUp: false,
             },
           ].map((stat, index) => (
@@ -213,7 +215,7 @@ export function DashboardContent() {
                           stat.trendUp ? "text-green-600" : "text-red-600"
                         }`}
                       >
-                        {stat.trend}
+                        {stat.trendUp ? "+" + stat.trend : "-" + stat.trend}
                       </p>
                     </div>
                     <stat.icon className="h-8 w-8 text-primary opacity-80" />
@@ -299,7 +301,7 @@ export function DashboardContent() {
                 <CardDescription>支出に関連する感情の分析</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px] w-full">
+                <div className="h-[400px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart outerRadius={90} data={emotionRadarData}>
                       <PolarGrid />
@@ -492,41 +494,38 @@ export function DashboardContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5" />
-                  最近の取引
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                  今月の衝動買い＆後悔＆不満ランキング
                 </CardTitle>
-                <CardDescription>直近の収支記録</CardDescription>
+                <CardDescription>
+                  衝動買い・後悔・不満と判断された支出のトップ5
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[200px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RechartsBarChart data={recentTransactions}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value: number) =>
-                          `¥${Math.abs(value).toLocaleString()}`
-                        }
-                        contentStyle={{
-                          backgroundColor: "white",
-                          border: "1px solid #e2e8f0",
-                        }}
-                      />
-                      <Bar dataKey="amount" fill="hsl(var(--primary))">
-                        {recentTransactions.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={
-                              entry.type === "income"
-                                ? "hsl(142.1 76.2% 36.3%)"
-                                : "hsl(346.8 77.2% 49.8%)"
-                            }
-                          />
-                        ))}
-                      </Bar>
-                    </RechartsBarChart>
-                  </ResponsiveContainer>
+                <div className="space-y-4">
+                  {wasteRankingData.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="text-lg font-bold text-gray-500">
+                          #{index + 1}
+                        </span>
+                        <div>
+                          <p className="font-medium">{item.name}</p>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <span>{item.category}</span>
+                            <span>•</span>
+                            <span>{item.date}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="font-bold text-red-500">
+                        ¥{item.amount.toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

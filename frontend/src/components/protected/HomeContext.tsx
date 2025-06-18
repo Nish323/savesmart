@@ -48,7 +48,6 @@ export function HomeContext() {
 
   // トランザクションが更新されたときの処理
   const handleTransactionUpdated = () => {
-    console.log("Transaction updated, refreshing data...");
     fetchData();
     
     // カスタムイベントを発行して他のコンポーネントに通知
@@ -63,7 +62,6 @@ export function HomeContext() {
   // 他のコンポーネントからのトランザクション更新イベントをリッスン
   useEffect(() => {
     const handleTransactionUpdatedEvent = () => {
-      console.log("Transaction updated event received, refreshing data...");
       fetchData();
     };
     

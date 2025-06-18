@@ -106,7 +106,7 @@ export function ImprovedIncomeForm({ onSuccess, defaultDate }: ImprovedIncomeFor
   }
 
   return (
-    <Card>
+    <Card className="lg:max-w-5xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
