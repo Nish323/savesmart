@@ -2,7 +2,7 @@ export interface MonthIncome {
 	id: number;
 	year: number;
 	month: number;
-	income_total: number;
+	incomeTotal: number;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -11,7 +11,7 @@ export interface MonthExpense {
 	id: number;
 	year: number;
 	month: number;
-	expense_total: number;
+	expenseTotal: number;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -20,10 +20,10 @@ export interface MonthNormalExpense {
 	id: number;
 	year: number;
 	month: number;
-	expense_total: number;
-	normal_category_id: number;
-	normal_category_name: string;
-	normal_category_color: string;
+	expenseTotal: number;
+	normalCategoryId: number;
+	normalCategoryName: string;
+	normalCategoryColor: string;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -32,11 +32,11 @@ export interface MonthSpecialExpense {
 	id: number;
 	year: number;
 	month: number;
-	expense_total: number;
-	special_category_id: number;
-	special_category_name: string;
-	special_category_color: string;
-	special_category_icon: string;
+	expenseTotal: number;
+	specialCategoryId: number;
+	specialCategoryName: string;
+	specialCategoryColor: string;
+	specialCategoryIcon: string;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -45,11 +45,11 @@ export interface MonthEmotionExpense {
 	id: number;
 	year: number;
 	month: number;
-	expense_total: number;
-	emotion_category_id: number;
-	emotion_category_name: string;
-	emotion_category_color: string;
-	emotion_category_icon: string;
+	expenseTotal: number;
+	emotionCategoryId: number;
+	emotionCategoryName: string;
+	emotionCategoryColor: string;
+	emotionCategoryIcon: string;
 	createdAt: string;
 	updatedAt: string;
 }

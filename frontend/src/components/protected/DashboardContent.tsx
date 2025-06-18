@@ -65,6 +65,9 @@ import { getColorBackGround, getColorText } from "../color/getColor";
 import { Saving } from "@/types/saving";
 import { SavingLineGraph } from "./dashboard/SavingLineGraph";
 import { getDashboardData } from "@/api/controllers/dashboardControllr";
+import { Expense } from "@/types/expense";
+import { getCurrentMonthData } from "./dashboard/getCurrentMonthData";
+import { CurrentMonthDataCards } from "./dashboard/currentMonthData";
 
 // カテゴリー別支出データ
 const categoryExpenseData = [
@@ -128,7 +131,13 @@ const wasteRankingData = [
 ];
 
 export function DashboardContent() {
-  const [savings, setSavings] = useState<Saving>([]);
+  const [savings, setSavings] = useState<Saving[]>([]);
+  const [monthIncomes, setMonthIncomes] = useState<MonthIncome[]>([]);
+  const [monthExpenses, setMonthExpenses] = useState<MonthExpenses[]>([]);
+  const [monthNormalExpenses, setMonthNormalExpenses] = useState<MonthNormalExpense[]>([]);
+  const [monthSpecialExpenses, setMonthSpecialExpenses] = useState<MonthSpecialExpense[]>([]);
+  const [monthEmotionExpenses, setMonthEmotionExpenses] = useState<MonthEmotionExpense[]>([]);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
@@ -137,6 +146,12 @@ export function DashboardContent() {
       const Data = await getDashboardData();
       console.log("Data fetched successfully:", Data);
       setSavings(Data.savings);
+      setMonthIncomes(Data.monthIncomes);
+      setMonthExpenses(Data.monthExpenses);
+      setMonthNormalExpenses(Data.monthNormalExpenses);
+      setMonthSpecialExpenses(Data.monthSpecialExpenses);
+      setMonthEmotionExpenses(Data.monthEmotionExpenses);
+      setCurrentMonthExpenses(Data.currentMonthExpenses);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -149,15 +164,20 @@ export function DashboardContent() {
     fetchData();
   }, []);
 
+  console.log("Savings:", savings);
+  console.log("Month Incomes:", monthIncomes);
+  console.log("Month Expenses:", monthExpenses);
+  console.log("Month Normal Category Expenses:", monthNormalExpenses);
+  console.log("Month Special Category Expenses:", monthSpecialExpenses);
+  console.log("Month Emotion Category Expenses:", monthEmotionExpenses);
+  console.log("Current Month Expenses:", currentMonthExpenses);
+
   // 今月の貯金額
-  const latestAmount: number = savings[5]?.amount ?? 0;
-  const savingTrendUp = savings[5]?.amount > savings[4]?.amount;
-  let savingTrend: number = 0;
-  if(savingTrendUp){
-    savingTrend = savings[5]?.amount / savings[4]?.amount || 0;
-  } else {
-    savingTrend = savings[4]?.amount / savings[5]?.amount || 0;
-  }
+  const currentSaving = getCurrentMonthData(savings);
+  // 今月の収入
+  const currentMonthIncome = getCurrentMonthData(monthIncomes);
+  // 今月の支出
+  const currentMonthExpense = getCurrentMonthData(monthExpenses);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-24">
@@ -172,59 +192,12 @@ export function DashboardContent() {
           <p className="text-gray-600">資産状況の概要</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
-          {[
-            {
-              title: "貯金額",
-              value: `¥${latestAmount.toLocaleString()}`,
-              icon: Wallet,
-              trend: savingTrend.toFixed(1) + "%",
-              trendUp: savingTrendUp,
-            },
-            {
-              title: "今月の収入",
-              value: "¥320,000",
-              icon: ArrowUp,
-              trend: "2.1%",
-              trendUp: true,
-            },
-            {
-              title: "今月の支出",
-              value: "¥185,000",
-              icon: ArrowDown,
-              trend: "1.5%",
-              trendUp: false,
-            },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        {stat.title}
-                      </p>
-                      <h3 className="text-2xl font-bold mt-2">{stat.value}</h3>
-                      <p
-                        className={`text-sm mt-1 ${
-                          stat.trendUp ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {stat.trendUp ? "+" + stat.trend : "-" + stat.trend}
-                      </p>
-                    </div>
-                    <stat.icon className="h-8 w-8 text-primary opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        <CurrentMonthDataCards
+          currentSaving={currentSaving}
+          currentMonthIncome={currentMonthIncome}
+          currentMonthExpense={currentMonthExpense}
+          loading={loading}
+        /> 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <motion.div

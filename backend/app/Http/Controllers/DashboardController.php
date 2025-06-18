@@ -23,21 +23,21 @@ class DashboardController extends Controller
         $currentMonth = date('m');
         // 各データの取得
         $savings = Saving::get6MonthsSavings($userId);       
-        $monthIncoe = MonthIncome::getMonthIncome($userId, $currentYear, $currentMonth);
+        $monthIncomes = MonthIncome::get2MonthsIncomes($userId, $currentYear, $currentMonth);
         $monthExpenses = MonthExpense::get6MonthsExpenses($userId, $currentYear, $currentMonth);
-        $monthNormalExpense = MonthNormalExpense::getAllMonthNormalExpense($userId, $currentYear, $currentMonth);
-        $monthSpecialExpense = MonthSpecialExpense::getAllMonthSpecialExpense($userId, $currentYear, $currentMonth);
-        $monthEmotionExpense = MonthEmotionExpense::getAllMonthEmotionExpense($userId, $currentYear, $currentMonth);
+        $monthNormalExpenses = MonthNormalExpense::getAllMonthNormalExpense($userId, $currentYear, $currentMonth);
+        $monthSpecialExpenses = MonthSpecialExpense::getAllMonthSpecialExpense($userId, $currentYear, $currentMonth);
+        $monthEmotionExpenses = MonthEmotionExpense::getAllMonthEmotionExpense($userId, $currentYear, $currentMonth);
         $currentMonthExpenses = Expense::getCurrentMonthExpenses($userId, $currentYear, $currentMonth);
 
         return response()->json([
             'savings' => $savings,
-            'monthIncome' => $monthIncoe,
+            'monthIncomes' => $monthIncomes,
             'monthExpenses' => $monthExpenses,
-            'monthNormalExpense' => $monthNormalExpense,
-            'monthSpecialExpense' => $monthSpecialExpense,
-            'monthEmotionExpense' => $monthEmotionExpense,
-            'currentMonthExpenses' => $currentMonthExpenses ,
+            'monthNormalExpenses' => $monthNormalExpenses,
+            'monthSpecialExpenses' => $monthSpecialExpenses,
+            'monthEmotionExpenses' => $monthEmotionExpenses,
+            'currentMonthExpenses' => $currentMonthExpenses,
         ]);
     }
 }
