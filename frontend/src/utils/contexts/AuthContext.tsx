@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(userResponse.data);
       setIsAuthenticated(true);
       setShowAuthDialog(false);
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
