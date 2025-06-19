@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Wallet, ArrowUp, ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
-import { CurrentMonthData } from "@/types/currentMonthData";
+import { CurrentMonthData } from "@/types/dashboard/currentMonthData";
 
 interface CurrentMonthDataProps {
   currentSaving: CurrentMonthData;

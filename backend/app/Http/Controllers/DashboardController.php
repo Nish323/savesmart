@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $monthIncomes = MonthIncome::get2MonthsIncomes($userId, $currentYear, $currentMonth);
         $monthExpenses = MonthExpense::get6MonthsExpenses($userId, $currentYear, $currentMonth);
         $monthNormalExpenses = MonthNormalExpense::getAllMonthNormalExpense($userId, $currentYear, $currentMonth);
-        $monthSpecialExpenses = MonthSpecialExpense::getAllMonthSpecialExpense($userId, $currentYear, $currentMonth);
+        $monthSpecialExpenses = MonthSpecialExpense::getAll6MonthsSpecialExpense($userId, $currentYear, $currentMonth);
         $monthEmotionExpenses = MonthEmotionExpense::getAllMonthEmotionExpense($userId, $currentYear, $currentMonth);
         $currentMonthExpenses = Expense::getCurrentMonthExpenses($userId, $currentYear, $currentMonth);
 

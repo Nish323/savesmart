@@ -46,6 +46,30 @@ class MonthSpecialExpense extends Model
         $monthSpecialExpense->save();
     }
 
+    public static function getAll6MonthsSpecialExpense($userId, $year, $month)
+    {
+        $startYear = $year;
+        $startMonth = $month - 5;
+
+        if ($startMonth <= 0) {
+            $startYear -= 1;
+            $startMonth += 12;
+        }
+
+        return self::where('user_id', $userId)
+            ->where('year', '>=', $startYear)
+            ->where(function ($query) use ($startYear, $startMonth, $year, $month) {
+                $query->where('year', '>', $startYear)
+                    ->orWhere(function ($query) use ($startMonth, $year, $month) {
+                        $query->where('year', '=', $year)
+                            ->where('month', '>=', $startMonth);
+                    });
+            })
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+    }   
+
     public static function deleteMonthSpecialExpense($userId, $year, $month, $specialCategoryId, $expense)
     {
         // 月ごとの特別カテゴリー支出を取得

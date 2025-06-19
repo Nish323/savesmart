@@ -5,8 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Saving } from "@/types/saving";
-import { LineChart } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
   Line,
@@ -15,9 +13,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart as RechartsPieChart,
-  BarChart as RechartsBarChart,
 } from "recharts";
+import { Saving } from "@/types/saving";
+import { LineChart } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface SavingLineGraphProps {
   savings: Saving[];
@@ -26,6 +25,11 @@ interface SavingLineGraphProps {
 export function SavingLineGraph({ savings }: SavingLineGraphProps) {	
 	const NumberOfMonths = savings.length;
 	return (
+		<motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+    >
 		<Card className="h-full">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
@@ -61,6 +65,7 @@ export function SavingLineGraph({ savings }: SavingLineGraphProps) {
 				</div>
 			</CardContent>
 		</Card>
+		</motion.div>
 	);
 }
 
