@@ -46,7 +46,7 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
             収支を記録
           </Button>
         </Link>
-        <Link href="/goals" onClick={onClose}>
+        {/* <Link href="/goals" onClick={onClose}>
           <Button
             variant={isActive("/goals") ? "default" : "ghost"}
             className="w-full text-left flex gap-2"
@@ -54,7 +54,7 @@ export const MobileMenu = ({ isOpen, onClose, isActive }: MobileMenuProps) => {
             <Target className="h-4 w-4" />
             目標
           </Button>
-        </Link>
+        </Link> */}
         <div className="border-t pt-2">
           <Link href="/settingProfile" onClick={onClose}>
             <Button

@@ -40,7 +40,7 @@ export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
           収支を記録
         </Button>
       </Link>
-      <Link href="/goals">
+      {/* <Link href="/goals">
         <Button
           variant={isActive("/goals") ? "default" : "ghost"}
           className="flex gap-2"
@@ -48,7 +48,7 @@ export const DesktopMenu = ({ isActive }: DesktopMenuProps) => {
           <Target className="h-4 w-4" />
           目標
         </Button>
-      </Link>
+      </Link> */}
 
       <div className="flex items-center space-x-2 ml-2 border-l pl-2">
         <UserMenu />
