@@ -47,7 +47,7 @@ import {
 } from "@/types/category";
 import {
   MonthIncome,
-  MonthExpensen,
+  MonthExpense,
   MonthNormalExpense,
   MonthSpecialExpense,
   MonthEmotionExpense,
@@ -65,78 +65,38 @@ import { getColorBackGround, getColorText } from "../color/getColor";
 import { Saving } from "@/types/saving";
 import { SavingLineGraph } from "./dashboard/SavingLineGraph";
 import { getDashboardData } from "@/api/controllers/dashboardControllr";
+import { Expense } from "@/types/expense";
+import { getCurrentMonthData } from "./dashboard/dataProcessings/getCurrentMonthData";
+import { CurrentMonthDataCards } from "./dashboard/CurrentMonthDataCards";
+import { MonthlyTrendData } from "@/types/dashboard/monthlyTrendData";
+import { MonthlyTrendDataCard } from "./dashboard/MonthlyTrendDataCard";
 
-// カテゴリー別支出データ
-const categoryExpenseData = [
-  { name: "食費", value: 45000, color: "hsl(var(--chart-1))" },
-  { name: "住居費", value: 85000, color: "hsl(var(--chart-2))" },
-  { name: "交通費", value: 12000, color: "hsl(var(--chart-3))" },
-  { name: "娯楽費", value: 25000, color: "hsl(var(--chart-4))" },
-  { name: "その他", value: 18000, color: "hsl(var(--chart-5))" },
-];
-
-// 重み付け別支出データ
-const specialExpenseData = [
-  { name: "無駄遣い", value: 28000, color: "hsl(346.8 77.2% 49.8%)" },
-  { name: "自己投資", value: 65000, color: "hsl(142.1 76.2% 36.3%)" },
-  { name: "通常支出", value: 92000, color: "hsl(var(--chart-3))" },
-];
-
-// 感情別支出データ
-const emotionExpenseData = [
-  { name: "満足", value: 42000, color: "hsl(142.1 76.2% 36.3%)" },
-  { name: "後悔", value: 28000, color: "hsl(346.8 77.2% 49.8%)" },
-  { name: "衝動的", value: 35000, color: "hsl(var(--chart-1))" },
-  { name: "計画的", value: 80000, color: "hsl(var(--chart-2))" },
-];
-
-// 感情ポートフォリオデータ
-const emotionRadarData = [
-  { emotion: "満足", value: 80 },
-  { emotion: "後悔", value: 30 },
-  { emotion: "衝動", value: 60 },
-  { emotion: "不満", value: 45 },
-  { emotion: "計画的", value: 70 },
-];
-
-// 支出習慣の時系列変化データ
-const monthlyTrendData = [
-  { month: "1月", 総支出: 80000, 無駄遣い: 20000, 自己投資: 10000 },
-  { month: "2月", 総支出: 75000, 無駄遣い: 15000, 自己投資: 12000 },
-  { month: "3月", 総支出: 90000, 無駄遣い: 18000, 自己投資: 15000 },
-  { month: "4月", 総支出: 70000, 無駄遣い: 10000, 自己投資: 9000 },
-  { month: "5月", 総支出: 85000, 無駄遣い: 12000, 自己投資: 8000 },
-];
-
-// 無駄遣いランキングデータ
-const wasteRankingData = [
-  { name: "飲み会", amount: 15000, category: "娯楽費", date: "3/15" },
-  {
-    name: "衝動買いのガジェット",
-    amount: 12000,
-    category: "買い物",
-    date: "3/10",
-  },
-  {
-    name: "使っていない定額サービス",
-    amount: 8000,
-    category: "その他",
-    date: "3/1",
-  },
-  { name: "タクシー", amount: 5000, category: "交通費", date: "3/8" },
-  { name: "食べ残し", amount: 3000, category: "食費", date: "3/12" },
-];
+//　今の日付の取得
+const today = new Date();
+const currentYear = today.getFullYear();
+const currentMonth = today.getMonth() + 1;
 
 export function DashboardContent() {
-  const [savings, setSavings] = useState<Saving>([]);
+  const [savings, setSavings] = useState<Saving[]>([]);
+  const [monthIncomes, setMonthIncomes] = useState<MonthIncome[]>([]);
+  const [monthExpenses, setMonthExpenses] = useState<MonthExpense[]>([]);
+  const [monthNormalExpenses, setMonthNormalExpenses] = useState<MonthNormalExpense[]>([]);
+  const [monthSpecialExpenses, setMonthSpecialExpenses] = useState<MonthSpecialExpense[]>([]);
+  const [monthEmotionExpenses, setMonthEmotionExpenses] = useState<MonthEmotionExpense[]>([]);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const Data = await getDashboardData();
-      console.log("Data fetched successfully:", Data);
       setSavings(Data.savings);
+      setMonthIncomes(Data.monthIncomes);
+      setMonthExpenses(Data.monthExpenses);
+      setMonthNormalExpenses(Data.monthNormalExpenses);
+      setMonthSpecialExpenses(Data.monthSpecialExpenses);
+      setMonthEmotionExpenses(Data.monthEmotionExpenses);
+      setCurrentMonthExpenses(Data.currentMonthExpenses);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -149,15 +109,122 @@ export function DashboardContent() {
     fetchData();
   }, []);
 
+  // console.log("Savings:", savings);
+  // console.log("Month Incomes:", monthIncomes);
+  // console.log("Month Expenses:", monthExpenses);
+  // console.log("Month Normal Category Expenses:", monthNormalExpenses);
+  // console.log("Month Special Category Expenses:", monthSpecialExpenses);
+  // console.log("Month Emotion Category Expenses:", monthEmotionExpenses);
+  // console.log("Current Month Expenses:", currentMonthExpenses);
+
   // 今月の貯金額
-  const latestAmount: number = savings[5]?.amount ?? 0;
-  const savingTrendUp = savings[5]?.amount > savings[4]?.amount;
-  let savingTrend: number = 0;
-  if(savingTrendUp){
-    savingTrend = savings[5]?.amount / savings[4]?.amount || 0;
-  } else {
-    savingTrend = savings[4]?.amount / savings[5]?.amount || 0;
+  const currentSaving = getCurrentMonthData(savings);
+  // 今月の収入
+  const currentMonthIncome = getCurrentMonthData(monthIncomes);
+  // 今月の支出
+  const currentMonthExpense = getCurrentMonthData(monthExpenses);
+
+  // 月次トレンドデータの生成（過去6ヶ月分）
+  const monthlyTrendData = [];
+  
+  // 現在の月から過去6ヶ月分の月を生成
+  for (let i = 5; i >= 0; i--) {
+    const targetDate = new Date(currentYear, currentMonth - 1 - i, 1);
+    const targetYear = targetDate.getFullYear();
+    const targetMonth = targetDate.getMonth() + 1;
+    
+    // 対応する月のデータを探す
+    const expenseData = monthExpenses.find(
+      (expense) => expense.year === targetYear && expense.month === targetMonth
+    );
+    
+    // 対応する月の特別カテゴリー支出を取得
+    const specialExpenses = monthSpecialExpenses.filter(
+      (item) => item.year === targetYear && item.month === targetMonth
+    );
+    
+    // 無駄遣いと自己投資の金額を計算
+    const wasteExpense = specialExpenses.find(
+      (item) => item.specialCategoryName === "無駄遣い"
+    )?.expenseTotal || 0;
+    
+    const selfInvestmentExpense = specialExpenses.find(
+      (item) => item.specialCategoryName === "自己投資"
+    )?.expenseTotal || 0;
+
+    monthlyTrendData.push({
+      month: `${targetMonth}月`,
+      ExpenseTotal: expenseData?.expenseTotal || 0,
+      WasteTotal: wasteExpense,
+      SelfInvestmentTotal: selfInvestmentExpense,
+      総支出: expenseData?.expenseTotal || 0,
+      無駄遣い: wasteExpense,
+      自己投資: selfInvestmentExpense,
+    });
   }
+
+  // カテゴリー別支出データの生成
+  const categoryExpenseData = monthNormalExpenses.map((expense) => ({
+    name: expense.normalCategoryName,
+    value: expense.expenseTotal,
+    color: expense.normalCategoryColor || `hsl(var(--chart-${(expense.normalCategoryId % 5) + 1}))`,
+  }));
+
+  // 今月の自己管理支出データの生成
+  const specialExpenseData = monthSpecialExpenses.filter(
+    (item) => item.year === currentYear && item.month === currentMonth
+  ).map((expense) => ({
+    name: expense.specialCategoryName,
+    value: expense.expenseTotal,
+    color: expense.specialCategoryColor || 
+      (expense.specialCategoryName === "無駄遣い" ? "hsl(346.8 77.2% 49.8%)" : 
+       expense.specialCategoryName === "自己投資" ? "hsl(142.1 76.2% 36.3%)" : 
+       "hsl(var(--chart-3))"),
+  }));
+
+  // 感情別支出データの生成
+  const emotionExpenseData = monthEmotionExpenses.map((expense) => ({
+    name: expense.emotionCategoryName,
+    value: expense.expenseTotal,
+    color: expense.emotionCategoryColor || 
+      (expense.emotionCategoryName === "満足" || expense.emotionCategoryName === "計画的" ? "hsl(142.1 76.2% 36.3%)" : 
+       expense.emotionCategoryName === "後悔" || expense.emotionCategoryName === "衝動的" ? "hsl(346.8 77.2% 49.8%)" : 
+       `hsl(var(--chart-${(expense.emotionCategoryId % 5) + 1}))`),
+  }));
+
+  // 感情ポートフォリオデータの生成
+  const emotionRadarData = monthEmotionExpenses.map((expense) => ({
+    emotion: expense.emotionCategoryName,
+    value: Math.min(100, Math.max(0, expense.expenseTotal / 1000)), // 0-100の範囲に正規化
+  }));
+
+  // 無駄遣いランキングデータの生成
+  const wasteRankingData = currentMonthExpenses
+    .filter((expense) => expense.specialCategoryName === "無駄遣い")
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5)
+    .map((expense) => ({
+      name: expense.description || "無題の支出",
+      amount: expense.amount,
+      category: expense.normalCategoryName || "その他",
+      date: new Date(expense.date).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }),
+    }));
+
+  // 感情ランキングデータの生成
+  const emotionRankingData = currentMonthExpenses
+    .filter((expense) => 
+      expense.emotionCategoryName === "衝動的" || 
+      expense.emotionCategoryName === "後悔" || 
+      expense.emotionCategoryName === "不満"
+    )
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5)
+    .map((expense) => ({
+      name: expense.description || "無題の支出",
+      amount: expense.amount,
+      category: expense.normalCategoryName || "その他",
+      date: new Date(expense.date).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }),
+    }));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-24">
@@ -172,118 +239,15 @@ export function DashboardContent() {
           <p className="text-gray-600">資産状況の概要</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
-          {[
-            {
-              title: "貯金額",
-              value: `¥${latestAmount.toLocaleString()}`,
-              icon: Wallet,
-              trend: savingTrend.toFixed(1) + "%",
-              trendUp: savingTrendUp,
-            },
-            {
-              title: "今月の収入",
-              value: "¥320,000",
-              icon: ArrowUp,
-              trend: "2.1%",
-              trendUp: true,
-            },
-            {
-              title: "今月の支出",
-              value: "¥185,000",
-              icon: ArrowDown,
-              trend: "1.5%",
-              trendUp: false,
-            },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        {stat.title}
-                      </p>
-                      <h3 className="text-2xl font-bold mt-2">{stat.value}</h3>
-                      <p
-                        className={`text-sm mt-1 ${
-                          stat.trendUp ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {stat.trendUp ? "+" + stat.trend : "-" + stat.trend}
-                      </p>
-                    </div>
-                    <stat.icon className="h-8 w-8 text-primary opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        <CurrentMonthDataCards
+          currentSaving={currentSaving}
+          currentMonthIncome={currentMonthIncome}
+          currentMonthExpense={currentMonthExpense}
+        /> 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <SavingLineGraph savings={savings} />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LineChart className="h-5 w-5" />
-                  支出習慣の時系列変化
-                </CardTitle>
-                <CardDescription>月別の支出パターン分析</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={monthlyTrendData}>
-                      <CartesianGrid stroke="#f5f5f5" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value: number) =>
-                          `¥${value.toLocaleString()}`
-                        }
-                        contentStyle={{
-                          backgroundColor: "white",
-                          border: "1px solid #e2e8f0",
-                        }}
-                      />
-                      <Legend />
-                      <Bar dataKey="総支出" barSize={20} fill="#ccc" />
-                      <Line
-                        type="monotone"
-                        dataKey="無駄遣い"
-                        stroke="hsl(346.8 77.2% 49.8%)"
-                        strokeWidth={2}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="自己投資"
-                        stroke="hsl(142.1 76.2% 36.3%)"
-                        strokeWidth={2}
-                      />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <SavingLineGraph savings={savings} />
+          <MonthlyTrendDataCard monthlyTrendData={monthlyTrendData} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -337,9 +301,9 @@ export function DashboardContent() {
               <CardContent>
                 <Tabs defaultValue="category" className="mb-4">
                   <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="category">カテゴリー別</TabsTrigger>
-                    <TabsTrigger value="weight">重み付け別</TabsTrigger>
-                    <TabsTrigger value="emotion">感情別</TabsTrigger>
+                    <TabsTrigger value="category">通常</TabsTrigger>
+                    <TabsTrigger value="weight">自己管理</TabsTrigger>
+                    <TabsTrigger value="emotion">感情</TabsTrigger>
                   </TabsList>
                   <TabsContent value="category">
                     <div className="h-[300px] w-full">
@@ -503,7 +467,7 @@ export function DashboardContent() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {wasteRankingData.map((item, index) => (
+                  {emotionRankingData.map((item, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"

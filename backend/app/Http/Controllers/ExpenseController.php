@@ -31,7 +31,7 @@ class ExpenseController extends Controller
     public function store(ExpenseRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $date = Carbon::parse($request->saved_at);
+            $date = Carbon::parse($request->spent_at);
             // 年月日を取得
             $year = $date->year;
             $month = $date->month;

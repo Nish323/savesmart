@@ -24,13 +24,22 @@ class MonthIncome extends Model
         $monthIncome->save();
     }
 
-    public static function getMonthIncome($userId, $year, $month)
+    public static function get2MonthsIncomes($userId, $year, $month)
     {
-        // 月ごとの収入を取得
-        $monthIncome = self::firstOrCreate(
-            ['user_id' => $userId, 'year' => $year, 'month' => $month],
-        );
-        return $monthIncome;
+        // 2ヶ月分の収入を取得
+        $monthIncomes = self::where('user_id', $userId)
+            ->where(function ($query) use ($year, $month) {
+                $query->where('year', $year)
+                      ->where('month', $month)
+                      ->orWhere(function ($query) use ($year, $month) {
+                          $query->where('year', $year)
+                                ->where('month', $month - 1);
+                      });
+            })
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+        return $monthIncomes;
     }
 
     public static function deleteMonthIncome($userId, $year, $month, $income)
