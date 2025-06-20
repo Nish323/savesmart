@@ -66,6 +66,7 @@ import { Saving } from "@/types/saving";
 import { SavingLineGraph } from "./dashboard/SavingLineGraph";
 import { getDashboardData } from "@/api/controllers/dashboardControllr";
 import { Expense } from "@/types/expense";
+import { AiAdviceCard } from "./dashboard/AiAdviceCard";
 import { getCurrentMonthData } from "./dashboard/dataProcessings/getCurrentMonthData";
 import { CurrentMonthDataCards } from "./dashboard/CurrentMonthDataCards";
 import { MonthlyTrendData } from "@/types/dashboard/monthlyTrendData";
@@ -96,6 +97,7 @@ export function DashboardContent() {
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState<Expense[]>(
     []
   );
+  const [aiAdvice, setAiAdvice] = useState(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
@@ -109,6 +111,9 @@ export function DashboardContent() {
       setMonthSpecialExpenses(Data.monthSpecialExpenses);
       setMonthEmotionExpenses(Data.monthEmotionExpenses);
       setCurrentMonthExpenses(Data.currentMonthExpenses);
+      if (Data.aiAdvice) {
+        setAiAdvice(Data.aiAdvice);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -291,6 +296,10 @@ export function DashboardContent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <WasteRankingCard wasteRankingData={wasteRankingData} />
           <EmotionRankingCard emotionRankingData={emotionRankingData} />
+        </div>
+
+        <div className="mb-8">
+          <AiAdviceCard advice={aiAdvice} />
         </div>
       </div>
     </div>
