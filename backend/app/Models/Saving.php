@@ -24,7 +24,7 @@ class Saving extends Model
         return self::where('user_id', $userId)
             ->where('year', $year)
             ->where('month', $month)
-            ->first();
+            ->get();
     }
 
     /**
