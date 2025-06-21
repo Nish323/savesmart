@@ -50,24 +50,18 @@ export function AiAdviceCard({ advice }: AiAdviceCardProps) {
       const result = await analyzeExpenses();
       if (result.success) {
         // 成功したらアドバイスを更新（親コンポーネントから渡される関数を使用）
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
           // クライアントサイドでのみ実行
-          const event = new CustomEvent("aiAdviceUpdated", {
-            detail: result.advice,
-          });
+          const event = new CustomEvent('aiAdviceUpdated', { detail: result.advice });
           window.dispatchEvent(event);
         }
       } else {
         console.error("AI分析に失敗しました:", result.message);
-        alert(
-          "AI分析に失敗しました。しばらく経ってからもう一度お試しください。"
-        );
+        alert("AI分析に失敗しました。しばらく経ってからもう一度お試しください。");
       }
     } catch (error) {
       console.error("AI分析中にエラーが発生しました:", error);
-      alert(
-        "AI分析中にエラーが発生しました。しばらく経ってからもう一度お試しください。"
-      );
+      alert("AI分析中にエラーが発生しました。しばらく経ってからもう一度お試しください。");
     } finally {
       setIsLoading(false);
     }
@@ -89,14 +83,14 @@ export function AiAdviceCard({ advice }: AiAdviceCardProps) {
           <div className="space-y-4">
             <p className="text-gray-700 whitespace-pre-line">{advice.advice}</p>
             <p className="text-xs text-gray-500 mt-4">
-              分析日:{" "}
-              {advice.advicedAt
-                ? new Date(advice.advicedAt).toLocaleDateString("ja-JP", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+            分析日: {advice.advicedAt
+                ? new Date(advice.advicedAt).toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })
-                : "不明"}
+                : '不明'
+              }
             </p>
           </div>
         ) : (
