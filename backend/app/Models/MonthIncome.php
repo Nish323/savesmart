@@ -64,4 +64,13 @@ class MonthIncome extends Model
         self::deleteMonthIncome($userId, $pastYear, $pastMonth, $pastIncome);
         self::addMonthIncome($userId, $year, $month, $currentIncome);
     }
+
+    public static function getMonthIncome($userId, $year, $month)
+    {
+        // 月ごとの収入を取得
+        return self::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
+    }
 }

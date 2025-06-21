@@ -62,4 +62,5 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/month-special-expenses', [MonthSpecialExpenseController::class, 'index']);
     Route::get('/month-emotion-expenses', [MonthEmotionExpenseController::class, 'index']);
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'getData']);
+    Route::post('/ai-advice/analyze', [App\Http\Controllers\DashboardController::class, 'analyze']);
 });

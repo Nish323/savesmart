@@ -68,7 +68,7 @@ class MonthSpecialExpense extends Model
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->get();
-    }   
+    }
 
     public static function deleteMonthSpecialExpense($userId, $year, $month, $specialCategoryId, $expense)
     {

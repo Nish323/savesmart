@@ -124,6 +124,19 @@ export function DashboardContent() {
   // 初回レンダリング時にデータを取得
   useEffect(() => {
     fetchData();
+
+    // AIアドバイス更新イベントのリスナーを追加
+    const handleAiAdviceUpdated = (event) => {
+      setAiAdvice(event.detail);
+    };
+
+    // イベントリスナーを登録
+    window.addEventListener('aiAdviceUpdated', handleAiAdviceUpdated);
+
+    // クリーンアップ関数
+    return () => {
+      window.removeEventListener('aiAdviceUpdated', handleAiAdviceUpdated);
+    };
   }, []);
 
   // console.log("Savings:", savings);
@@ -234,7 +247,7 @@ export function DashboardContent() {
       name: expense.description || "無題の支出",
       amount: expense.amount,
       category: expense.normalCategoryName || "その他",
-      date: new Date(expense.date).toLocaleDateString("ja-JP", {
+      date: new Date(expense.year, expense.month - 1, expense.day).toLocaleDateString("ja-JP", {
         month: "numeric",
         day: "numeric",
       }),
@@ -254,7 +267,7 @@ export function DashboardContent() {
       name: expense.description || "無題の支出",
       amount: expense.amount,
       category: expense.normalCategoryName || "その他",
-      date: new Date(expense.date).toLocaleDateString("ja-JP", {
+      date: new Date(expense.year, expense.month - 1, expense.day).toLocaleDateString("ja-JP", {
         month: "numeric",
         day: "numeric",
       }),

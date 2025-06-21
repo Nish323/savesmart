@@ -17,9 +17,9 @@ interface AiAdviceCardProps {
   advice?: {
     id: number;
     advice: string;
-    adviced_at: string;
-    created_at: string;
-    updated_at: string;
+    advicedAt: string;
+    createdAt: string;
+    updatedAt: string;
   } | null;
 }
 
@@ -28,30 +28,46 @@ export function AiAdviceCard({ advice }: AiAdviceCardProps) {
 
   // 現在の日付を取得
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // 時間をリセット
 
-  // アドバイスの作成日または更新日を取得
-  const createdDate = advice?.created_at ? new Date(advice.created_at) : null;
-  const updatedDate = advice?.updated_at ? new Date(advice.updated_at) : null;
-  
-  // 日付の比較用に時間をリセット
-  if (createdDate) createdDate.setHours(0, 0, 0, 0);
-  if (updatedDate) updatedDate.setHours(0, 0, 0, 0);
+  let isAdviceFromToday = false;
+  if (advice?.advicedAt) {
+    // データベースから取得したUTC文字列をDateオブジェクトに変換
+    const adviceDate = new Date(advice.advicedAt);
+    console.log("アドバイスの日付:", adviceDate);
+    console.log("今日の日付:", today);
 
-  // 作成日または更新日が今日かどうかをチェック
-  const isCreatedToday = createdDate && createdDate.getTime() === today.getTime();
-  const isUpdatedToday = updatedDate && updatedDate.getTime() === today.getTime();
-  const isAdviceFromToday = isCreatedToday || isUpdatedToday;
+    // ユーザーのローカルタイムゾーン（日本時間）で年月日を比較
+    isAdviceFromToday =
+      adviceDate.getFullYear() === today.getFullYear() &&
+      adviceDate.getMonth() === today.getMonth() &&
+      adviceDate.getDate() === today.getDate();
+  }
 
   // AIで分析ボタンをクリックした時の処理
   const handleAnalyze = async () => {
     setIsLoading(true);
     try {
-      await analyzeExpenses();
-      // 成功したら画面をリロード
-      window.location.reload();
+      const result = await analyzeExpenses();
+      if (result.success) {
+        // 成功したらアドバイスを更新（親コンポーネントから渡される関数を使用）
+        if (typeof window !== "undefined") {
+          // クライアントサイドでのみ実行
+          const event = new CustomEvent("aiAdviceUpdated", {
+            detail: result.advice,
+          });
+          window.dispatchEvent(event);
+        }
+      } else {
+        console.error("AI分析に失敗しました:", result.message);
+        alert(
+          "AI分析に失敗しました。しばらく経ってからもう一度お試しください。"
+        );
+      }
     } catch (error) {
       console.error("AI分析中にエラーが発生しました:", error);
+      alert(
+        "AI分析中にエラーが発生しました。しばらく経ってからもう一度お試しください。"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +89,14 @@ export function AiAdviceCard({ advice }: AiAdviceCardProps) {
           <div className="space-y-4">
             <p className="text-gray-700 whitespace-pre-line">{advice.advice}</p>
             <p className="text-xs text-gray-500 mt-4">
-              分析日: {new Date(advice.adviced_at).toLocaleDateString("ja-JP")}
+              分析日:{" "}
+              {advice.advicedAt
+                ? new Date(advice.advicedAt).toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "不明"}
             </p>
           </div>
         ) : (
