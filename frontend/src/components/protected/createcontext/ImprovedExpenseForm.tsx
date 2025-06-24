@@ -169,27 +169,37 @@ export function ImprovedExpenseForm({
             />
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between md:flex-row flex-col gap-4">
                 <h3 className="text-lg font-semibold">支出項目</h3>
-                <Button
+                <div className="flex items-center gap-2">
+                  <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    append({
-                      amount: "",
-                      normalCategoryId: "",
-                      specialCategoryId: "",
-                      emotionCategoryId: "",
-                      weight: "normal",
-                      emotion: "planned",
-                      memo: "",
-                    })
-                  }
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  項目を追加
-                </Button>
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Zaimで追加
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      append({
+                        amount: "",
+                        normalCategoryId: "",
+                        specialCategoryId: "",
+                        emotionCategoryId: "",
+                        weight: "normal",
+                        emotion: "planned",
+                        memo: "",
+                      })
+                    }
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    項目を追加
+                  </Button>
+                </div>
               </div>
 
               {fields.map((field, index) => (
