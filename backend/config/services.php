@@ -39,4 +39,10 @@ return [
         'api_key' => env('GEMINI_API_KEY'),
     ],
 
+    'zaim' => [
+        'client_id' => env('ZAIM_CLIENT_ID'),
+        'client_secret' => env('ZAIM_CLIENT_SECRET'),
+        'redirect' => env('ZAIM_REDIRECT_URI', 'https://90e0-133-71-201-137.ngrok-free.app/zaim/callback'),
+    ],
+
 ];

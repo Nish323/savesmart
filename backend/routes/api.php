@@ -37,6 +37,8 @@ Route::get('/', function () {
 Route::post('/user/register', [UserController::class, 'register']);
 Route::post('/user/login', [UserController::class, 'login']);
 
+// Zaim連携用ルートはweb.phpに移動しました
+
 // ユーザーログインしたものしか受け付けない
 Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/user/check-auth', [UserController::class, 'checkAuth']);

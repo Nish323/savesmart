@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'zaim_oauth_token',
+        'zaim_oauth_token_secret',
     ];
 
     /**
@@ -33,6 +35,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'zaim_oauth_token',
+        'zaim_oauth_token_secret',
     ];
 
     /**
@@ -46,6 +50,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Zaimと連携済みかどうかを判定するアクセサ
+     *
+     * @return bool
+     */
+    public function getIsZaimLinkedAttribute(): bool
+    {
+        return !empty($this->zaim_oauth_token) && !empty($this->zaim_oauth_token_secret);
     }
 
     protected static function booted()
