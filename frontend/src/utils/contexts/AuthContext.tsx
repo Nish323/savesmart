@@ -15,6 +15,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  is_zaim_linked?: boolean;
 }
 
 interface AuthContextType {
