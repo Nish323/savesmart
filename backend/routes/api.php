@@ -65,4 +65,8 @@ Route::middleware(['auth:sanctum', 'ability:user'])->group(function () {
     Route::get('/month-emotion-expenses', [MonthEmotionExpenseController::class, 'index']);
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'getData']);
     Route::post('/ai-advice/analyze', [App\Http\Controllers\DashboardController::class, 'analyze']);
+    
+    // Zaim連携機能
+    Route::get('/zaim/verify', [App\Http\Controllers\ZaimController::class, 'verifyUser']);
+    Route::get('/zaim/expenses', [App\Http\Controllers\ZaimController::class, 'getExpenses']);
 });
