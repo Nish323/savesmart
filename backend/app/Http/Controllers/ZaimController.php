@@ -137,4 +137,169 @@ class ZaimController extends Controller
                 ->with('error', 'Zaimとの連携中にエラーが発生しました。');
         }
     }
+
+    /**
+     * Zaimのユーザー情報を取得してトークンの有効性を確認する
+     */
+    public function verifyUser(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user->is_zaim_linked) {
+                return response()->json(['error' => 'Zaimとの連携が必要です。'], 400);
+            }
+
+            // Zaimのアクセストークンを復号化
+            $accessToken = decrypt($user->zaim_oauth_token);
+            $accessTokenSecret = decrypt($user->zaim_oauth_token_secret);
+
+            // OAuth1クライアントを設定
+            $server = $this->getZaimServer();
+            $tokenCredentials = new \League\OAuth1\Client\Credentials\TokenCredentials();
+            $tokenCredentials->setIdentifier($accessToken);
+            $tokenCredentials->setSecret($accessTokenSecret);
+
+            // ZaimのユーザーAPIエンドポイント
+            $url = 'https://api.zaim.net/v2/home/user/verify';
+            $params = [];
+
+            Log::info('Zaim verify user request');
+            Log::info('Zaim access token: ' . substr($accessToken, 0, 10) . '...');
+
+            // League OAuth1 Clientを使用してリクエストを送信
+            try {
+                $client = new \GuzzleHttp\Client();
+                
+                // OAuth1署名付きヘッダーを生成
+                $headers = $server->getHeaders($tokenCredentials, 'GET', $url, $params);
+                $headers['Accept'] = 'application/json';
+                $headers['User-Agent'] = 'SaveSmart/1.0';
+                
+                Log::info('Zaim verify API headers: ' . json_encode($headers));
+                
+                $response = $client->request('GET', $url, [
+                    'headers' => $headers
+                ]);
+                
+                Log::info('Zaim verify API response status: ' . $response->getStatusCode());
+                $responseBody = $response->getBody()->getContents();
+                Log::info('Zaim verify API response body: ' . $responseBody);
+                
+                return response()->json(['success' => true, 'data' => json_decode($responseBody, true)]);
+                
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                Log::error('Zaim verify API client error: ' . $e->getMessage());
+                Log::error('Zaim verify API response body: ' . $e->getResponse()->getBody());
+                throw new \Exception('Zaim APIからの認証エラー: ' . $e->getMessage());
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Zaim verify user failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Zaimユーザー情報の取得に失敗しました。'], 500);
+        }
+    }
+
+    /**
+     * 指定した日付の支出データをZaimから取得する
+     */
+    public function getExpenses(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user->is_zaim_linked) {
+                return response()->json(['error' => 'Zaimとの連携が必要です。'], 400);
+            }
+
+            $date = $request->query('date');
+            if (!$date) {
+                return response()->json(['error' => '日付が指定されていません。'], 400);
+            }
+
+            // 日付の形式を検証
+            try {
+                $dateObj = new \DateTime($date);
+                $formattedDate = $dateObj->format('Y-m-d');
+            } catch (\Exception $e) {
+                return response()->json(['error' => '無効な日付形式です。'], 400);
+            }
+
+            // Zaimのアクセストークンを復号化
+            $accessToken = decrypt($user->zaim_oauth_token);
+            $accessTokenSecret = decrypt($user->zaim_oauth_token_secret);
+
+            // OAuth1クライアントを設定
+            $server = $this->getZaimServer();
+            $tokenCredentials = new \League\OAuth1\Client\Credentials\TokenCredentials();
+            $tokenCredentials->setIdentifier($accessToken);
+            $tokenCredentials->setSecret($accessTokenSecret);
+
+            // ZaimのAPIエンドポイント
+            $url = 'https://api.zaim.net/v2/home/money';
+            $params = [
+                'mapping' => 1,
+                'start_date' => $formattedDate,
+                'end_date' => $formattedDate,
+                'mode' => 'payment', // 支出のみ
+            ];
+
+            Log::info('Zaim API request params: ' . json_encode($params));
+            Log::info('Zaim access token: ' . substr($accessToken, 0, 10) . '...');
+            Log::info('Zaim access token secret: ' . substr($accessTokenSecret, 0, 10) . '...');
+
+            // League OAuth1 Clientを使用してリクエストを送信
+            try {
+                $client = new \GuzzleHttp\Client();
+                
+                // OAuth1署名付きヘッダーを生成
+                $headers = $server->getHeaders($tokenCredentials, 'GET', $url, $params);
+                $headers['Accept'] = 'application/json';
+                $headers['User-Agent'] = 'SaveSmart/1.0';
+                
+                Log::info('Zaim API headers: ' . json_encode($headers));
+                
+                $response = $client->request('GET', $url, [
+                    'query' => $params,
+                    'headers' => $headers
+                ]);
+                
+                Log::info('Zaim API response status: ' . $response->getStatusCode());
+                
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                Log::error('Zaim API client error: ' . $e->getMessage());
+                Log::error('Zaim API response body: ' . $e->getResponse()->getBody());
+                throw new \Exception('Zaim APIからの認証エラー: ' . $e->getMessage());
+            }
+
+            $data = json_decode($response->getBody(), true);
+
+            if (!isset($data['money'])) {
+                return response()->json(['expenses' => []]);
+            }
+
+            // 支出データを整形
+            $expenses = [];
+            foreach ($data['money'] as $item) {
+                if ($item['mode'] === 'payment') { // 支出のみ
+                    $expenses[] = [
+                        'id' => $item['id'],
+                        'amount' => $item['amount'],
+                        'date' => $item['date'],
+                        'category_id' => $item['category_id'] ?? null,
+                        'genre_id' => $item['genre_id'] ?? null,
+                        'comment' => $item['comment'] ?? '',
+                        'place' => $item['place'] ?? '',
+                        'name' => $item['name'] ?? '',
+                    ];
+                }
+            }
+
+            return response()->json(['expenses' => $expenses]);
+
+        } catch (\Exception $e) {
+            Log::error('Zaim get expenses failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Zaimからのデータ取得に失敗しました。'], 500);
+        }
+    }
 }

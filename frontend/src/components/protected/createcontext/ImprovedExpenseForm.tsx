@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Plus } from "lucide-react";
 import { createExpense } from "@/api/controllers/expenseController";
+import { getZaimExpenses } from "@/api/controllers/zaimController";
 import { DatePicker } from "./DatePicker";
 import { ExpenseFormProps } from "@/types/form";
 import { convertToHalfWidth } from "@/components/number/ConvertToHalfWidth";
@@ -31,6 +32,7 @@ export function ImprovedExpenseForm({
   defaultDate,
 }: ExpenseFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isZaimLoading, setIsZaimLoading] = useState(false);
   const [total, setTotal] = useState<number>(0);
   const [totalBySpecial, setTotalBySpecial] = useState<Record<string, number>>(
     {}
@@ -103,6 +105,65 @@ export function ImprovedExpenseForm({
     setTotalByEmotion({});
   };
 
+  const handleZaimImport = async () => {
+    setIsZaimLoading(true);
+    try {
+      const selectedDate = form.getValues("date");
+      const year = selectedDate.getFullYear();
+      const month = selectedDate.getMonth() + 1;
+      const day = selectedDate.getDate();
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+      const response = await getZaimExpenses(formattedDate);
+      
+      if (response.expenses.length === 0) {
+        onSuccess("指定した日付にZaimの支出データが見つかりませんでした。");
+        return;
+      }
+
+      // 既存の項目をクリア（最初の空の項目以外）
+      const currentItems = form.getValues("items");
+      if (currentItems.length > 1 || currentItems[0].amount !== "") {
+        // 既存のデータがある場合は確認
+        if (!confirm("既存の項目をクリアしてZaimのデータを読み込みますか？")) {
+          return;
+        }
+        // 全ての項目を削除
+        for (let i = currentItems.length - 1; i >= 0; i--) {
+          remove(i);
+        }
+      } else {
+        // 最初の空の項目を削除
+        remove(0);
+      }
+
+      // Zaimのデータをフォームに追加
+      response.expenses.forEach((expense) => {
+        append({
+          amount: expense.amount.toString(),
+          normalCategoryId: normalCategories.length > 0 ? normalCategories[0].id.toString() : "",
+          specialCategoryId: "",
+          emotionCategoryId: "",
+          weight: "normal",
+          emotion: "planned",
+          memo: expense.comment || expense.name || "",
+        });
+      });
+
+      // 合計を再計算
+      setTimeout(() => {
+        calculateTotals();
+      }, 100);
+
+      onSuccess(`Zaimから${response.expenses.length}件の支出データを読み込みました。`);
+    } catch (error: any) {
+      console.error("Zaim import error:", error);
+      onSuccess(error.message || "Zaimからのデータ取得に失敗しました。");
+    } finally {
+      setIsZaimLoading(false);
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
@@ -173,12 +234,14 @@ export function ImprovedExpenseForm({
                 <h3 className="text-lg font-semibold">支出項目</h3>
                 <div className="flex items-center gap-2">
                   <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleZaimImport}
+                    disabled={isZaimLoading}
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Zaimで追加
+                    {isZaimLoading ? "読み込み中..." : "Zaimで追加"}
                   </Button>
                   <Button
                     type="button"
