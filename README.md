@@ -10,4 +10,11 @@ https://docs.google.com/presentation/d/1kCcJwa1iQasOiDPaC54EaOCUNQDbPzyXZVMxWLYi
 2025年7月6日
 とりあえずでデプロイしました！！
 細かい修正がありますので、随時修正していきますが、主要機能は問題なく使えるようになっています。
+
 https://frontend-service-443841702745.asia-northeast1.run.app/
+
+
+テストuser
+
+mail:demo@example.com
+password:password
