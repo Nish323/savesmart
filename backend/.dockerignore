@@ -1,0 +1,12 @@
+# ローカル開発用の.envファイルをコピーしない
+.env
+.env.*
+!.env.example
+
+# ComposerやNPMのパッケージはコンテナ内でインストールするのでコピーしない
+/vendor/
+/node_modules/
+
+# Gitの管理ファイル
+.git
+.gitignore

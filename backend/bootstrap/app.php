@@ -14,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+
         $middleware->alias([
             'abilities' => CheckAbilities::class, // ability && abilityB && abilityC の意
             'ability' => CheckForAnyAbility::class, // ability || ability || ability の意

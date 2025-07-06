@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-t'
+  - '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/my-repo-frontend/frontend:latest'
+  - '-f'
+  - 'Dockerfile'
+  - '.'
+  - '--build-arg'
+  - 'NEXT_PUBLIC_API_URL_CLIENT=${_BACKEND_API_URL_CLIENT}' # コマンドラインから渡す変数に変更
+  - '--build-arg'
+  - 'NEXT_PUBLIC_API_URL_SERVER=${_BACKEND_API_URL_SERVER}' # コマンドラインから渡す変数に変更
+  - '--build-arg'
+  - 'NEXT_PUBLIC_BACKEND_URL=${_BACKEND_URL}' # コマンドラインから渡す変数に変更
+  - '--build-arg'
+  - 'NEXT_PUBLIC_BACKEND_API_URL=${_BACKEND_API_URL_REWRITE}' # next.config.jsのリライト用変数
+images:
+- '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/my-repo-frontend/frontend:latest'
