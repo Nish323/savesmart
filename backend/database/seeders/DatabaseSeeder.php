@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             NormalCategorySeeder::class,
             SpecialCategorySeeder::class,
             EmotionCategorySeeder::class,
-            ExpenseSeeder::class,  // ← ここを追加
+            ExpenseSeeder::class,
         ]);
     }
 }
