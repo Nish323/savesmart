@@ -16,5 +16,5 @@ https://frontend-service-443841702745.asia-northeast1.run.app/
 
 テストuser
 
-mail:demo@example.com
+mail:demo@example.com<br>
 password:password
