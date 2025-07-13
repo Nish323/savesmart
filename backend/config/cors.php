@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+			'https://frontend-service-443841702745.asia-northeast1.run.app',
+			'http://localhost:3000',
+		],
 
     'allowed_origins_patterns' => [],
 
