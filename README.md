@@ -24,41 +24,26 @@
 これらの多角的な分析により、ユーザーは自身の消費行動パターンを深く理解し、後悔の少ないお金の使い方を習慣づけることができます。
 
 ---
-### 開発環境・使用技術・ツール
-こちらに Route8 についての詳しい内容と技術的な部分をまとめています。
-
 ## 🚙 開発環境・使用技術・ツール
 
-開発期間：2ヶ月
+開発期間：4ヶ月
 
 **FE**
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![Recoil](https://img.shields.io/badge/Recoil-3578E5?style=flat-square&logo=recoil&logoColor=white)
+[![Front-End Skills](https://skillicons.dev/icons?i=ts,nextjs,react,recoil)](https://skillicons.dev)
 
 **BE**
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)
-![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white)
-![Laravel Breeze](https://img.shields.io/badge/Laravel_Breeze-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+[![Back-End Skills](https://skillicons.dev/icons?i=php,laravel)](https://skillicons.dev)
 **DB**
-![PlanetScale](https://img.shields.io/badge/PlanetScale-000000?style=flat-square&logo=planetscale&logoColor=white)
+[![Database Skills](https://skillicons.dev/icons?i=mysql)](https://skillicons.dev)
 
 **インフラ**
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
-![Visual Studio Code](https://img.shields.io/badge/Visual_Studio_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)
+[![Infrastructure Skills](https://skillicons.dev/icons?i=docker,github,git,vscode)](https://skillicons.dev)
 
 **デプロイ**
-![Heroku](https://img.shields.io/badge/Heroku-430098?style=flat-square&logo=heroku&logoColor=white)
+[![Deployment Skills](https://skillicons.dev/icons?i=gcp)](https://skillicons.dev)
 
 **UI・ロゴ**
-![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white)
-![Blender](https://img.shields.io/badge/Blender-F5792A?style=flat-square&logo=blender&logoColor=white)
-![Adobe Photoshop](https://img.shields.io/badge/Adobe_Photoshop-31A8FF?style=flat-square&logo=adobephotoshop&logoColor=white)
-
+[![Design Skills](https://skillicons.dev/icons?i=figma)](https://skillicons.dev)
 
 ---
 ### 🚀 アプリへのリンクとテスト情報
