@@ -1,0 +1,10 @@
+{
+  "name": "savesmart-backend",
+  "scripts": {
+    "postdeploy": "cd backend && php artisan migrate --force"
+  },
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false"
+  }
+}
