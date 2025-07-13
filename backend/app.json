@@ -16,13 +16,6 @@
     "SESSION_DOMAIN": ".herokuapp.com",
     "LOG_CHANNEL": "errorlog",
     "FILESYSTEM_DISK": "local",
-
-    "GEMINI_API_KEY": "AIzaSyCCzUidmsoW-qGQec3uuddqTa-jruShJTA",
-    "SCHEDULER_TOKEN": "your-very-long-and-random-secret-token",
-    "ZAIM_CLIENT_ID": "4655f40f0d2e52889b2aaca3b423496458429504",
-    "ZAIM_CLIENT_SECRET": "7eee7b22522792e25998fccadfa1eac1bd401272",
-    "ZAIM_REDIRECT_URI": "https://your-app-name.herokuapp.com/zaim/callback",
-    "ZAIM_BASE_URL": "https://your-app-name.herokuapp.com/"
   },
   "buildpacks": [
     { "url": "heroku/php" }
