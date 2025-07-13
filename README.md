@@ -24,7 +24,52 @@
 これらの多角的な分析により、ユーザーは自身の消費行動パターンを深く理解し、後悔の少ないお金の使い方を習慣づけることができます。
 
 ---
-
+### 開発環境・使用技術・ツール
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=react" alt="React" width="60"><br>
+      <strong>Frontend</strong><br>React
+    </td>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=nodejs" alt="Node.js" width="60"><br>
+      <strong>Backend</strong><br>Node.js
+    </td>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=mongodb" alt="MongoDB" width="60"><br>
+      <strong>Database</strong><br>MongoDB
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=gcp" alt="Google Cloud Platform" width="60"><br>
+      <strong>Cloud Platform</strong><br>GCP
+    </td>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=docker" alt="Docker" width="60"><br>
+      <strong>Containerization</strong><br>Docker (Cloud Run)
+    </td>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=git,github" alt="Git & GitHub" width="60"><br>
+      <strong>Version Control</strong><br>Git & GitHub
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=aws,azure" alt="CI/CD Placeholder" width="60"><br>
+      <strong>CI/CD</strong><br>(Not specified, but likely used)
+    </td>
+     <td align="center">
+      <img src="https://skillicons.dev/icons?i=figma" alt="Figma" width="60"><br>
+      <strong>Design</strong><br>Figma (UI/UX)
+    </td>
+    <td align="center">
+      <img src="https://skillicons.dev/icons?i=vscode" alt="VS Code" width="60"><br>
+      <strong>IDE</strong><br>VS Code
+    </td>
+  </tr>
+</table>
+---
 ### 🚀 アプリへのリンクとテスト情報
 
 初期バージョンをデプロイ済みです。ぜひお試しください。
