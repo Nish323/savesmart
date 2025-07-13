@@ -25,50 +25,45 @@
 
 ---
 ### 開発環境・使用技術・ツール
-<table>
-  <tr>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=react" alt="React" width="60"><br>
-      <strong>Frontend</strong><br>React
-    </td>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=nodejs" alt="Node.js" width="60"><br>
-      <strong>Backend</strong><br>Node.js
-    </td>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=mongodb" alt="MongoDB" width="60"><br>
-      <strong>Database</strong><br>MongoDB
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=gcp" alt="Google Cloud Platform" width="60"><br>
-      <strong>Cloud Platform</strong><br>GCP
-    </td>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=docker" alt="Docker" width="60"><br>
-      <strong>Containerization</strong><br>Docker (Cloud Run)
-    </td>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=git,github" alt="Git & GitHub" width="60"><br>
-      <strong>Version Control</strong><br>Git & GitHub
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=aws,azure" alt="CI/CD Placeholder" width="60"><br>
-      <strong>CI/CD</strong><br>(Not specified, but likely used)
-    </td>
-     <td align="center">
-      <img src="https://skillicons.dev/icons?i=figma" alt="Figma" width="60"><br>
-      <strong>Design</strong><br>Figma (UI/UX)
-    </td>
-    <td align="center">
-      <img src="https://skillicons.dev/icons?i=vscode" alt="VS Code" width="60"><br>
-      <strong>IDE</strong><br>VS Code
-    </td>
-  </tr>
-</table>
+こちらに Route8 についての詳しい内容と技術的な部分をまとめています。
+
+## 🚙 開発環境・使用技術・ツール
+
+開発期間：2ヶ月
+
+**FE**
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Recoil](https://img.shields.io/badge/Recoil-3578E5?style=for-the-badge&logo=recoil&logoColor=white)
+
+**BE**
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Laravel Breeze](https://img.shields.io/badge/Laravel_Breeze-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+**DB**
+![PlanetScale](https://img.shields.io/badge/PlanetScale-000000?style=for-the-badge&logo=planetscale&logoColor=white)
+
+**インフラ**
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/Visual_Studio_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
+
+**デプロイ**
+![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)
+
+**UI・ロゴ**
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+![Blender](https://img.shields.io/badge/Blender-F5792A?style=for-the-badge&logo=blender&logoColor=white)
+![Adobe Photoshop](https://img.shields.io/badge/Adobe_Photoshop-31A8FF?style=for-the-badge&logo=adobephotoshop&logoColor=white)
+
+## 📖 アプリ機能
+
+1.  **ログイン・新規登録機能**
+    Route8を利用するためのアカウント登録とログイン機能です。パスワードは忘れないように。
+
 ---
 ### 🚀 アプリへのリンクとテスト情報
 
