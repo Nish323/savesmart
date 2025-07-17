@@ -50,6 +50,8 @@
 
 初期バージョンをデプロイ済みです。ぜひお試しください。
 
+**CloudSQLが高すぎて一時インタスタンスを停止しています！！！！！！！！**
+
 * **デモサイトURL**
     * [https://frontend-service-443841702745.asia-northeast1.run.app/](https://frontend-service-443841702745.asia-northeast1.run.app/)
 
